@@ -1,0 +1,136 @@
+/* UTILITYnet ERP — Design System v2.0 tokens */
+
+/* ── LIGHT MODE (default) ── */
+:root,
+[data-theme="light"] {
+  --bg: #F4F7FA;
+  --surface: #FFFFFF;
+  --s2: #EEF2F6;
+
+  --teal: #1678A0;
+  --teal-dim: rgba(22, 120, 160, 0.08);
+  --teal-bdr: rgba(22, 120, 160, 0.25);
+
+  --navy: #045477;
+
+  --gold: #D4A017;
+  --gold-dim: rgba(212, 160, 23, 0.10);
+  --gold-bdr: rgba(212, 160, 23, 0.30);
+
+  --text: #4A5568;
+  --light: #1A2B3C;
+  --muted: #8896A5;
+
+  --border: #E2E8EF;
+  --bormid: #CBD5E0;
+
+  --success: #27AE60;
+  --warning: #D4A017;
+  --error: #E53E3E;
+  --info: #1678A0;
+
+  --nav-bg: #045477;
+  --nav-text: #FFFFFF;
+  --sidebar-bg: #FFFFFF;
+  --sidebar-bdr: #E2E8EF;
+
+  --btn-primary-bg: #1678A0;
+  --btn-primary-text: #FFFFFF;
+  --btn-sec-bg: transparent;
+  --btn-sec-text: #1678A0;
+  --btn-sec-bdr: #1678A0;
+
+  --input-bg: #F4F7FA;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --label-color: #1678A0;
+  --kpi-color: #1678A0;
+  --active-nav-bg: rgba(22, 120, 160, 0.10);
+  --active-nav-color: #1678A0;
+  --active-nav-bdr: #D4A017;
+
+  --font-ui: 'Quicksand', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ── DARK MODE ── */
+[data-theme="dark"] {
+  --bg: #0A1628;
+  --surface: #0F2040;
+  --s2: #162B52;
+
+  --teal: #1E88B4;
+  --teal-dim: rgba(30, 136, 180, 0.12);
+  --teal-bdr: rgba(30, 136, 180, 0.30);
+
+  --navy: #045477;
+
+  --gold: #ECB324;
+  --gold-dim: rgba(236, 179, 36, 0.10);
+  --gold-bdr: rgba(236, 179, 36, 0.30);
+
+  --text: #A8BFCC;
+  --light: #E8F2F7;
+  --muted: #6B8FA3;
+
+  --border: rgba(168, 191, 204, 0.08);
+  --bormid: rgba(168, 191, 204, 0.15);
+
+  --success: #2ECC71;
+  --warning: #ECB324;
+  --error: #E74C3C;
+  --info: #1E88B4;
+
+  --nav-bg: #0F2040;
+  --nav-text: #E8F2F7;
+  --sidebar-bg: #0F2040;
+  --sidebar-bdr: rgba(168, 191, 204, 0.08);
+
+  --btn-primary-bg: #ECB324;
+  --btn-primary-text: #0A1628;
+  --btn-sec-bg: transparent;
+  --btn-sec-text: #A8BFCC;
+  --btn-sec-bdr: rgba(168, 191, 204, 0.20);
+
+  --input-bg: #0A1628;
+  --card-shadow: none;
+  --label-color: #1E88B4;
+  --kpi-color: #ECB324;
+  --active-nav-bg: rgba(30, 136, 180, 0.12);
+  --active-nav-color: #4BAED4;
+  --active-nav-bdr: #ECB324;
+}
+
+/* ── THENA / FRACTALSHIFT (Analytics module) ── */
+[data-theme="thena"] {
+  --bg: #111210;
+  --surface: #161714;
+  --s2: #1c1d19;
+  --accent: #D44028;
+  --teal: #D44028;
+  --teal-dim: rgba(212, 64, 40, 0.10);
+  --teal-bdr: rgba(212, 64, 40, 0.28);
+
+  --text: #C8C4BF;
+  --light: #F2F0EC;
+  --muted: rgba(200, 196, 191, 0.5);
+
+  --border: rgba(242, 240, 236, 0.07);
+  --bormid: rgba(242, 240, 236, 0.13);
+
+  --nav-bg: #111210;
+  --sidebar-bg: #111210;
+  --sidebar-bdr: rgba(242, 240, 236, 0.07);
+
+  --active-nav-bg: rgba(212, 64, 40, 0.10);
+  --active-nav-bdr: #D44028;
+  --active-nav-color: #F2F0EC;
+
+  --label-color: #D44028;
+  --kpi-color: #F2F0EC;
+  --gold: #D44028;
+  --gold-dim: rgba(212, 64, 40, 0.10);
+  --gold-bdr: rgba(212, 64, 40, 0.28);
+
+  --font-ui: 'Syne', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}

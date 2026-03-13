@@ -1,0 +1,45 @@
+{
+  "name": "utilitynet-erp-demo",
+  "private": true,
+  "version": "2.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "demo:dashboard": "node scripts/run-dashboard.mjs",
+    "demo:enrollment": "node scripts/run-enrollment.mjs",
+    "demo:customer-service": "node scripts/run-customer-service.mjs",
+    "demo:billing": "node scripts/run-billing.mjs",
+    "demo:settlement": "node scripts/run-settlement.mjs",
+    "demo:marketers": "node scripts/run-marketers.mjs",
+    "demo:analytics": "node scripts/run-analytics.mjs",
+    "demo:complex": "node scripts/run-complex.mjs",
+    "demo:all": "node scripts/run-all.mjs",
+    "demo:heal": "node scripts/auto-heal.mjs",
+    "demo:heal:dashboard": "node scripts/auto-heal.mjs dashboard",
+    "demo:heal:enrollment": "node scripts/auto-heal.mjs enrollment",
+    "demo:heal:customer-service": "node scripts/auto-heal.mjs customer-service",
+    "demo:heal:billing": "node scripts/auto-heal.mjs billing",
+    "demo:heal:settlement": "node scripts/auto-heal.mjs settlement",
+    "demo:heal:marketers": "node scripts/auto-heal.mjs marketers",
+    "demo:heal:analytics": "node scripts/auto-heal.mjs analytics",
+    "demo:heal:complex": "node scripts/auto-heal.mjs complex",
+    "demo:heal:all": "node scripts/auto-heal.mjs all"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "vite": "^5.0.0"
+  }
+}

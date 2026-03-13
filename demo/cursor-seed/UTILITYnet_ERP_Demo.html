@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UTILITYnet ERP Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+/* ── DESIGN TOKENS ── */
+:root, [data-theme="light"] {
+  --bg: #F4F7FA; --surface: #FFFFFF; --s2: #EEF2F6;
+  --teal: #1678A0; --teal-dim: rgba(22,120,160,0.08); --teal-bdr: rgba(22,120,160,0.25);
+  --navy: #045477; --gold: #D4A017; --gold-dim: rgba(212,160,23,0.10); --gold-bdr: rgba(212,160,23,0.30);
+  --text: #4A5568; --light: #1A2B3C; --muted: #8896A5;
+  --border: #E2E8EF; --bormid: #CBD5E0;
+  --success: #27AE60; --warning: #D4A017; --error: #E53E3E; --info: #1678A0;
+  --nav-bg: #045477; --nav-text: #FFFFFF; --sidebar-bg: #FFFFFF; --sidebar-bdr: #E2E8EF;
+  --btn-primary-bg: #1678A0; --btn-primary-text: #FFFFFF;
+  --btn-sec-bg: transparent; --btn-sec-text: #1678A0; --btn-sec-bdr: #1678A0;
+  --input-bg: #F4F7FA; --card-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  --label-color: #1678A0; --kpi-color: #1678A0;
+  --active-nav-bg: rgba(22,120,160,0.10); --active-nav-color: #1678A0; --active-nav-bdr: #D4A017;
+  --font-ui: 'Quicksand', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+}
+[data-theme="dark"] {
+  --bg: #0A1628; --surface: #0F2040; --s2: #162B52;
+  --teal: #1E88B4; --teal-dim: rgba(30,136,180,0.12); --teal-bdr: rgba(30,136,180,0.30);
+  --navy: #045477; --gold: #ECB324; --gold-dim: rgba(236,179,36,0.10); --gold-bdr: rgba(236,179,36,0.30);
+  --text: #A8BFCC; --light: #E8F2F7; --muted: #6B8FA3;
+  --border: rgba(168,191,204,0.08); --bormid: rgba(168,191,204,0.15);
+  --success: #2ECC71; --warning: #ECB324; --error: #E74C3C; --info: #1E88B4;
+  --nav-bg: #0F2040; --nav-text: #E8F2F7; --sidebar-bg: #0F2040; --sidebar-bdr: rgba(168,191,204,0.08);
+  --btn-primary-bg: #ECB324; --btn-primary-text: #0A1628;
+  --btn-sec-bg: transparent; --btn-sec-text: #A8BFCC; --btn-sec-bdr: rgba(168,191,204,0.20);
+  --input-bg: #0A1628; --card-shadow: none;
+  --label-color: #1E88B4; --kpi-color: #ECB324;
+  --active-nav-bg: rgba(30,136,180,0.12); --active-nav-color: #4BAED4; --active-nav-bdr: #ECB324;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.2s ease, border-color 0.2s ease, color 0.1s ease; }
+body { font-family: var(--font-ui); background: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; font-size: 14px; }
+
+/* ── THENA / FRACTALSHIFT IRON-STEEL TOKENS ── */
+/* Fonts loaded via <link> in <head> */
+body.thena-mode {
+  --t-bg:      #111210;
+  --t-surface: #161714;
+  --t-s2:      #1c1d19;
+  --t-accent:  #D44028;
+  --t-adim:    rgba(212,64,40,0.10);
+  --t-aborder: rgba(212,64,40,0.28);
+  --t-text:    #C8C4BF;
+  --t-light:   #F2F0EC;
+  --t-border:  rgba(242,240,236,0.07);
+  --t-bormid:  rgba(242,240,236,0.13);
+  --t-muted:   rgba(200,196,191,0.5);
+  --font-display: 'Playfair Display', serif;
+  --font-thena-ui: 'Syne', sans-serif;
+  --font-thena-mono: 'DM Mono', monospace;
+}
+
+/* Sidebar transformation */
+body.thena-mode .sidebar {
+  background: #111210 !important;
+  border-right-color: rgba(242,240,236,0.07) !important;
+}
+body.thena-mode .sidebar-label {
+  color: rgba(200,196,191,0.4) !important;
+}
+body.thena-mode .nav-item {
+  color: #C8C4BF !important;
+  font-family: 'Syne', sans-serif !important;
+}
+body.thena-mode .nav-item:hover {
+  background: rgba(212,64,40,0.08) !important;
+  color: #F2F0EC !important;
+}
+body.thena-mode .nav-item.active {
+  background: rgba(212,64,40,0.10) !important;
+  border-left-color: #D44028 !important;
+  color: #F2F0EC !important;
+}
+body.thena-mode .sidebar-footer {
+  border-top-color: rgba(242,240,236,0.07) !important;
+}
+body.thena-mode .sidebar-product {
+  color: rgba(200,196,191,0.4) !important;
+}
+body.thena-mode .nav-badge-count {
+  background: #D44028 !important;
+}
+
+/* ── THENA MODULE SHELL — standalone, no body.thena-mode required ── */
+#module-analytics {
+  background: #111210;
+  font-family: 'Syne', sans-serif;
+  color: #C8C4BF;
+  padding: 4px 0 60px;
+  min-height: calc(100vh - 56px);
+}
+.thena-page-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: #F2F0EC; position: relative; display: inline-block; }
+.thena-page-title::after { content: ''; display: block; width: 48px; height: 3px; background: #D44028; border-radius: 2px; margin-top: 10px; }
+.thena-subtitle { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(200,196,191,0.5); margin-top: 16px; }
+.thena-section-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: #D44028; margin-bottom: 10px; }
+.thena-card { background: #161714; border: 1px solid rgba(242,240,236,0.07); border-radius: 10px; padding: 20px 24px; }
+.thena-card-accent { background: rgba(212,64,40,0.10) !important; border-color: rgba(212,64,40,0.28) !important; }
+.thena-card-dim { background: #1c1d19 !important; border-color: rgba(242,240,236,0.13) !important; }
+.thena-kpi-value { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 26px; color: #F2F0EC; letter-spacing: -0.02em; }
+.thena-kpi-value.accent { color: #D44028; }
+.thena-kpi-label { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.10em; text-transform: uppercase; color: #C8C4BF; opacity: 0.65; margin-bottom: 6px; }
+.thena-kpi-delta { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 600; margin-top: 5px; color: #27AE60; }
+.thena-kpi-delta.neg { color: #E74C3C; }
+.thena-badge { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; display: inline-block; }
+.thena-badge-red { background: #D44028; color: #fff; }
+.thena-badge-neutral { background: #1c1d19; color: #C8C4BF; border: 1px solid rgba(242,240,236,0.13); }
+.thena-pill { display: inline-flex; align-items: center; gap: 5px; border-radius: 100px; padding: 3px 11px; font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.thena-pill-active { background: rgba(212,64,40,0.10); border: 1px solid rgba(212,64,40,0.28); color: #D44028; }
+.thena-pill-muted { background: #1c1d19; border: 1px solid rgba(242,240,236,0.13); color: #C8C4BF; }
+.thena-btn-primary { background: #D44028; color: #fff; border: none; border-radius: 8px; padding: 9px 18px; font: 600 13px 'Syne', sans-serif; cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 6px; }
+.thena-btn-primary:hover { background: #BF3220; }
+.thena-btn-ghost { background: transparent; color: #C8C4BF; border: 1px solid rgba(242,240,236,0.13); border-radius: 8px; padding: 9px 18px; font: 500 13px 'Syne', sans-serif; cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 6px; }
+.thena-btn-ghost:hover { background: rgba(242,240,236,0.04); color: #F2F0EC; }
+.thena-confidence-bar { height: 4px; background: #1c1d19; border-radius: 2px; overflow: hidden; margin-top: 8px; }
+.thena-confidence-fill { height: 100%; border-radius: 2px; background: #D44028; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+
+/* ── THENA SIDEBAR + PANEL (only when thena-mode is active) ── */
+body.thena-mode .sidebar { background: #111210 !important; border-right-color: rgba(242,240,236,0.07) !important; }
+body.thena-mode .sidebar-label { color: rgba(200,196,191,0.4) !important; }
+body.thena-mode .nav-item { color: #C8C4BF !important; font-family: 'Syne', sans-serif !important; }
+body.thena-mode .nav-item:hover { background: rgba(212,64,40,0.08) !important; color: #F2F0EC !important; }
+body.thena-mode .nav-item.active { background: rgba(212,64,40,0.10) !important; border-left-color: #D44028 !important; color: #F2F0EC !important; }
+body.thena-mode .sidebar-footer { border-top-color: rgba(242,240,236,0.07) !important; }
+body.thena-mode .sidebar-product { color: rgba(200,196,191,0.4) !important; }
+body.thena-mode .nav-badge-count { background: #D44028 !important; }
+body.thena-mode #thenaToggle { background: #D44028 !important; color: #fff !important; }
+body.thena-mode #thenaPanel { background: #161714 !important; border-left-color: rgba(212,64,40,0.28) !important; }
+body.thena-mode #thenaPanel .emberlyn-context { background: #1c1d19 !important; border-bottom-color: rgba(242,240,236,0.07) !important; color: rgba(200,196,191,0.5) !important; }
+body.thena-mode #thenaPanel .emberlyn-messages { background: #161714 !important; }
+body.thena-mode #thenaPanel .bubble-ai { background: #1c1d19 !important; border-color: rgba(242,240,236,0.13) !important; color: #F2F0EC !important; }
+body.thena-mode #thenaPanel .bubble-user { background: #D44028 !important; }
+body.thena-mode #thenaPanel .suggestion-chip { background: #1c1d19 !important; border-color: rgba(242,240,236,0.13) !important; color: #C8C4BF !important; }
+body.thena-mode #thenaPanel .emberlyn-input-area { background: #161714 !important; border-top-color: rgba(242,240,236,0.07) !important; }
+body.thena-mode #thenaPanel .emberlyn-suggestions { background: #161714 !important; border-top-color: rgba(242,240,236,0.07) !important; }
+body.thena-mode #thenaPanel #thenaInput { background: #111210 !important; border-color: rgba(212,64,40,0.30) !important; color: #F2F0EC !important; }
+body.thena-mode #thenaPanel #thenaSend { background: #D44028 !important; }
+
+/* ── NAV BAR ── */
+.navbar {
+  height: 56px; background: var(--nav-bg); border-bottom: 1px solid var(--border);
+  padding: 0 24px; display: flex; align-items: center; gap: 16px;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100; flex-shrink: 0;
+}
+.nav-logo { font: 700 18px var(--font-ui); letter-spacing: -0.02em; color: #fff; display: flex; align-items: center; gap: 8px; }
+.nav-logo-sub { font: 500 10px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-left: 8px; }
+.nav-spacer { flex: 1; }
+.nav-badge { background: rgba(30,136,180,0.25); border: 1px solid rgba(30,136,180,0.4); color: #4BAED4; font: 500 9px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; }
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+.mode-toggle { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.15); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all 0.15s ease; }
+.mode-toggle:hover { background: rgba(255,255,255,0.18); }
+.nav-avatar { width: 32px; height: 32px; border-radius: 7px; background: var(--teal); display: flex; align-items: center; justify-content: center; font: 700 11px var(--font-ui); color: #fff; letter-spacing: 0.03em; cursor: pointer; }
+.nav-user { font: 500 12px var(--font-ui); color: rgba(255,255,255,0.8); }
+.nav-notification { position: relative; cursor: pointer; color: rgba(255,255,255,0.7); font-size: 18px; }
+.nav-notification-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; border: 2px solid var(--nav-bg); }
+
+/* ── APP BODY ── */
+.app-body { display: flex; flex: 1; margin-top: 56px; min-height: calc(100vh - 56px); }
+
+/* ── SIDEBAR ── */
+.sidebar { width: 220px; background: var(--sidebar-bg); border-right: 1px solid var(--sidebar-bdr); display: flex; flex-direction: column; position: fixed; top: 56px; left: 0; bottom: 0; overflow-y: auto; z-index: 50; flex-shrink: 0; }
+.sidebar-section { padding: 16px 0 8px; }
+.sidebar-label { font: 500 8px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); padding: 0 16px 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; border-left: 2px solid transparent; color: var(--text); font: 500 13px var(--font-ui); transition: all 0.15s ease; user-select: none; }
+.nav-item:hover { background: var(--teal-dim); color: var(--teal); }
+.nav-item.active { background: var(--active-nav-bg); border-left-color: var(--active-nav-bdr); color: var(--active-nav-color); font-weight: 600; }
+.nav-icon { width: 18px; height: 18px; opacity: 0.7; flex-shrink: 0; }
+.nav-item.active .nav-icon, .nav-item:hover .nav-icon { opacity: 1; }
+.nav-badge-count { margin-left: auto; background: var(--error); color: #fff; font: 500 9px var(--font-mono); padding: 1px 6px; border-radius: 100px; }
+.sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
+.sidebar-product { font: 500 9px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); opacity: 0.6; }
+
+/* ── MAIN CONTENT ── */
+.main { flex: 1; margin-left: 220px; padding: 28px; overflow-x: hidden; }
+body.thena-mode .main { background: #111210 !important; }
+.main.panel-open { margin-right: 340px; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 24px; }
+.page-title { font: 700 22px var(--font-ui); color: var(--light); position: relative; display: inline-block; }
+.page-title::after { content: ''; display: block; width: 48px; height: 3px; background: var(--gold); border-radius: 2px; margin-top: 8px; }
+.page-subtitle { font: 500 13px var(--font-ui); color: var(--muted); margin-top: 14px; }
+.page-header-row { display: flex; align-items: flex-start; justify-content: space-between; }
+
+/* ── SECTION LABEL ── */
+.section-label { font: 500 9px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--label-color); margin-bottom: 10px; }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; box-shadow: var(--card-shadow); }
+.card-gold { border-color: var(--gold-bdr); background: var(--gold-dim); }
+.card-teal { border-color: var(--teal-bdr); background: var(--teal-dim); }
+
+/* ── KPI GRID ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; box-shadow: var(--card-shadow); position: relative; overflow: hidden; }
+.kpi-card.featured { border-color: var(--gold-bdr); background: var(--gold-dim); }
+.kpi-label { font: 500 8px var(--font-mono); letter-spacing: 0.10em; text-transform: uppercase; color: var(--text); opacity: 0.75; margin-bottom: 6px; }
+.kpi-value { font: 700 24px var(--font-ui); color: var(--kpi-color); letter-spacing: -0.02em; }
+.kpi-card:not(.featured) .kpi-value { color: var(--light); }
+.kpi-delta { font: 600 10px var(--font-ui); color: var(--success); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+.kpi-delta.neg { color: var(--error); }
+.kpi-sub { font: 400 11px var(--font-ui); color: var(--muted); margin-top: 2px; }
+
+/* ── GRID LAYOUTS ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.gap-20 { gap: 20px; }
+
+/* ── DATA TABLE ── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--s2); border-bottom: 2px solid var(--teal); }
+thead th { font: 500 8px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); opacity: 0.65; padding: 10px 14px; text-align: left; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s ease; }
+tbody tr:hover { background: var(--teal-dim); cursor: pointer; }
+tbody td { padding: 10px 14px; font: 500 12px var(--font-ui); color: var(--light); }
+.td-mono { font-family: var(--font-mono); font-size: 11px; }
+.td-muted { color: var(--muted); }
+
+/* ── STATUS PILLS ── */
+.pill { display: inline-flex; align-items: center; gap: 5px; border-radius: 100px; padding: 3px 10px; font: 500 8px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.pill-active { background: var(--teal-dim); border: 1px solid var(--teal-bdr); color: var(--teal); }
+.pill-pending { background: var(--gold-dim); border: 1px solid var(--gold-bdr); color: var(--gold); }
+.pill-error { background: rgba(229,62,62,0.10); border: 1px solid rgba(229,62,62,0.30); color: var(--error); }
+.pill-success { background: rgba(39,174,96,0.10); border: 1px solid rgba(39,174,96,0.30); color: var(--success); }
+.pill-draft { background: rgba(128,128,128,0.08); border: 1px solid rgba(128,128,128,0.18); color: var(--muted); }
+.pill-info { background: var(--teal-dim); border: 1px solid var(--teal-bdr); color: var(--info); }
+.pill-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 9px 18px; font: 600 13px var(--font-ui); cursor: pointer; transition: all 0.15s ease; border: none; white-space: nowrap; }
+.btn-primary { background: var(--btn-primary-bg); color: var(--btn-primary-text); }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: transparent; color: var(--btn-sec-text); border: 1.5px solid var(--btn-sec-bdr); }
+.btn-secondary:hover { background: var(--teal-dim); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--s2); }
+.btn-danger { background: rgba(229,62,62,0.12); color: var(--error); border: 1px solid rgba(229,62,62,0.3); }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--s2); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-size: 16px; transition: all 0.15s ease; }
+.btn-icon:hover { background: var(--teal-dim); color: var(--teal); border-color: var(--teal-bdr); }
+
+/* ── INPUTS ── */
+input, select, textarea { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; font: 500 13px var(--font-ui); color: var(--light); outline: none; width: 100%; transition: border-color 0.15s ease; }
+input:focus, select:focus, textarea:focus { border-color: var(--teal-bdr); }
+input::placeholder { color: var(--muted); opacity: 0.6; }
+label { font: 600 12px var(--font-ui); color: var(--text); margin-bottom: 4px; display: block; }
+.form-group { margin-bottom: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+/* ── SEARCH BAR ── */
+.search-bar { position: relative; }
+.search-bar input { padding-left: 36px; }
+.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab { padding: 9px 18px; font: 600 13px var(--font-ui); color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s ease; white-space: nowrap; }
+.tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.tab:hover:not(.active) { color: var(--light); }
+
+/* ── BADGES ── */
+.badge { font: 500 8px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; white-space: nowrap; }
+.badge-teal { background: var(--teal); color: #fff; }
+.badge-gold { background: var(--gold); color: #fff; }
+.badge-muted { background: var(--s2); color: var(--muted); border: 1px solid var(--border); }
+.badge-error { background: var(--error); color: #fff; }
+.badge-success { background: var(--success); color: #fff; }
+
+/* ── PROGRESS BAR ── */
+.progress-bar { height: 6px; background: var(--s2); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.progress-teal { background: var(--teal); }
+.progress-gold { background: var(--gold); }
+.progress-success { background: var(--success); }
+.progress-error { background: var(--error); }
+
+/* ── ALERT BANNERS ── */
+.alert { padding: 12px 16px; border-radius: 8px; font: 500 12px var(--font-ui); display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.alert-warning { background: var(--gold-dim); border: 1px solid var(--gold-bdr); color: var(--gold); }
+.alert-info { background: var(--teal-dim); border: 1px solid var(--teal-bdr); color: var(--teal); }
+.alert-error { background: rgba(229,62,62,0.08); border: 1px solid rgba(229,62,62,0.25); color: var(--error); }
+.alert-success { background: rgba(39,174,96,0.08); border: 1px solid rgba(39,174,96,0.25); color: var(--success); }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.divider-label { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+.divider-label span { font: 500 9px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.divider-label::before, .divider-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* ── TIMELINE ── */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.timeline-item { display: flex; gap: 14px; padding-bottom: 18px; position: relative; }
+.timeline-item::before { content: ''; position: absolute; left: 13px; top: 26px; bottom: 0; width: 1px; background: var(--border); }
+.timeline-item:last-child::before { display: none; }
+.timeline-dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; z-index: 1; }
+.timeline-dot.active { border-color: var(--teal); background: var(--teal-dim); }
+.timeline-dot.done { border-color: var(--success); background: rgba(39,174,96,0.12); }
+.timeline-content { flex: 1; padding-top: 3px; }
+.timeline-title { font: 600 13px var(--font-ui); color: var(--light); }
+.timeline-sub { font: 400 11px var(--font-ui); color: var(--muted); margin-top: 2px; }
+
+/* ── MINI CHART SPARKLINE ── */
+.sparkline-wrap { height: 40px; }
+
+/* ── WORKFLOW STEPS ── */
+.workflow-steps { display: flex; gap: 0; align-items: center; margin-bottom: 24px; }
+.workflow-step { display: flex; align-items: center; gap: 8px; flex: 1; }
+.workflow-step-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font: 700 12px var(--font-ui); flex-shrink: 0; }
+.workflow-step.done .workflow-step-num { background: var(--success); color: #fff; }
+.workflow-step.active .workflow-step-num { background: var(--teal); color: #fff; }
+.workflow-step.pending .workflow-step-num { background: var(--s2); color: var(--muted); border: 1px solid var(--border); }
+.workflow-step-label { font: 600 11px var(--font-ui); color: var(--muted); }
+.workflow-step.active .workflow-step-label { color: var(--teal); }
+.workflow-step.done .workflow-step-label { color: var(--success); }
+.workflow-connector { flex: 0 0 24px; height: 1px; background: var(--border); }
+.workflow-connector.done { background: var(--success); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.fade-up { animation: fadeUp 0.22s ease; }
+.spin { animation: spin 0.8s linear infinite; }
+
+/* ── INSIGHT CARDS ── */
+.insight-card { background: var(--gold-dim); border: 1px solid var(--gold-bdr); border-radius: 10px; padding: 16px 18px; }
+.insight-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.insight-type { font: 500 8px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); }
+.insight-action-pill { background: var(--gold); color: #fff; font: 500 8px var(--font-mono); padding: 2px 8px; border-radius: 3px; cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase; }
+.insight-text { font: 600 13px var(--font-ui); color: var(--light); line-height: 1.5; }
+.insight-meta { font: 400 11px var(--font-ui); color: var(--muted); margin-top: 6px; }
+
+/* ── METRIC ROW ── */
+.metric-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.metric-row:last-child { border-bottom: none; }
+.metric-label { font: 500 12px var(--font-ui); color: var(--text); flex: 1; }
+.metric-value { font: 700 13px var(--font-ui); color: var(--light); }
+.metric-bar { flex: 0 0 100px; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(30,136,180,0.2); border-radius: 3px; }
+
+/* ── MODULES (hide/show) ── */
+.module { display: none; }
+.module.active { display: block; animation: fadeUp 0.22s ease forwards; }
+
+/* ── EMBERLYN PANEL ── */
+.emberlyn-panel { width: 340px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; top: 56px; right: 0; bottom: 0; z-index: 60; transform: translateX(100%); transition: transform 0.25s cubic-bezier(0.4,0,0.2,1); }
+.emberlyn-panel.open { transform: translateX(0); }
+.emberlyn-header { padding: 14px 16px; border-bottom: 1px solid var(--bormid); background: var(--gold-dim); border-top: 3px solid var(--gold); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+.emberlyn-title-group { }
+.emberlyn-label { font: 500 8px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 3px; }
+.emberlyn-name { font: 600 14px var(--font-ui); color: var(--light); }
+.emberlyn-status { display: flex; align-items: center; gap: 6px; font: 500 10px var(--font-mono); color: var(--muted); margin-top: 4px; }
+.emberlyn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+.emberlyn-close { cursor: pointer; color: var(--muted); font-size: 18px; padding: 4px; transition: color 0.15s; }
+.emberlyn-close:hover { color: var(--light); }
+.emberlyn-context { padding: 8px 14px; background: var(--s2); border-bottom: 1px solid var(--border); font: 500 10px var(--font-mono); color: var(--muted); letter-spacing: 0.06em; flex-shrink: 0; }
+.emberlyn-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.bubble-ai { background: var(--surface); border: 1px solid var(--border); border-radius: 10px 10px 10px 2px; padding: 10px 12px; font: 400 12px var(--font-ui); color: var(--light); line-height: 1.6; max-width: 90%; align-self: flex-start; }
+.bubble-user { background: var(--teal); color: #fff; border-radius: 10px 10px 2px 10px; padding: 10px 12px; font: 500 12px var(--font-ui); line-height: 1.5; max-width: 90%; align-self: flex-end; }
+.bubble-label { font: 500 9px var(--font-mono); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.action-preview { background: var(--gold-dim); border: 1px solid var(--gold-bdr); border-radius: 8px; padding: 10px 12px; font: 500 11px var(--font-ui); color: var(--light); margin-top: 6px; }
+.action-preview-label { font: 500 8px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.action-btns { display: flex; gap: 8px; margin-top: 10px; }
+.emberlyn-suggestions { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; background: var(--surface); }
+.sugg-label { font: 500 8px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.suggestion-chip { background: var(--s2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font: 500 11px var(--font-ui); color: var(--text); cursor: pointer; transition: all 0.15s ease; text-align: left; }
+.suggestion-chip:hover { background: var(--teal-dim); border-color: var(--teal-bdr); color: var(--teal); }
+.emberlyn-input-area { padding: 12px 14px; border-top: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+.emberlyn-input-row { display: flex; gap: 8px; }
+.emberlyn-input-row input { flex: 1; font-size: 12px; }
+.thinking-dots span { display: inline-block; animation: pulse 1.4s ease infinite; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ── EMBERLYN TOGGLE BUTTON ── */
+.emberlyn-toggle { position: fixed; right: 24px; bottom: 28px; z-index: 70; background: var(--gold); color: var(--btn-primary-text, #fff); border: none; border-radius: 100px; padding: 10px 20px; font: 600 13px var(--font-ui); cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 8px; transition: all 0.15s ease; }
+.emberlyn-toggle:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.emberlyn-toggle.panel-open { right: 360px; }
+
+/* ── MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(10,22,40,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; width: 580px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: fadeUp 0.2s ease; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.modal-title { font: 700 18px var(--font-ui); color: var(--light); }
+.modal-close { cursor: pointer; font-size: 20px; color: var(--muted); transition: color 0.15s; }
+.modal-close:hover { color: var(--error); }
+
+/* ── UTILITIES ── */
+.flex { display: flex; } .flex-col { flex-direction: column; } .items-center { align-items: center; } .items-start { align-items: flex-start; } .justify-between { justify-content: space-between; } .justify-end { justify-content: flex-end; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .gap-16 { gap: 16px; } .gap-20 { gap: 20px; } .gap-24 { gap: 24px; } .flex-1 { flex: 1; } .w-full { width: 100%; } .mt-4 { margin-top: 4px; } .mt-8 { margin-top: 8px; } .mt-12 { margin-top: 12px; } .mt-16 { margin-top: 16px; } .mt-20 { margin-top: 20px; } .mt-24 { margin-top: 24px; } .mb-8 { margin-bottom: 8px; } .mb-12 { margin-bottom: 12px; } .mb-16 { margin-bottom: 16px; } .mb-20 { margin-bottom: 20px; } .mb-24 { margin-bottom: 24px; } .text-muted { color: var(--muted); } .text-light { color: var(--light); } .text-teal { color: var(--teal); } .text-gold { color: var(--gold); } .text-success { color: var(--success); } .text-error { color: var(--error); } .font-mono { font-family: var(--font-mono); font-size: 11px; } .text-right { text-align: right; } .text-center { text-align: center; } .opacity-60 { opacity: 0.6; } .rounded { border-radius: 8px; } .p-16 { padding: 16px; } .p-20 { padding: 20px; } .border-t { border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<!-- ── NAV BAR ── -->
+<nav class="navbar">
+  <div class="nav-logo">
+    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L19 6.5V15.5L11 20L3 15.5V6.5L11 2Z" fill="#1E88B4" opacity="0.3"/><path d="M11 2L19 6.5V15.5L11 20" stroke="#ECB324" stroke-width="1.5" fill="none"/><path d="M11 2L3 6.5V15.5L11 20" stroke="#1E88B4" stroke-width="1.5" fill="none"/><circle cx="11" cy="11" r="2.5" fill="#ECB324"/></svg>
+    <span style="color:#fff">UTILITY</span><span style="color:#ECB324">net</span>
+    <span class="nav-logo-sub">ERP Platform</span>
+  </div>
+  <div class="nav-spacer"></div>
+  <span class="nav-badge">● Alberta Energy Retail</span>
+  <div class="nav-actions">
+    <div class="nav-notification">🔔<span class="nav-notification-dot"></span></div>
+    <span class="nav-user" style="font-size:12px;color:rgba(255,255,255,0.7)">Sarah M.</span>
+    <div class="nav-avatar">SM</div>
+    <button class="mode-toggle" onclick="toggleMode()" id="modeBtn">🌙</button>
+  </div>
+</nav>
+
+<!-- ── APP BODY ── -->
+<div class="app-body">
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Operations</div>
+    <div class="nav-item active" data-module="dashboard" onclick="navigate('dashboard', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" data-module="customers" onclick="navigate('customers', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="6" r="3"/><path d="M3 15c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+      Customers
+    </div>
+    <div class="nav-item" data-module="billing" onclick="navigate('billing', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="14" height="11" rx="1.5"/><path d="M6 8h6M6 11h4"/></svg>
+      Billing <span class="nav-badge-count">3</span>
+    </div>
+    <div class="nav-item" data-module="settlement" onclick="navigate('settlement', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 9l3 3 5-5"/><circle cx="9" cy="9" r="7"/></svg>
+      Settlement
+    </div>
+    <div class="nav-item" data-module="marketers" onclick="navigate('marketers', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="9" width="4" height="6" rx="1"/><rect x="7" y="5" width="4" height="10" rx="1"/><rect x="11" y="2" width="4" height="13" rx="1"/></svg>
+      Marketers
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Finance</div>
+    <div class="nav-item" data-module="finance" onclick="navigate('finance', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="7"/><path d="M9 6v6M7 8h3.5a1.5 1.5 0 010 3H7"/></svg>
+      Finance
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Intelligence</div>
+    <div class="nav-item" data-module="analytics" onclick="navigate('analytics', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14l4-5 3 3 3-4 2 2"/><circle cx="3" cy="14" r="1" fill="currentColor" stroke="none"/></svg>
+      Analytics
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">System</div>
+    <div class="nav-item" data-module="admin" onclick="navigate('admin', this)">
+      <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="2.5"/><path d="M9 2v1.5M9 14.5V16M2 9h1.5M14.5 9H16M4 4l1.1 1.1M12.9 12.9L14 14M4 14l1.1-1.1M12.9 5.1L14 4"/></svg>
+      Admin
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-product">FractalShift × Gnar · v2.1.0</div>
+    <div class="sidebar-product" style="margin-top:3px;opacity:0.4">Powered by Emberlyn AI</div>
+  </div>
+</aside>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="main" id="main">
+
+<!-- ══════════════════════════════════════
+     MODULE: DASHBOARD
+══════════════════════════════════════ -->
+<div class="module active" id="module-dashboard">
+  <div class="page-header-row">
+    <div class="page-header">
+      <div class="page-title">Operations Dashboard</div>
+      <div class="page-subtitle">Wednesday, March 11, 2026 · Q1 Billing Cycle Active · Alberta AESO Feed: Live</div>
+    </div>
+    <div class="flex gap-8 items-center">
+      <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      <button class="btn btn-primary btn-sm" onclick="openEmberlyn()">✦ Ask Emberlyn</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card featured">
+      <div class="kpi-label">Total Revenue — MTD</div>
+      <div class="kpi-value">$2.34M</div>
+      <div class="kpi-delta">↑ 12.4% vs. last month</div>
+      <div class="kpi-sub">CAD · March 2026</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Customers</div>
+      <div class="kpi-value">14,291</div>
+      <div class="kpi-delta">↑ 3.1% MoM</div>
+      <div class="kpi-sub">Residential + Industrial</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Active Marketers</div>
+      <div class="kpi-value">52</div>
+      <div class="kpi-delta" style="color:var(--gold)">4 onboarding</div>
+      <div class="kpi-sub">Partner network</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Settlement Status</div>
+      <div class="kpi-value" style="font-size:16px">98.2%</div>
+      <div class="kpi-delta">↑ 1.4% reconciled</div>
+      <div class="kpi-sub">3 exceptions pending</div>
+    </div>
+  </div>
+
+  <div class="grid-2 gap-20 mb-24">
+    <!-- Revenue chart -->
+    <div class="card">
+      <div class="section-label">Revenue Trend — Last 12 Months</div>
+      <canvas id="revenueChart" height="180"></canvas>
+    </div>
+    <!-- AI Insights -->
+    <div class="flex flex-col gap-12">
+      <div class="section-label">✦ Predictive Insights</div>
+      <div class="insight-card">
+        <div class="insight-header">
+          <span class="insight-type">⚠ Predictive · Late Payment</span>
+          <div class="insight-action-pill" onclick="openThena('late-payment')">Review</div>
+        </div>
+        <div class="insight-text">17 accounts likely to miss payment in the next 14 days — projected exposure $41,200</div>
+        <div class="insight-meta">Confidence 82% · Based on billing history + 3 data sources</div>
+      </div>
+      <div class="insight-card" style="background:var(--teal-dim);border-color:var(--teal-bdr)">
+        <div class="insight-header">
+          <span class="insight-type" style="color:var(--teal)">↑ Prescriptive · Growth</span>
+          <span class="insight-action-pill" style="background:var(--teal)" onclick="openEmberlyn('growth')">Act</span>
+        </div>
+        <div class="insight-text">3 partner marketers show below-benchmark conversion but above-average lead quality</div>
+        <div class="insight-meta">Recommended: Schedule enablement call this week</div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-header">
+          <span class="insight-type">⚡ Predictive · Settlement</span>
+          <span class="insight-action-pill" onclick="openEmberlyn('settlement-risk')">Review</span>
+        </div>
+        <div class="insight-text">Industrial settlement may slip 2 days — unresolved invoice mismatch with AltaGas</div>
+        <div class="insight-meta">Confidence 74% · AltaGas INV-2026-0312 pending</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2 gap-20">
+    <!-- Recent enrollments -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-16">
+        <div class="section-label">Recent Enrollments</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('customers', document.querySelector('[data-module=customers]'))">View All</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Type</th><th>Plan</th><th>Status</th><th>Date</th></tr></thead>
+          <tbody>
+            <tr onclick="openCustomerModal('C-10482')"><td><strong>Mehta, Priya</strong><br><span class="text-muted font-mono">C-10482</span></td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td><span class="pill pill-success"><span class="pill-dot"></span>Enrolled</span></td><td class="td-muted">Mar 10</td></tr>
+            <tr onclick="openCustomerModal('C-10481')"><td><strong>Lakeside Industrial</strong><br><span class="text-muted font-mono">C-10481</span></td><td><span class="badge badge-teal">Industrial</span></td><td>Fixed</td><td><span class="pill pill-pending"><span class="pill-dot"></span>Pending</span></td><td class="td-muted">Mar 9</td></tr>
+            <tr onclick="openCustomerModal('C-10480')"><td><strong>O'Brien, Connor</strong><br><span class="text-muted font-mono">C-10480</span></td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td><span class="pill pill-success"><span class="pill-dot"></span>Enrolled</span></td><td class="td-muted">Mar 9</td></tr>
+            <tr onclick="openCustomerModal('C-10479')"><td><strong>Alvarez Holdings</strong><br><span class="text-muted font-mono">C-10479</span></td><td><span class="badge badge-teal">Industrial</span></td><td>Variable</td><td><span class="pill pill-error"><span class="pill-dot"></span>Credit Fail</span></td><td class="td-muted">Mar 8</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Marketer performance -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-16">
+        <div class="section-label">Top Marketer Performance</div>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('marketers', document.querySelector('[data-module=marketers]'))">All Marketers</button>
+      </div>
+      <div id="marketerPerfList">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2 gap-20 mt-20">
+    <!-- Alerts -->
+    <div class="card">
+      <div class="section-label mb-12">System Alerts</div>
+      <div class="alert alert-warning">⚠ 3 billing exceptions require manual review — Batch B-2026-0311</div>
+      <div class="alert alert-info">ℹ AESO data feed updated — March settlement inputs received</div>
+      <div class="alert alert-success">✓ February month-end reconciliation complete — all GL accounts balanced</div>
+    </div>
+    <!-- Tasks -->
+    <div class="card">
+      <div class="section-label mb-12">Your Tasks Today</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot done">✓</div>
+          <div class="timeline-content"><div class="timeline-title">Run March billing batch B-2026-0311</div><div class="timeline-sub">Completed 8:14 AM · 2,847 invoices</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot active">!</div>
+          <div class="timeline-content"><div class="timeline-title">Review 3 billing exceptions</div><div class="timeline-sub">Flagged by system · CAD $8,400 at risk</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot pending"></div>
+          <div class="timeline-content"><div class="timeline-title">Approve 4 new marketer onboarding files</div><div class="timeline-sub">Due today · AltaEnergy, GreenPath + 2 more</div></div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot pending"></div>
+          <div class="timeline-content"><div class="timeline-title">Q1 settlement report to CFO</div><div class="timeline-sub">Due March 15 · Emberlyn can draft</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /dashboard -->
+
+<!-- ══════════════════════════════════════
+     MODULE: CUSTOMERS
+══════════════════════════════════════ -->
+<div class="module" id="module-customers">
+  <div class="page-header-row">
+    <div class="page-header">
+      <div class="page-title">Customers</div>
+      <div class="page-subtitle">Enrollment, CRM, 360° Account View</div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      <button class="btn btn-primary" onclick="openEnrollmentModal()">+ New Enrollment</button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('cust', 'list', this)">All Customers</div>
+    <div class="tab" onclick="switchTab('cust', 'enrollment', this)">Enrollment Queue</div>
+    <div class="tab" onclick="switchTab('cust', 'service', this)">Service Cases</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex gap-12 items-center mb-16">
+    <div class="search-bar flex-1"><span class="search-icon">🔍</span><input type="text" placeholder="Search customers, ID, address…" id="custSearch" onkeyup="filterTable('custTable', this.value)"></div>
+    <select style="width:160px"><option>All Types</option><option>Residential</option><option>Industrial</option></select>
+    <select style="width:160px"><option>All Statuses</option><option>Active</option><option>Pending</option><option>Suspended</option></select>
+    <button class="btn btn-ghost btn-sm">⚙ Filters</button>
+  </div>
+
+  <!-- Tab: Customer List -->
+  <div id="cust-list-tab" class="tab-content">
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table id="custTable">
+          <thead><tr><th>Customer</th><th>ID</th><th>Type</th><th>Plan</th><th>Marketer</th><th>Balance</th><th>Status</th><th>Since</th><th></th></tr></thead>
+          <tbody>
+            <tr onclick="openCustomerDetail('C-10482')"><td><strong>Mehta, Priya</strong><br><span class="font-mono text-muted">priya.m@email.ca</span></td><td class="td-mono">C-10482</td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td>NRG Direct</td><td class="td-mono text-success">$0.00</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td class="td-muted">Jan 2024</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr onclick="openCustomerDetail('C-10481')"><td><strong>Lakeside Industrial Ltd.</strong><br><span class="font-mono text-muted">ops@lakeside.ca</span></td><td class="td-mono">C-10481</td><td><span class="badge badge-teal">Industrial</span></td><td>Fixed</td><td>PrairieEnergy</td><td class="td-mono text-warning">$14,200.00</td><td><span class="pill pill-pending"><span class="pill-dot"></span>Pending</span></td><td class="td-muted">Mar 2026</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr onclick="openCustomerDetail('C-10480')"><td><strong>O'Brien, Connor</strong><br><span class="font-mono text-muted">cobrien@outlook.com</span></td><td class="td-mono">C-10480</td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td>AltaEnergy</td><td class="td-mono text-success">$0.00</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td class="td-muted">Feb 2026</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr onclick="openCustomerDetail('C-10478')"><td><strong>Nguyen Family Holdings</strong><br><span class="font-mono text-muted">admin@nguyenhold.ca</span></td><td class="td-mono">C-10478</td><td><span class="badge badge-teal">Industrial</span></td><td>Variable</td><td>GreenPath</td><td class="td-mono text-error">$8,400.00</td><td><span class="pill pill-error"><span class="pill-dot"></span>Exception</span></td><td class="td-muted">Nov 2023</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr onclick="openCustomerDetail('C-10475')"><td><strong>Tremblay, Marie</strong><br><span class="font-mono text-muted">mtremblay@shaw.ca</span></td><td class="td-mono">C-10475</td><td><span class="badge badge-muted">Residential</span></td><td>Fixed</td><td>NRG Direct</td><td class="td-mono text-success">$0.00</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td class="td-muted">Jun 2023</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr><td><strong>Sharma Industrial Group</strong><br><span class="font-mono text-muted">finance@sharma-ig.ca</span></td><td class="td-mono">C-10473</td><td><span class="badge badge-teal">Industrial</span></td><td>Fixed</td><td>Calgary Energy</td><td class="td-mono text-success">$0.00</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td class="td-muted">Apr 2023</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr><td><strong>Wilson, Barbara</strong><br><span class="font-mono text-muted">bwilson@gmail.com</span></td><td class="td-mono">C-10470</td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td>NRG Direct</td><td class="td-mono text-warning">$124.00</td><td><span class="pill pill-pending"><span class="pill-dot"></span>Pending</span></td><td class="td-muted">Mar 2023</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+            <tr><td><strong>Pemberton Resources Corp</strong><br><span class="font-mono text-muted">ar@pemberton.ca</span></td><td class="td-mono">C-10468</td><td><span class="badge badge-teal">Industrial</span></td><td>Variable</td><td>PrairieEnergy</td><td class="td-mono text-success">$0.00</td><td><span class="pill pill-active"><span class="pill-dot"></span>Active</span></td><td class="td-muted">Jan 2023</td><td><button class="btn-icon btn-sm" style="width:28px;height:28px;font-size:12px">›</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="flex items-center justify-between mt-16">
+      <span class="font-mono text-muted" style="font-size:11px">Showing 8 of 14,291 customers</span>
+      <div class="flex gap-8">
+        <button class="btn btn-ghost btn-sm">← Prev</button>
+        <button class="btn btn-ghost btn-sm">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Enrollment Queue -->
+  <div id="cust-enrollment-tab" class="tab-content" style="display:none">
+    <div class="alert alert-info mb-16">ℹ 6 applications in queue · 2 awaiting credit review · 1 flagged for manual review</div>
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Applicant</th><th>Type</th><th>Plan</th><th>Marketer</th><th>Stage</th><th>Flag</th><th>Applied</th><th></th></tr></thead>
+          <tbody>
+            <tr onclick="openEnrollmentDetail()"><td><strong>Kowalczyk, Jan</strong></td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td>NRG Direct</td><td><span class="pill pill-pending">Credit Review</span></td><td>—</td><td class="td-muted">Mar 11</td><td><button class="btn btn-primary btn-sm">Review</button></td></tr>
+            <tr><td><strong>SunCrest Manufacturing</strong></td><td><span class="badge badge-teal">Industrial</span></td><td>Fixed</td><td>PrairieEnergy</td><td><span class="pill pill-info">Validation</span></td><td>⚠ Site unverified</td><td class="td-muted">Mar 10</td><td><button class="btn btn-secondary btn-sm">View</button></td></tr>
+            <tr><td><strong>Beaumont, Céleste</strong></td><td><span class="badge badge-muted">Residential</span></td><td>Variable</td><td>GreenPath</td><td><span class="pill pill-draft">Draft</span></td><td>—</td><td class="td-muted">Mar 10</td><td><button class="btn btn-secondary btn-sm">View</button></td></tr>
+            <tr><td><strong>Atlas Cold Storage</strong></td><td><span class="badge badge-teal">Industrial</span></td><td>Variable</td><td>AltaEnergy</td><td><span class="pill pill-error">Credit Fail</span></td><td>⛔ Score 480</td><td class="td-muted">Mar 9</td><td><button class="btn btn-ghost btn-sm">Appeal</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Service Cases -->
+  <div id="cust-service-tab" class="tab-content" style="display:none">
+    <div class="flex gap-12 mb-16">
+      <div class="kpi-card flex-1" style="padding:14px 18px">
+        <div class="kpi-label">Open Cases</div><div class="kpi-value" style="font-size:20px;color:var(--error)">23</div>
+      </div>
+      <div class="kpi-card flex-1" style="padding:14px 18px">
+        <div class="kpi-label">Avg. Resolution</div><div class="kpi-value" style="font-size:20px">1.4d</div>
+      </div>
+      <div class="kpi-card flex-1" style="padding:14px 18px">
+        <div class="kpi-label">CSAT Score</div><div class="kpi-value" style="font-size:20px;color:var(--success)">4.6/5</div>
+      </div>
+      <div class="kpi-card flex-1" style="padding:14px 18px">
+        <div class="kpi-label">Resolved This Week</div><div class="kpi-value" style="font-size:20px">41</div>
+      </div>
+    </div>
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Case ID</th><th>Customer</th><th>Type</th><th>Priority</th><th>Agent</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody>
+            <tr onclick="openCaseDetail('CS-8821')"><td class="td-mono">CS-8821</td><td>Nguyen Family Holdings</td><td>Billing Dispute</td><td><span class="badge badge-error">High</span></td><td>Sarah M.</td><td><span class="pill pill-error">Open</span></td><td class="td-muted">Mar 11</td></tr>
+            <tr onclick="openCaseDetail('CS-8819')"><td class="td-mono">CS-8819</td><td>Wilson, Barbara</td><td>Payment Issue</td><td><span class="badge badge-gold">Medium</span></td><td>James T.</td><td><span class="pill pill-pending">In Progress</span></td><td class="td-muted">Mar 10</td></tr>
+            <tr onclick="openCaseDetail('CS-8815')"><td class="td-mono">CS-8815</td><td>Mehta, Priya</td><td>Rate Query</td><td><span class="badge badge-muted">Low</span></td><td>Sarah M.</td><td><span class="pill pill-pending">In Progress</span></td><td class="td-muted">Mar 9</td></tr>
+            <tr><td class="td-mono">CS-8810</td><td>Lakeside Industrial</td><td>Enrollment Help</td><td><span class="badge badge-muted">Low</span></td><td>Maya R.</td><td><span class="pill pill-success">Resolved</span></td><td class="td-muted">Mar 8</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /customers -->
+
+<!-- ══════════════════════════════════════
+     MODULE: BILLING
+══════════════════════════════════════ -->
+<div class="module" id="module-billing">
+  <div class="page-header-row">
+    <div class="page-header">
+      <div class="page-title">Billing Engine</div>
+      <div class="page-subtitle">Batch runs, usage import, invoice management</div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm">⬇ Download Report</button>
+      <button class="btn btn-primary">⊕ New Billing Batch</button>
+    </div>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert alert-warning">⚠ Batch B-2026-0311 has 3 exceptions requiring review before final invoice distribution · <strong style="cursor:pointer;text-decoration:underline" onclick="switchBillingTab('exceptions')">Review Now</strong></div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card featured"><div class="kpi-label">Current Batch Total</div><div class="kpi-value">$1.84M</div><div class="kpi-delta">2,847 invoices</div><div class="kpi-sub">B-2026-0311</div></div>
+    <div class="kpi-card"><div class="kpi-label">Exceptions</div><div class="kpi-value" style="color:var(--error)">3</div><div class="kpi-delta neg">↑ 1 from last run</div><div class="kpi-sub">CAD $8,400 at risk</div></div>
+    <div class="kpi-card"><div class="kpi-label">Avg. Invoice Value</div><div class="kpi-value">$647</div><div class="kpi-delta">↑ 4.2% MoM</div><div class="kpi-sub">Residential avg.</div></div>
+    <div class="kpi-card"><div class="kpi-label">Auto-Payment Rate</div><div class="kpi-value">74.3%</div><div class="kpi-delta">↑ 2.1% this period</div><div class="kpi-sub">Pre-authorized</div></div>
+  </div>
+
+  <div class="tabs" id="billing-tabs">
+    <div class="tab active" onclick="switchBillingTab('batches', this)">Billing Batches</div>
+    <div class="tab" onclick="switchBillingTab('exceptions', this)" id="exc-tab">Exceptions <span class="badge badge-error" style="margin-left:4px">3</span></div>
+    <div class="tab" onclick="switchBillingTab('invoices', this)">Invoices</div>
+    <div class="tab" onclick="switchBillingTab('rates', this)">Rate Configuration</div>
+  </div>
+
+  <!-- Batches tab -->
+  <div id="billing-batches-content">
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Batch ID</th><th>Period</th><th>Type</th><th>Invoices</th><th>Total Value</th><th>Exceptions</th><th>Status</th><th>Run Date</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="td-mono font-bold">B-2026-0311</td><td>March 2026</td><td>Residential + Industrial</td><td>2,847</td><td class="td-mono">$1,841,233</td><td><span class="badge badge-error">3</span></td><td><span class="pill pill-pending">In Review</span></td><td class="td-muted">Mar 11</td><td><button class="btn btn-primary btn-sm" onclick="openBatchDetail()">Review</button></td></tr>
+            <tr><td class="td-mono">B-2026-0228</td><td>Feb 2026</td><td>Residential + Industrial</td><td>2,801</td><td class="td-mono">$1,763,100</td><td><span class="badge badge-muted">0</span></td><td><span class="pill pill-success">Distributed</span></td><td class="td-muted">Feb 28</td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-mono">B-2026-0131</td><td>Jan 2026</td><td>Residential + Industrial</td><td>2,788</td><td class="td-mono">$1,701,450</td><td><span class="badge badge-muted">1</span></td><td><span class="pill pill-success">Distributed</span></td><td class="td-muted">Jan 31</td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td class="td-mono">B-2025-1231</td><td>Dec 2025</td><td>Residential + Industrial</td><td>2,765</td><td class="td-mono">$1,829,800</td><td><span class="badge badge-muted">2</span></td><td><span class="pill pill-success">Distributed</span></td><td class="td-muted">Dec 31</td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Exceptions tab -->
+  <div id="billing-exceptions-content" style="display:none">
+    <div class="card mb-16" style="border-color:rgba(229,62,62,0.3);background:rgba(229,62,62,0.04)">
+      <div class="flex items-center gap-12">
+        <div style="font-size:24px">⚠</div>
+        <div>
+          <div style="font:700 14px var(--font-ui);color:var(--error)">3 Exceptions Blocking Invoice Distribution</div>
+          <div style="font:500 12px var(--font-ui);color:var(--muted);margin-top:3px">Resolve all exceptions before Batch B-2026-0311 can be finalized and invoices distributed to customers</div>
+        </div>
+        <button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="openEmberlyn('billing-exceptions')">✦ Ask Emberlyn to Explain</button>
+      </div>
+    </div>
+    <div class="flex flex-col gap-12">
+      <div class="card" id="exc-1">
+        <div class="flex items-center justify-between mb-12">
+          <div><span class="badge badge-error">Exception EXC-0311-A</span> <span class="badge badge-muted" style="margin-left:6px">Meter Data</span></div>
+          <span class="pill pill-error">Unresolved</span>
+        </div>
+        <div class="font-mono text-muted" style="font-size:11px;margin-bottom:6px">Customer: Nguyen Family Holdings · C-10478 · Industrial</div>
+        <div style="font:600 13px var(--font-ui);color:var(--light);margin-bottom:6px">Usage reading missing for March 1–8 period. AESO feed returned null for Meter ID NGH-44821. Billing calculation blocked.</div>
+        <div style="font:400 12px var(--font-ui);color:var(--text)">Estimated impact: <strong style="color:var(--error)">CAD $4,200</strong> · Suggested resolution: Use previous period average (4,820 kWh) pending AESO correction</div>
+        <div class="flex gap-8 mt-12">
+          <button class="btn btn-primary btn-sm" onclick="resolveException('exc-1', 'Use prior period avg — 4,820 kWh')">✓ Apply Suggested Fix</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEmberlyn('exc-A')">✦ Explain This</button>
+          <button class="btn btn-ghost btn-sm">✎ Manual Override</button>
+        </div>
+      </div>
+      <div class="card" id="exc-2">
+        <div class="flex items-center justify-between mb-12">
+          <div><span class="badge badge-error">Exception EXC-0311-B</span> <span class="badge badge-muted" style="margin-left:6px">Rate Mismatch</span></div>
+          <span class="pill pill-error">Unresolved</span>
+        </div>
+        <div class="font-mono text-muted" style="font-size:11px;margin-bottom:6px">Customer: Wilson, Barbara · C-10470 · Residential</div>
+        <div style="font:600 13px var(--font-ui);color:var(--light);margin-bottom:6px">Applied rate $0.0892/kWh does not match NRG Direct contract rate $0.0854/kWh effective Feb 15. Overcharged by $38.40.</div>
+        <div class="flex gap-8 mt-12">
+          <button class="btn btn-primary btn-sm" onclick="resolveException('exc-2', 'Applied correct rate $0.0854/kWh, credit issued $38.40')">✓ Apply Correct Rate</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEmberlyn('exc-B')">✦ Explain This</button>
+        </div>
+      </div>
+      <div class="card" id="exc-3">
+        <div class="flex items-center justify-between mb-12">
+          <div><span class="badge badge-error">Exception EXC-0311-C</span> <span class="badge badge-muted" style="margin-left:6px">Banking Error</span></div>
+          <span class="pill pill-error">Unresolved</span>
+        </div>
+        <div class="font-mono text-muted" style="font-size:11px;margin-bottom:6px">Customer: Moreau, Jean-Pierre · C-10451 · Residential</div>
+        <div style="font:600 13px var(--font-ui);color:var(--light);margin-bottom:6px">RBC pre-authorized payment returned NSF. Account balance owing $124.00. PAD agreement requires re-authorization.</div>
+        <div class="flex gap-8 mt-12">
+          <button class="btn btn-primary btn-sm" onclick="resolveException('exc-3', 'NSF flag set, customer contacted for PAD re-auth')">✓ Flag & Contact Customer</button>
+          <button class="btn btn-ghost btn-sm">📧 Send Notice</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invoices tab -->
+  <div id="billing-invoices-content" style="display:none">
+    <div class="flex gap-12 mb-16">
+      <div class="search-bar flex-1"><span class="search-icon">🔍</span><input type="text" placeholder="Search by customer, invoice #…"></div>
+      <select style="width:160px"><option>All Batches</option><option>B-2026-0311</option><option>B-2026-0228</option></select>
+    </div>
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Invoice #</th><th>Customer</th><th>Period</th><th>Usage</th><th>Amount</th><th>Due Date</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="td-mono">INV-2026-14821</td><td>Mehta, Priya</td><td>Mar 2026</td><td class="td-mono">812 kWh</td><td class="td-mono">$72.40</td><td class="td-muted">Mar 25</td><td><span class="pill pill-success">Paid</span></td></tr>
+            <tr><td class="td-mono">INV-2026-14820</td><td>O'Brien, Connor</td><td>Mar 2026</td><td class="td-mono">1,094 kWh</td><td class="td-mono">$97.60</td><td class="td-muted">Mar 25</td><td><span class="pill pill-pending">Pending</span></td></tr>
+            <tr><td class="td-mono">INV-2026-14819</td><td>Sharma Industrial Group</td><td>Mar 2026</td><td class="td-mono">48,400 kWh</td><td class="td-mono">$4,314.00</td><td class="td-muted">Mar 25</td><td><span class="pill pill-active">Sent</span></td></tr>
+            <tr><td class="td-mono">INV-2026-14818</td><td>Tremblay, Marie</td><td>Mar 2026</td><td class="td-mono">934 kWh</td><td class="td-mono">$79.80</td><td class="td-muted">Mar 25</td><td><span class="pill pill-success">Paid</span></td></tr>
+            <tr><td class="td-mono">INV-2026-14817</td><td>Wilson, Barbara</td><td>Mar 2026</td><td class="td-mono">760 kWh</td><td class="td-mono">$65.00</td><td class="td-muted">Mar 25</td><td><span class="pill pill-error">NSF</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rates tab -->
+  <div id="billing-rates-content" style="display:none">
+    <div class="grid-2 gap-20">
+      <div class="card">
+        <div class="section-label mb-16">Residential Rate Tiers — March 2026</div>
+        <table>
+          <thead><tr><th>Tier</th><th>Usage Range</th><th>Rate (CAD/kWh)</th><th>Effective</th></tr></thead>
+          <tbody>
+            <tr><td>Tier 1</td><td class="td-mono">0 – 600 kWh</td><td class="td-mono text-success">$0.0854</td><td class="td-muted">Feb 15</td></tr>
+            <tr><td>Tier 2</td><td class="td-mono">601 – 900 kWh</td><td class="td-mono">$0.1011</td><td class="td-muted">Feb 15</td></tr>
+            <tr><td>Tier 3</td><td class="td-mono">900+ kWh</td><td class="td-mono text-warning">$0.1240</td><td class="td-muted">Feb 15</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="section-label mb-16">Industrial Rate Configuration</div>
+        <table>
+          <thead><tr><th>Category</th><th>Rate</th><th>Unit</th></tr></thead>
+          <tbody>
+            <tr><td>Energy Charge</td><td class="td-mono">$0.0688</td><td>per kWh</td></tr>
+            <tr><td>Demand Charge</td><td class="td-mono">$14.20</td><td>per kW</td></tr>
+            <tr><td>Hedge Allocation</td><td class="td-mono">Variable</td><td>per billing cycle</td></tr>
+            <tr><td>Transmission</td><td class="td-mono">$0.0082</td><td>per kWh</td></tr>
+            <tr><td>Distribution</td><td class="td-mono">$0.0041</td><td>per kWh</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div><!-- /billing -->
+
+<!-- ══════════════════════════════════════
+     MODULE: SETTLEMENT
+══════════════════════════════════════ -->
+<div class="module" id="module-settlement">
+  <div class="page-header-row">
+    <div class="page-header">
+      <div class="page-title">Settlement</div>
+      <div class="page-subtitle">Marketer reconciliation · Distributor invoices · AESO settlement</div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      <button class="btn btn-primary btn-sm" onclick="openEmberlyn('settlement-queue')">✦ Emberlyn Assist</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card featured"><div class="kpi-label">Q1 Settlement Value</div><div class="kpi-value">$6.82M</div><div class="kpi-delta">↑ 8.1% vs Q4</div><div class="kpi-sub">All marketers</div></div>
+    <div class="kpi-card"><div class="kpi-label">Reconciled</div><div class="kpi-value" style="color:var(--success)">49/52</div><div class="kpi-delta" style="color:var(--success)">94.2% complete</div><div class="kpi-sub">Partner marketers</div></div>
+    <div class="kpi-card"><div class="kpi-label">Exceptions</div><div class="kpi-value" style="color:var(--error)">3</div><div class="kpi-delta neg">↑ 1 from last cycle</div><div class="kpi-sub">Pending resolution</div></div>
+    <div class="kpi-card"><div class="kpi-label">Days to Close</div><div class="kpi-value">4</div><div class="kpi-delta">↓ 2 days improved</div><div class="kpi-sub">Avg. resolution time</div></div>
+  </div>
+
+  <div class="grid-2 gap-20">
+    <!-- Settlement workbench -->
+    <div class="card" style="padding:0">
+      <div class="p-20">
+        <div class="flex items-center justify-between">
+          <div class="section-label">Marketer Settlement Workbench</div>
+          <span class="pill pill-pending">March 2026 Cycle</span>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Marketer</th><th>Customers</th><th>Revenue</th><th>Commission</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>NRG Direct</strong></td><td class="td-mono">4,821</td><td class="td-mono">$841,200</td><td class="td-mono text-success">$42,060</td><td><span class="pill pill-success">Reconciled</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>PrairieEnergy</strong></td><td class="td-mono">3,112</td><td class="td-mono">$612,400</td><td class="td-mono text-success">$30,620</td><td><span class="pill pill-success">Reconciled</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr onclick="openSettlementDetail('AltaGas')" style="cursor:pointer"><td><strong>AltaGas Retail</strong></td><td class="td-mono">2,408</td><td class="td-mono">$481,600</td><td class="td-mono text-error">$—</td><td><span class="pill pill-error">Exception</span></td><td><button class="btn btn-primary btn-sm">Resolve</button></td></tr>
+            <tr><td><strong>GreenPath</strong></td><td class="td-mono">1,944</td><td class="td-mono">$388,800</td><td class="td-mono text-success">$19,440</td><td><span class="pill pill-success">Reconciled</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>Calgary Energy</strong></td><td class="td-mono">1,102</td><td class="td-mono">$220,400</td><td class="td-mono text-warning">$—</td><td><span class="pill pill-pending">In Review</span></td><td><button class="btn btn-secondary btn-sm">Review</button></td></tr>
+            <tr><td><strong>AltaEnergy</strong></td><td class="td-mono">893</td><td class="td-mono">$178,600</td><td class="td-mono text-success">$8,930</td><td><span class="pill pill-success">Reconciled</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Settlement exception detail -->
+    <div class="flex flex-col gap-16">
+      <div class="card card-teal" id="settlement-exc-card">
+        <div class="section-label">Active Exception — AltaGas Retail</div>
+        <div style="font:700 14px var(--font-ui);color:var(--light);margin:8px 0">Invoice mismatch: AltaGas INV-2026-0312</div>
+        <div class="grid-2 gap-12 mt-12">
+          <div><div class="font-mono text-muted" style="font-size:10px">UTILITYNET CALCULATION</div><div style="font:700 16px var(--font-ui);color:var(--light)">$481,600.00</div></div>
+          <div><div class="font-mono text-muted" style="font-size:10px">ALTAGAS SUBMITTED</div><div style="font:700 16px var(--font-ui);color:var(--error)">$483,240.00</div></div>
+        </div>
+        <div class="divider"></div>
+        <div style="font:600 13px var(--font-ui);color:var(--text)">Variance: <strong style="color:var(--error)">$1,640.00</strong></div>
+        <div style="font:400 12px var(--font-ui);color:var(--muted);margin-top:4px">Root cause: 8 site meter reads not reflected in AltaGas submission. AESO data confirms UTILITYnet figures.</div>
+        <div class="flex gap-8 mt-14">
+          <button class="btn btn-primary btn-sm" onclick="resolveSettlement()">✓ Accept Our Figures</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEmberlyn('settlement-exc')">✦ Draft Response</button>
+          <button class="btn btn-ghost btn-sm">⬇ Download Evidence</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-label mb-12">Settlement Timeline — March 2026</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot done">✓</div><div class="timeline-content"><div class="timeline-title">AESO settlement data received</div><div class="timeline-sub">Mar 5 · All 52 marketer feeds ingested</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot done">✓</div><div class="timeline-content"><div class="timeline-title">Automated reconciliation run</div><div class="timeline-sub">Mar 7 · 49/52 reconciled automatically</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot active">!</div><div class="timeline-content"><div class="timeline-title">Manual exception resolution</div><div class="timeline-sub">In progress · AltaGas, Calgary Energy, + 1</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot pending"></div><div class="timeline-content"><div class="timeline-title">Commission statements issued</div><div class="timeline-sub">Target: Mar 15</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot pending"></div><div class="timeline-content"><div class="timeline-title">Final settlement closed</div><div class="timeline-sub">Target: Mar 20</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /settlement -->
+
+<!-- ══════════════════════════════════════
+     MODULE: MARKETERS
+══════════════════════════════════════ -->
+<div class="module" id="module-marketers">
+  <div class="page-header-row">
+    <div class="page-header">
+      <div class="page-title">Energy Marketers</div>
+      <div class="page-subtitle">Partner directory · Margin management · Performance · Onboarding</div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm">⬇ Export</button>
+      <button class="btn btn-primary">+ Onboard Marketer</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card featured"><div class="kpi-label">Total Partner Revenue — MTD</div><div class="kpi-value">$2.34M</div><div class="kpi-delta">↑ 11.2% MoM</div><div class="kpi-sub">52 active marketers</div></div>
+    <div class="kpi-card"><div class="kpi-label">Top Marketer</div><div class="kpi-value" style="font-size:14px">NRG Direct</div><div class="kpi-delta">$841K revenue</div><div class="kpi-sub">4,821 customers</div></div>
+    <div class="kpi-card"><div class="kpi-label">New Enrollments MTD</div><div class="kpi-value">284</div><div class="kpi-delta">↑ 8.4% vs last month</div><div class="kpi-sub">Across all partners</div></div>
+    <div class="kpi-card"><div class="kpi-label">Onboarding Pipeline</div><div class="kpi-value">4</div><div class="kpi-delta" style="color:var(--gold)">2 pending approval</div><div class="kpi-sub">Active applications</div></div>
+  </div>
+
+  <div class="grid-2 gap-20">
+    <div class="card" style="padding:0">
+      <div class="p-20 flex items-center justify-between">
+        <div class="section-label">Marketer Directory</div>
+        <div class="search-bar" style="width:200px"><span class="search-icon">🔍</span><input type="text" placeholder="Search…" style="font-size:12px"></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Marketer</th><th>Customers</th><th>Revenue MTD</th><th>Margin</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr onclick="openMarketerDetail('NRG Direct')" style="cursor:pointer"><td><strong>NRG Direct</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-001</span></td><td class="td-mono">4,821</td><td class="td-mono text-success">$841,200</td><td class="td-mono">5.0%</td><td><span class="pill pill-active">Active</span></td></tr>
+            <tr onclick="openMarketerDetail('PrairieEnergy')" style="cursor:pointer"><td><strong>PrairieEnergy</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-002</span></td><td class="td-mono">3,112</td><td class="td-mono text-success">$612,400</td><td class="td-mono">5.0%</td><td><span class="pill pill-active">Active</span></td></tr>
+            <tr onclick="openMarketerDetail('AltaGas Retail')" style="cursor:pointer"><td><strong>AltaGas Retail</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-003</span></td><td class="td-mono">2,408</td><td class="td-mono text-error">$481,600</td><td class="td-mono">5.0%</td><td><span class="pill pill-error">Exception</span></td></tr>
+            <tr><td><strong>GreenPath</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-004</span></td><td class="td-mono">1,944</td><td class="td-mono text-success">$388,800</td><td class="td-mono">5.0%</td><td><span class="pill pill-active">Active</span></td></tr>
+            <tr><td><strong>Calgary Energy</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-005</span></td><td class="td-mono">1,102</td><td class="td-mono text-warning">$220,400</td><td class="td-mono">4.5%</td><td><span class="pill pill-pending">Review</span></td></tr>
+            <tr><td><strong>AltaEnergy</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-006</span></td><td class="td-mono">893</td><td class="td-mono text-success">$178,600</td><td class="td-mono">5.0%</td><td><span class="pill pill-active">Active</span></td></tr>
+            <tr><td><strong>SolarEdge Partners</strong><br><span class="font-mono text-muted" style="font-size:10px">MKT-007</span></td><td class="td-mono">441</td><td class="td-mono">$88,200</td><td class="td-mono">4.0%</td><td><span class="pill pill-draft">Onboarding</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-16">
+      <!-- Marketer detail card -->
+      <div class="card" id="marketer-detail-panel">
+        <div class="flex items-center justify-between mb-14">
+          <div>
+            <div class="section-label">Selected Marketer</div>
+            <div style="font:700 16px var(--font-ui);color:var(--light)" id="mkt-name">NRG Direct</div>
+            <div class="font-mono text-muted mt-4" style="font-size:10px">MKT-001 · Active since January 2022</div>
+          </div>
+          <span class="pill pill-active">Active</span>
+        </div>
+        <div class="grid-2 gap-12 mb-16">
+          <div class="card" style="padding:12px 16px;background:var(--s2)"><div class="kpi-label">Customers</div><div class="kpi-value" style="font-size:18px;color:var(--light)">4,821</div></div>
+          <div class="card" style="padding:12px 16px;background:var(--s2)"><div class="kpi-label">Revenue MTD</div><div class="kpi-value" style="font-size:18px;color:var(--teal)">$841,200</div></div>
+          <div class="card" style="padding:12px 16px;background:var(--s2)"><div class="kpi-label">Commission</div><div class="kpi-value" style="font-size:18px;color:var(--success)">$42,060</div></div>
+          <div class="card" style="padding:12px 16px;background:var(--s2)"><div class="kpi-label">Margin</div><div class="kpi-value" style="font-size:18px;color:var(--light)">5.0%</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label mb-8">Rate Configuration</div>
+        <div class="form-row" style="gap:10px">
+          <div class="form-group" style="margin:0"><label>Current Margin</label><input value="5.00%" style="font-family:var(--font-mono)"></div>
+          <div class="form-group" style="margin:0"><label>Plan Type</label><select><option>Variable</option><option>Fixed</option><option>Hybrid</option></select></div>
+        </div>
+        <div class="flex gap-8 mt-14">
+          <button class="btn btn-primary btn-sm">✓ Save Changes</button>
+          <button class="btn btn-secondary btn-sm" onclick="openEmberlyn('marketer-nrg')">✦ Emberlyn Insights</button>
+          <button class="btn btn-ghost btn-sm">⬇ Statement</button>
+        </div>
+      </div>
+
+      <!-- Performance chart -->
+      <div class="card">
+        <div class="section-label mb-12">Enrollment Trend — NRG Direct</div>
+        <canvas id="marketerChart" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+</div><!-- /marketers -->
+
+<!-- ══════════════════════════════════════
+     MODULE: ANALYTICS — THENA WORLD
+══════════════════════════════════════ -->
+<div class="module" id="module-analytics">
+
+  <!-- Thena header bar -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px">
+    <div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+        <div style="font:500 9px 'DM Mono',monospace;letter-spacing:0.14em;text-transform:uppercase;color:#D44028;opacity:0.9">◈ Fractal Forge · Intelligence Layer</div>
+        <div class="thena-pill thena-pill-active"><span style="width:6px;height:6px;border-radius:50%;background:#D44028;display:inline-block;animation:pulse 2s infinite"></span> Live · March 2026</div>
+      </div>
+      <div class="thena-page-title">Thena</div>
+      <div class="thena-subtitle" style="margin-top:10px">Reporting · Predictive · Prescriptive · UTILITYnet Q1 2026</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <button class="thena-btn-ghost" style="font-size:12px;padding:7px 14px">Q1 2026 ▾</button>
+      <button class="thena-btn-primary" onclick="openThena('analytics')">◈ Ask Thena</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION 1: DESCRIPTIVE (BI)
+  ═══════════════════════════════ -->
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div class="thena-section-label" style="margin-bottom:0">↗ Descriptive Analytics</div>
+      <div style="height:1px;flex:1;background:rgba(242,240,236,0.07)"></div>
+      <span class="thena-badge thena-badge-neutral">What happened</span>
+    </div>
+
+    <!-- KPI row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px">
+      <div class="thena-card thena-card-accent">
+        <div class="thena-kpi-label">Total Revenue — Q1</div>
+        <div class="thena-kpi-value">$6.82M</div>
+        <div class="thena-kpi-delta">↑ 8.1% vs Q4 2025</div>
+        <div style="font:400 10px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-top:3px">CAD · All segments</div>
+      </div>
+      <div class="thena-card">
+        <div class="thena-kpi-label">Net New Customers</div>
+        <div class="thena-kpi-value">+842</div>
+        <div class="thena-kpi-delta">↑ 6.3% this quarter</div>
+        <div style="font:400 10px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-top:3px">14,291 total active</div>
+      </div>
+      <div class="thena-card">
+        <div class="thena-kpi-label">Billing Accuracy</div>
+        <div class="thena-kpi-value">99.9%</div>
+        <div class="thena-kpi-delta">↑ 0.2% improved</div>
+        <div style="font:400 10px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-top:3px">Current batch run</div>
+      </div>
+      <div class="thena-card">
+        <div class="thena-kpi-label">Churn Rate</div>
+        <div class="thena-kpi-value">1.4%</div>
+        <div class="thena-kpi-delta">↓ 0.3% improved</div>
+        <div style="font:400 10px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-top:3px">Rolling 90 days</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div class="thena-card">
+        <div class="thena-section-label">Revenue by Segment — Q1 2026</div>
+        <canvas id="segmentChart" height="180"></canvas>
+      </div>
+      <div class="thena-card">
+        <div class="thena-section-label">Marketer Revenue Ranking</div>
+        <div style="display:flex;flex-direction:column;gap:13px;margin-top:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:500 12px 'Syne',sans-serif;color:#F2F0EC;width:130px;flex-shrink:0">NRG Direct</span>
+            <div style="flex:1;height:4px;background:#1c1d19;border-radius:2px"><div style="width:100%;height:100%;background:#D44028;border-radius:2px"></div></div>
+            <span style="font:500 11px 'DM Mono',monospace;color:#F2F0EC;width:44px;text-align:right">$841K</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:500 12px 'Syne',sans-serif;color:#C8C4BF;width:130px;flex-shrink:0">PrairieEnergy</span>
+            <div style="flex:1;height:4px;background:#1c1d19;border-radius:2px"><div style="width:73%;height:100%;background:rgba(212,64,40,0.75);border-radius:2px"></div></div>
+            <span style="font:500 11px 'DM Mono',monospace;color:#C8C4BF;width:44px;text-align:right">$612K</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:500 12px 'Syne',sans-serif;color:#C8C4BF;width:130px;flex-shrink:0">AltaGas Retail <span style="color:#E74C3C">⚠</span></span>
+            <div style="flex:1;height:4px;background:#1c1d19;border-radius:2px"><div style="width:57%;height:100%;background:#E74C3C;border-radius:2px"></div></div>
+            <span style="font:500 11px 'DM Mono',monospace;color:#E74C3C;width:44px;text-align:right">$482K</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:500 12px 'Syne',sans-serif;color:#C8C4BF;width:130px;flex-shrink:0">GreenPath</span>
+            <div style="flex:1;height:4px;background:#1c1d19;border-radius:2px"><div style="width:46%;height:100%;background:rgba(212,64,40,0.50);border-radius:2px"></div></div>
+            <span style="font:500 11px 'DM Mono',monospace;color:#C8C4BF;width:44px;text-align:right">$389K</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font:500 12px 'Syne',sans-serif;color:#C8C4BF;width:130px;flex-shrink:0">Calgary Energy</span>
+            <div style="flex:1;height:4px;background:#1c1d19;border-radius:2px"><div style="width:26%;height:100%;background:rgba(212,64,40,0.30);border-radius:2px"></div></div>
+            <span style="font:500 11px 'DM Mono',monospace;color:#C8C4BF;width:44px;text-align:right">$220K</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="thena-card">
+        <div class="thena-section-label">Service Issue Volume by Category</div>
+        <canvas id="issueChart" height="160"></canvas>
+      </div>
+      <div class="thena-card">
+        <div class="thena-section-label">Settlement Turnaround — Days to Close</div>
+        <canvas id="settlementChart" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION 2: PREDICTIVE
+  ═══════════════════════════════ -->
+  <div style="margin-bottom:36px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div class="thena-section-label" style="margin-bottom:0">◉ Predictive Analytics</div>
+      <div style="height:1px;flex:1;background:rgba(242,240,236,0.07)"></div>
+      <span class="thena-badge thena-badge-neutral">What's likely next</span>
+    </div>
+
+    <div style="background:rgba(212,64,40,0.06);border:1px solid rgba(212,64,40,0.15);border-radius:8px;padding:11px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <span style="color:#D44028;font-size:13px">◉</span>
+      <span style="font:500 11px 'Syne',sans-serif;color:#C8C4BF">Models trained on 24 months of operational data · Confidence intervals shown · Updated daily 6:00 AM MST</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px">
+      <div class="thena-card thena-card-accent">
+        <div style="font:500 8px 'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#D44028;margin-bottom:8px">Late Payment Risk</div>
+        <div style="font:400 italic 15px 'Playfair Display',serif;color:#F2F0EC;line-height:1.45;margin-bottom:8px">17 accounts likely to miss payment in next 14 days</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;margin-bottom:10px">Projected exposure: $41,200 CAD</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font:500 8px 'DM Mono',monospace;color:rgba(200,196,191,0.5);text-transform:uppercase;letter-spacing:0.08em">Confidence</span>
+          <span style="font:700 11px 'Syne',sans-serif;color:#D44028">82%</span>
+        </div>
+        <div class="thena-confidence-bar"><div class="thena-confidence-fill" style="width:82%"></div></div>
+      </div>
+      <div class="thena-card thena-card-accent">
+        <div style="font:500 8px 'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#D44028;margin-bottom:8px">Customer Growth Forecast</div>
+        <div style="font:400 italic 15px 'Playfair Display',serif;color:#F2F0EC;line-height:1.45;margin-bottom:8px">+310–380 new enrollments projected in April</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;margin-bottom:10px">Current pipeline + seasonal trend</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font:500 8px 'DM Mono',monospace;color:rgba(200,196,191,0.5);text-transform:uppercase;letter-spacing:0.08em">Confidence</span>
+          <span style="font:700 11px 'Syne',sans-serif;color:#D44028">76%</span>
+        </div>
+        <div class="thena-confidence-bar"><div class="thena-confidence-fill" style="width:76%"></div></div>
+      </div>
+      <div class="thena-card thena-card-accent">
+        <div style="font:500 8px 'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:#D44028;margin-bottom:8px">Churn Risk Signal</div>
+        <div style="font:400 italic 15px 'Playfair Display',serif;color:#F2F0EC;line-height:1.45;margin-bottom:8px">42 customers flagged as high churn risk for Q2</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;margin-bottom:10px">3+ billing complaints + plan mismatch pattern</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font:500 8px 'DM Mono',monospace;color:rgba(200,196,191,0.5);text-transform:uppercase;letter-spacing:0.08em">Confidence</span>
+          <span style="font:700 11px 'Syne',sans-serif;color:#D44028">79%</span>
+        </div>
+        <div class="thena-confidence-bar"><div class="thena-confidence-fill" style="width:79%"></div></div>
+      </div>
+      <div class="thena-card">
+        <div style="font:500 8px 'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:rgba(212,64,40,0.65);margin-bottom:8px">Billing Exception Forecast</div>
+        <div style="font:400 italic 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.45;margin-bottom:6px">Next batch: 1–2 fewer exceptions expected</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;margin-bottom:8px">Rate mismatch corrected · AESO feed stable</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font:500 8px 'DM Mono',monospace;color:rgba(200,196,191,0.5);text-transform:uppercase;letter-spacing:0.08em">Confidence</span>
+          <span style="font:700 11px 'Syne',sans-serif;color:#2ECC71">88%</span>
+        </div>
+        <div class="thena-confidence-bar"><div class="thena-confidence-fill" style="width:88%;background:#2ECC71"></div></div>
+      </div>
+      <div class="thena-card">
+        <div style="font:500 8px 'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:rgba(212,64,40,0.65);margin-bottom:8px">Service Volume Forecast</div>
+        <div style="font:400 italic 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.45;margin-bottom:6px">22–28 service cases expected next week</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;margin-bottom:8px">Post-billing-run spike pattern</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font:500 8px 'DM Mono',monospace;color:rgba(200,196,191,0.5);text-transform:uppercase;letter-spacing:0.08em">Confidence</span>
+          <span style="font:700 11px 'Syne',sans-serif;color:#D4A017">71%</span>
+        </div>
+        <div class="thena-confidence-bar"><div class="thena-confidence-fill" style="width:71%;background:#D4A017"></div></div>
+      </div>
+      <div class="thena-card">
+        <div style="font:500 8px 'DM Mono',monospace;letter-spacing:0.1em;text-transform:uppercase;color:rgba(212,64,40,0.65);margin-bottom:8px">Energy Demand Forecast</div>
+        <div style="font:400 italic 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.45;margin-bottom:6px">Usage volumes +8% in April vs March expected</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;margin-bottom:8px">Seasonal transition · AESO outlook aligned</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font:500 8px 'DM Mono',monospace;color:rgba(200,196,191,0.5);text-transform:uppercase;letter-spacing:0.08em">Confidence</span>
+          <span style="font:700 11px 'Syne',sans-serif;color:#D44028">84%</span>
+        </div>
+        <div class="thena-confidence-bar"><div class="thena-confidence-fill" style="width:84%"></div></div>
+      </div>
+    </div>
+
+    <div class="thena-card">
+      <div class="thena-section-label">Payment Risk Distribution — Next 30 Days</div>
+      <canvas id="paymentRiskChart" height="140"></canvas>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       SECTION 3: PRESCRIPTIVE
+  ═══════════════════════════════ -->
+  <div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div class="thena-section-label" style="margin-bottom:0">⚡ Prescriptive Actions</div>
+      <div style="height:1px;flex:1;background:rgba(242,240,236,0.07)"></div>
+      <span class="thena-badge thena-badge-neutral">What to do about it</span>
+    </div>
+
+    <div style="background:rgba(212,64,40,0.06);border:1px solid rgba(212,64,40,0.15);border-radius:8px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font:700 12px 'Syne',sans-serif;color:#F2F0EC;margin-bottom:2px">4 actions identified for March 2026</div>
+        <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF">Estimated combined impact if actioned: <strong style="color:#F2F0EC">CAD $182,500</strong></div>
+      </div>
+      <button class="thena-btn-primary" style="font-size:12px;padding:7px 14px" onclick="openThena('prescriptive')">◈ Full 30-Day Plan</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="thena-card thena-card-accent" style="position:relative">
+        <div style="display:flex;align-items:flex-start;gap:13px">
+          <div style="flex-shrink:0;width:40px;height:40px;background:rgba(212,64,40,0.20);border:1px solid rgba(212,64,40,0.35);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">💳</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span class="thena-badge thena-badge-red">Collections</span>
+              <span style="font:500 9px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-left:auto">~$30,500 at risk</span>
+            </div>
+            <div style="font:700 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.4;margin-bottom:6px">Outreach to 17 at-risk accounts before March 25</div>
+            <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;line-height:1.5;margin-bottom:12px">Proactive contact recovers 74% of at-risk payments. Segment: variable plan customers with 1+ prior late payment.</div>
+            <div style="display:flex;gap:8px">
+              <button class="thena-btn-primary" style="font-size:11px;padding:6px 12px" onclick="openThena('collections-outreach')">◈ Create Campaign</button>
+              <button class="thena-btn-ghost" style="font-size:11px;padding:6px 12px">Preview List</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="thena-card thena-card-dim" style="position:relative">
+        <div style="display:flex;align-items:flex-start;gap:13px">
+          <div style="flex-shrink:0;width:40px;height:40px;background:rgba(242,240,236,0.05);border:1px solid rgba(242,240,236,0.13);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">📈</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span class="thena-badge thena-badge-red">Marketer Enablement</span>
+              <span style="font:500 9px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-left:auto">~$68,000 upside</span>
+            </div>
+            <div style="font:700 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.4;margin-bottom:6px">Enablement calls for 3 marketers with above-average leads, below-average close</div>
+            <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;line-height:1.5;margin-bottom:12px">GreenPath, AltaEnergy, SolarEdge. Rate positioning coaching expected to lift conversion 15–22%.</div>
+            <div style="display:flex;gap:8px">
+              <button class="thena-btn-primary" style="font-size:11px;padding:6px 12px">Schedule Calls</button>
+              <button class="thena-btn-ghost" style="font-size:11px;padding:6px 12px">View Analysis</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="thena-card thena-card-dim">
+        <div style="display:flex;align-items:flex-start;gap:13px">
+          <div style="flex-shrink:0;width:40px;height:40px;background:rgba(242,240,236,0.05);border:1px solid rgba(242,240,236,0.13);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">🔄</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span class="thena-badge thena-badge-neutral">Retention</span>
+              <span style="font:500 9px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-left:auto">$84K LTV at stake</span>
+            </div>
+            <div style="font:700 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.4;margin-bottom:6px">Plan review for 42 churn-risk customers before Q2</div>
+            <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;line-height:1.5;margin-bottom:12px">Variable customers with billing complaints. Fixed-rate conversion preserves an estimated $84K in 12-month LTV.</div>
+            <div style="display:flex;gap:8px">
+              <button class="thena-btn-primary" style="font-size:11px;padding:6px 12px" onclick="openThena('retention')">◈ Build List</button>
+              <button class="thena-btn-ghost" style="font-size:11px;padding:6px 12px">View Customers</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="thena-card thena-card-dim">
+        <div style="display:flex;align-items:flex-start;gap:13px">
+          <div style="flex-shrink:0;width:40px;height:40px;background:rgba(242,240,236,0.05);border:1px solid rgba(242,240,236,0.13);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+              <span class="thena-badge thena-badge-neutral">Hedge Strategy</span>
+              <span style="font:500 9px 'DM Mono',monospace;color:rgba(200,196,191,0.5);margin-left:auto">Review needed</span>
+            </div>
+            <div style="font:700 14px 'Playfair Display',serif;color:#F2F0EC;line-height:1.4;margin-bottom:6px">Increase industrial hedge coverage before April billing</div>
+            <div style="font:400 11px 'Syne',sans-serif;color:#C8C4BF;line-height:1.5;margin-bottom:12px">AESO forward pricing +6.2% in March average. Coverage at 61% — increase to 75% to stabilize industrial billing.</div>
+            <div style="display:flex;gap:8px">
+              <button class="thena-btn-primary" style="font-size:11px;padding:6px 12px">Review Hedge Model</button>
+              <button class="thena-btn-ghost" style="font-size:11px;padding:6px 12px">AESO Forecast</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /analytics -->
+
+<!-- ══════════════════════════════════════
+     MODULE: FINANCE
+══════════════════════════════════════ -->
+<div class="module" id="module-finance">
+  <div class="page-header-row">
+    <div class="page-header">
+      <div class="page-title">Finance</div>
+      <div class="page-subtitle">General Ledger · Accounts Receivable · Accounts Payable · Reconciliation</div>
+    </div>
+    <div class="flex gap-8">
+      <button class="btn btn-ghost btn-sm">Month-End: March 2026 ▾</button>
+      <button class="btn btn-primary btn-sm" onclick="openEmberlyn('finance')">✦ Emberlyn Assist</button>
+    </div>
+  </div>
+
+  <div class="alert alert-success mb-4">✓ February 2026 month-end reconciliation complete — all 14 GL accounts balanced · Completed March 5</div>
+  <div class="alert alert-info">ℹ March 2026 month-end target: March 31 · Current status: On track</div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card featured"><div class="kpi-label">Revenue — MTD</div><div class="kpi-value">$2.34M</div><div class="kpi-delta">↑ 12.4% MoM</div><div class="kpi-sub">March 2026</div></div>
+    <div class="kpi-card"><div class="kpi-label">AR Outstanding</div><div class="kpi-value" style="color:var(--warning)">$184,200</div><div class="kpi-delta neg">42 accounts</div><div class="kpi-sub">0–90 day aging</div></div>
+    <div class="kpi-card"><div class="kpi-label">AP Due This Month</div><div class="kpi-value">$1.21M</div><div class="kpi-delta">Marketer commissions</div><div class="kpi-sub">Due Mar 15</div></div>
+    <div class="kpi-card"><div class="kpi-label">Cash Position</div><div class="kpi-value" style="color:var(--success)">$1.82M</div><div class="kpi-delta" style="color:var(--success)">RBC Operating Account</div><div class="kpi-sub">As of Mar 11</div></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('fin', 'gl', this)">General Ledger</div>
+    <div class="tab" onclick="switchTab('fin', 'ar', this)">Accounts Receivable</div>
+    <div class="tab" onclick="switchTab('fin', 'ap', this)">Accounts Payable</div>
+    <div class="tab" onclick="switchTab('fin', 'recon', this)">Reconciliation</div>
+  </div>
+
+  <div id="fin-gl-tab">
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Account</th><th>GL Code</th><th>Type</th><th>Opening Balance</th><th>Debits</th><th>Credits</th><th>Closing Balance</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Energy Revenue</strong></td><td class="td-mono">4000</td><td>Revenue</td><td class="td-mono">$0.00</td><td class="td-mono">—</td><td class="td-mono text-success">$2,340,120</td><td class="td-mono text-success">$2,340,120</td><td><span class="pill pill-success">Balanced</span></td></tr>
+            <tr><td><strong>Marketer Commissions Payable</strong></td><td class="td-mono">2100</td><td>Liability</td><td class="td-mono">$0.00</td><td class="td-mono text-error">$1,208,400</td><td class="td-mono">—</td><td class="td-mono text-error">$(1,208,400)</td><td><span class="pill pill-success">Balanced</span></td></tr>
+            <tr><td><strong>Accounts Receivable</strong></td><td class="td-mono">1100</td><td>Asset</td><td class="td-mono">$142,800</td><td class="td-mono text-success">$41,400</td><td class="td-mono">$0.00</td><td class="td-mono text-warning">$184,200</td><td><span class="pill pill-pending">In Review</span></td></tr>
+            <tr><td><strong>AESO Settlement Payable</strong></td><td class="td-mono">2200</td><td>Liability</td><td class="td-mono">$0.00</td><td class="td-mono text-error">$6,820,000</td><td class="td-mono">—</td><td class="td-mono text-error">$(6,820,000)</td><td><span class="pill pill-success">Balanced</span></td></tr>
+            <tr><td><strong>Operating Cash — RBC</strong></td><td class="td-mono">1000</td><td>Asset</td><td class="td-mono">$1,240,000</td><td class="td-mono text-success">$580,000</td><td class="td-mono text-error">$0.00</td><td class="td-mono text-success">$1,820,000</td><td><span class="pill pill-success">Balanced</span></td></tr>
+            <tr><td><strong>Hedge Risk Reserve</strong></td><td class="td-mono">3100</td><td>Equity</td><td class="td-mono">$420,000</td><td class="td-mono">—</td><td class="td-mono">—</td><td class="td-mono">$420,000</td><td><span class="pill pill-active">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="fin-ar-tab" style="display:none">
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Customer</th><th>Invoice</th><th>Amount</th><th>Due Date</th><th>Days Outstanding</th><th>Risk</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>Nguyen Family Holdings</strong></td><td class="td-mono">INV-2026-14801</td><td class="td-mono text-error">$8,400</td><td class="td-muted">Feb 28</td><td class="td-mono" style="color:var(--error)">11 days</td><td><span class="badge badge-error">High</span></td><td><span class="pill pill-error">Overdue</span></td><td><button class="btn btn-danger btn-sm">Escalate</button></td></tr>
+            <tr><td><strong>Wilson, Barbara</strong></td><td class="td-mono">INV-2026-14817</td><td class="td-mono text-warning">$124</td><td class="td-muted">Mar 25</td><td class="td-mono">14 days</td><td><span class="badge badge-gold">Med</span></td><td><span class="pill pill-pending">NSF</span></td><td><button class="btn btn-secondary btn-sm">Contact</button></td></tr>
+            <tr><td><strong>Lakeside Industrial</strong></td><td class="td-mono">INV-2026-14810</td><td class="td-mono text-warning">$14,200</td><td class="td-muted">Mar 25</td><td class="td-mono">14 days</td><td><span class="badge badge-gold">Med</span></td><td><span class="pill pill-pending">Pending</span></td><td><button class="btn btn-ghost btn-sm">Review</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="fin-ap-tab" style="display:none">
+    <div class="card" style="padding:0">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Payee</th><th>Category</th><th>Amount</th><th>Due Date</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><strong>NRG Direct</strong></td><td>Commission — March</td><td class="td-mono">$42,060</td><td class="td-muted">Mar 15</td><td><span class="pill pill-pending">Pending Approval</span></td><td><button class="btn btn-primary btn-sm">Approve</button></td></tr>
+            <tr><td><strong>PrairieEnergy</strong></td><td>Commission — March</td><td class="td-mono">$30,620</td><td class="td-muted">Mar 15</td><td><span class="pill pill-pending">Pending Approval</span></td><td><button class="btn btn-primary btn-sm">Approve</button></td></tr>
+            <tr><td><strong>AESO</strong></td><td>Settlement — Q1</td><td class="td-mono">$6,820,000</td><td class="td-muted">Mar 20</td><td><span class="pill pill-info">In Progress</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+            <tr><td><strong>RBC Bank</strong></td><td>Credit Facility Fee</td><td class="td-mono">$4,200</td><td class="td-muted">Mar 30</td><td><span class="pill pill-draft">Scheduled</span></td><td><button class="btn btn-ghost btn-sm">View</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="fin-recon-tab" style="display:none">
+    <div class="grid-2 gap-20">
+      <div class="card">
+        <div class="section-label mb-16">Bank Reconciliation — March 2026</div>
+        <div class="metric-row"><span class="metric-label">RBC Statement Balance (Mar 10)</span><span class="metric-value font-mono">$1,820,000</span></div>
+        <div class="metric-row"><span class="metric-label">Outstanding Deposits</span><span class="metric-value font-mono text-success">+$42,400</span></div>
+        <div class="metric-row"><span class="metric-label">Outstanding Cheques</span><span class="metric-value font-mono text-error">-$8,200</span></div>
+        <div class="metric-row" style="border-top:2px solid var(--teal);padding-top:12px;margin-top:4px"><span class="metric-label" style="font-weight:700;color:var(--light)">Adjusted Bank Balance</span><span class="metric-value font-mono" style="color:var(--success);font-size:15px">$1,854,200</span></div>
+        <div class="metric-row"><span class="metric-label" style="font-weight:700;color:var(--light)">GL Cash Balance</span><span class="metric-value font-mono" style="color:var(--success);font-size:15px">$1,854,200</span></div>
+        <div class="alert alert-success mt-16">✓ Bank reconciliation balanced — no variance</div>
+      </div>
+      <div class="card">
+        <div class="section-label mb-16">Month-End Checklist</div>
+        <div class="timeline">
+          <div class="timeline-item"><div class="timeline-dot done">✓</div><div class="timeline-content"><div class="timeline-title">Revenue recognition complete</div><div class="timeline-sub">$2.34M recognized — all billing cycles closed</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot done">✓</div><div class="timeline-content"><div class="timeline-title">Bank reconciliation done</div><div class="timeline-sub">RBC operating account — balanced</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot active">!</div><div class="timeline-content"><div class="timeline-title">AP approvals pending</div><div class="timeline-sub">$72,680 in commissions awaiting approval</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot pending"></div><div class="timeline-content"><div class="timeline-title">AESO settlement final</div><div class="timeline-sub">Target: March 20 · 3 exceptions pending</div></div></div>
+          <div class="timeline-item"><div class="timeline-dot pending"></div><div class="timeline-content"><div class="timeline-title">Financial statements to CFO</div><div class="timeline-sub">Target: March 31</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /finance -->
+
+<!-- ══════════════════════════════════════
+     MODULE: ADMIN
+══════════════════════════════════════ -->
+<div class="module" id="module-admin">
+  <div class="page-header">
+    <div class="page-title">Admin & Integrations</div>
+    <div class="page-subtitle">Connected systems · API status · Audit log · User management · AI policy</div>
+  </div>
+
+  <div class="grid-2 gap-20 mb-20">
+    <div class="card">
+      <div class="section-label mb-16">Connected Integrations</div>
+      <div class="flex flex-col gap-10">
+        <div class="flex items-center justify-between p-16" style="background:var(--s2);border-radius:8px;border:1px solid var(--border)">
+          <div class="flex items-center gap-12"><span style="font-size:20px">⚡</span><div><div style="font:600 13px var(--font-ui);color:var(--light)">AESO Energy Feed</div><div class="font-mono text-muted" style="font-size:10px">Alberta Electric System Operator · Live Data</div></div></div>
+          <span class="pill pill-active"><span class="pill-dot" style="animation:pulse 2s infinite"></span>Live</span>
+        </div>
+        <div class="flex items-center justify-between p-16" style="background:var(--s2);border-radius:8px;border:1px solid var(--border)">
+          <div class="flex items-center gap-12"><span style="font-size:20px">🏦</span><div><div style="font:600 13px var(--font-ui);color:var(--light)">RBC Bank Integration</div><div class="font-mono text-muted" style="font-size:10px">Royal Bank of Canada · Pre-authorized payments</div></div></div>
+          <span class="pill pill-active"><span class="pill-dot"></span>Connected</span>
+        </div>
+        <div class="flex items-center justify-between p-16" style="background:var(--s2);border-radius:8px;border:1px solid var(--border)">
+          <div class="flex items-center gap-12"><span style="font-size:20px">📊</span><div><div style="font:600 13px var(--font-ui);color:var(--light)">Power BI Export</div><div class="font-mono text-muted" style="font-size:10px">Microsoft · Analytics reporting sync</div></div></div>
+          <span class="pill pill-active"><span class="pill-dot"></span>Syncing</span>
+        </div>
+        <div class="flex items-center justify-between p-16" style="background:var(--s2);border-radius:8px;border:1px solid var(--border)">
+          <div class="flex items-center gap-12"><span style="font-size:20px">📧</span><div><div style="font:600 13px var(--font-ui);color:var(--light)">HubSpot CRM</div><div class="font-mono text-muted" style="font-size:10px">Marketing automation · Lead sync</div></div></div>
+          <span class="pill pill-active"><span class="pill-dot"></span>Connected</span>
+        </div>
+        <div class="flex items-center justify-between p-16" style="background:var(--s2);border-radius:8px;border:1px solid var(--border)">
+          <div class="flex items-center gap-12"><span style="font-size:20px">☁</span><div><div style="font:600 13px var(--font-ui);color:var(--light)">AWS Cloud Infrastructure</div><div class="font-mono text-muted" style="font-size:10px">ca-central-1 · 99.99% uptime</div></div></div>
+          <span class="pill pill-success">Healthy</span>
+        </div>
+        <div class="flex items-center justify-between p-16" style="background:var(--gold-dim);border-radius:8px;border:1px solid var(--gold-bdr)">
+          <div class="flex items-center gap-12"><span style="font-size:20px">✦</span><div><div style="font:600 13px var(--font-ui);color:var(--light)">Emberlyn AI Engine</div><div class="font-mono text-muted" style="font-size:10px">FractalShift · claude-sonnet-4-20250514</div></div></div>
+          <span class="pill pill-active"><span class="pill-dot" style="animation:pulse 2s infinite;background:var(--gold)"></span>Active</span>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col gap-20">
+      <div class="card">
+        <div class="section-label mb-14">User Management</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>User</th><th>Role</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Sarah Marchetti</strong></td><td>Operations Manager</td><td><span class="pill pill-active">Active</span></td></tr>
+              <tr><td><strong>James Thompson</strong></td><td>Billing Analyst</td><td><span class="pill pill-active">Active</span></td></tr>
+              <tr><td><strong>Maya Rodriguez</strong></td><td>Customer Service</td><td><span class="pill pill-active">Active</span></td></tr>
+              <tr><td><strong>David Chen</strong></td><td>Finance Controller</td><td><span class="pill pill-active">Active</span></td></tr>
+              <tr><td><strong>Laura Kim</strong></td><td>Marketer Relations</td><td><span class="pill pill-pending">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn btn-secondary btn-sm mt-14">+ Invite User</button>
+      </div>
+      <div class="card">
+        <div class="section-label mb-14">Emberlyn AI Policy</div>
+        <div class="flex flex-col gap-10">
+          <div class="flex items-center justify-between">
+            <span style="font:500 13px var(--font-ui);color:var(--light)">AI-assisted record updates</span>
+            <div style="width:40px;height:22px;background:var(--success);border-radius:100px;position:relative;cursor:pointer"><div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span style="font:500 13px var(--font-ui);color:var(--light)">Require confirmation before applying</span>
+            <div style="width:40px;height:22px;background:var(--success);border-radius:100px;position:relative;cursor:pointer"><div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span style="font:500 13px var(--font-ui);color:var(--light)">Prescriptive recommendations</span>
+            <div style="width:40px;height:22px;background:var(--success);border-radius:100px;position:relative;cursor:pointer"><div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;right:2px;top:2px"></div></div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span style="font:500 13px var(--font-ui);color:var(--text)">Auto-apply low-risk fixes</span>
+            <div style="width:40px;height:22px;background:var(--border);border-radius:100px;position:relative;cursor:pointer"><div style="width:18px;height:18px;background:var(--muted);border-radius:50%;position:absolute;left:2px;top:2px"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="flex items-center justify-between mb-14">
+      <div class="section-label">Audit Log</div>
+      <div class="search-bar" style="width:300px"><span class="search-icon">🔍</span><input type="text" placeholder="Search audit log…" style="font-size:12px"></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Entity</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td class="td-mono">2026-03-11 08:14:32</td><td>Sarah M.</td><td>Billing batch initiated</td><td>B-2026-0311</td><td><span class="badge badge-muted">System</span></td></tr>
+          <tr><td class="td-mono">2026-03-11 08:16:44</td><td>Emberlyn AI</td><td>Exception flagged</td><td>EXC-0311-A</td><td><span class="badge badge-gold">AI</span></td></tr>
+          <tr><td class="td-mono">2026-03-11 09:02:11</td><td>James T.</td><td>Rate correction applied</td><td>C-10470</td><td><span class="badge badge-teal">Manual</span></td></tr>
+          <tr><td class="td-mono">2026-03-11 09:45:00</td><td>Emberlyn AI</td><td>Late payment risk scored</td><td>17 accounts</td><td><span class="badge badge-gold">AI</span></td></tr>
+          <tr><td class="td-mono">2026-03-10 16:30:55</td><td>Maya R.</td><td>Case closed</td><td>CS-8810</td><td><span class="badge badge-teal">Manual</span></td></tr>
+          <tr><td class="td-mono">2026-03-10 14:12:08</td><td>System</td><td>AESO feed synced</td><td>Settlement data</td><td><span class="badge badge-muted">System</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div><!-- /admin -->
+
+</main><!-- /main -->
+
+<!-- ══════════════════════════════════════
+     EMBERLYN PANEL
+══════════════════════════════════════ -->
+<div class="emberlyn-panel" id="emberlynPanel">
+  <div class="emberlyn-header">
+    <div class="emberlyn-title-group">
+      <div class="emberlyn-label">✦ AI Operations Copilot</div>
+      <div class="emberlyn-name">Emberlyn</div>
+      <div class="emberlyn-status"><span class="emberlyn-dot"></span>Active · claude-sonnet-4-20250514</div>
+    </div>
+    <span class="emberlyn-close" onclick="closeEmberlyn()">✕</span>
+  </div>
+  <div class="emberlyn-context" id="emberlynContext">CONTEXT: Dashboard · UTILITYnet ERP · March 2026</div>
+  <div class="emberlyn-messages" id="emberlynMessages">
+    <div>
+      <div class="bubble-label">Emberlyn</div>
+      <div class="bubble-ai fade-up">Good morning. I'm monitoring your March 2026 operations. You have <strong>3 billing exceptions</strong> blocking distribution of Batch B-2026-0311, and <strong>17 accounts</strong> at late payment risk totaling $41,200 exposure.<br><br>What would you like to address first?</div>
+    </div>
+  </div>
+  <div class="emberlyn-suggestions" id="emberlynSuggestions">
+    <div class="sugg-label">Suggested Prompts</div>
+    <button class="suggestion-chip" onclick="sendEmberlyn(this.textContent)">Why is EXC-0311-A blocked?</button>
+    <button class="suggestion-chip" onclick="sendEmberlyn(this.textContent)">Summarize late payment risk</button>
+    <button class="suggestion-chip" onclick="sendEmberlyn(this.textContent)">What's causing the AltaGas settlement mismatch?</button>
+  </div>
+  <div class="emberlyn-input-area">
+    <div class="emberlyn-input-row">
+      <input type="text" placeholder="Ask Emberlyn anything…" id="emberlynInput" onkeydown="if(event.key==='Enter')sendEmberlyn()">
+      <button class="btn btn-primary btn-sm" onclick="sendEmberlyn()" id="emberlynSend" style="padding:9px 14px">▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- Emberlyn toggle button -->
+<button class="emberlyn-toggle" id="emberlynToggle" onclick="openEmberlyn()">✦ Emberlyn</button>
+
+<!-- ══════════════════════════════════════
+     THENA PANEL (Analytics only)
+══════════════════════════════════════ -->
+<div class="emberlyn-panel" id="thenaPanel" style="border-left:1px solid var(--gold-bdr)">
+  <div class="emberlyn-header" style="background:linear-gradient(135deg,rgba(212,160,23,0.15),rgba(22,120,160,0.08));border-top-color:var(--teal)">
+    <div class="emberlyn-title-group">
+      <div class="emberlyn-label" style="color:var(--teal)">◈ Analytics Intelligence</div>
+      <div class="emberlyn-name">Thena</div>
+      <div class="emberlyn-status"><span class="emberlyn-dot" style="background:var(--teal)"></span>Active · Business & Finance Analyst</div>
+    </div>
+    <span class="emberlyn-close" onclick="closeThena()">✕</span>
+  </div>
+  <div class="emberlyn-context" id="thenaContext">CONTEXT: Analytics · Forecasting · Prescriptive Insights</div>
+  <div class="emberlyn-messages" id="thenaMessages">
+    <div>
+      <div class="bubble-label">Thena</div>
+      <div class="bubble-ai fade-up" style="border-color:var(--teal-bdr)">I'm Thena — your analytics and business intelligence specialist. I work across your revenue, customer, billing, and marketer data to surface what's coming and what to do about it.<br><br>You're in Q1 2026. Revenue is tracking at <strong>$6.82M</strong> with a churn risk signal on 42 accounts. Where do you want to start?</div>
+    </div>
+  </div>
+  <div class="emberlyn-suggestions" id="thenaSuggestions">
+    <div class="sugg-label">Suggested Analysis</div>
+    <button class="suggestion-chip" style="border-color:var(--teal-bdr)" onclick="sendThena(this.textContent)">What are the top revenue risks in Q2?</button>
+    <button class="suggestion-chip" style="border-color:var(--teal-bdr)" onclick="sendThena(this.textContent)">Which marketers need attention most?</button>
+    <button class="suggestion-chip" style="border-color:var(--teal-bdr)" onclick="sendThena(this.textContent)">Forecast April revenue and growth</button>
+  </div>
+  <div class="emberlyn-input-area">
+    <div class="emberlyn-input-row">
+      <input type="text" placeholder="Ask Thena for analysis…" id="thenaInput" onkeydown="if(event.key==='Enter')sendThena()" style="border-color:var(--teal-bdr)">
+      <button class="btn btn-primary btn-sm" onclick="sendThena()" id="thenaSend" style="padding:9px 14px;background:var(--teal)">▶</button>
+    </div>
+  </div>
+</div>
+<!-- Thena toggle (Analytics only) -->
+<button class="emberlyn-toggle" id="thenaToggle" onclick="openThena()" style="display:none;background:var(--teal)">◈ Thena</button>
+
+<!-- ══════════════════════════════════════
+     MODALS
+══════════════════════════════════════ -->
+
+<!-- Enrollment Modal -->
+<div class="modal-overlay" id="enrollmentModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">New Customer Enrollment</div>
+      <span class="modal-close" onclick="closeModal('enrollmentModal')">✕</span>
+    </div>
+    <!-- Workflow steps -->
+    <div class="workflow-steps mb-20">
+      <div class="workflow-step active" id="step-1"><div class="workflow-step-num">1</div><div class="workflow-step-label">Account Info</div></div>
+      <div class="workflow-connector"></div>
+      <div class="workflow-step pending" id="step-2"><div class="workflow-step-num">2</div><div class="workflow-step-label">Credit Check</div></div>
+      <div class="workflow-connector"></div>
+      <div class="workflow-step pending" id="step-3"><div class="workflow-step-num">3</div><div class="workflow-step-label">Plan Selection</div></div>
+      <div class="workflow-connector"></div>
+      <div class="workflow-step pending" id="step-4"><div class="workflow-step-num">4</div><div class="workflow-step-label">Banking</div></div>
+      <div class="workflow-connector"></div>
+      <div class="workflow-step pending" id="step-5"><div class="workflow-step-num">5</div><div class="workflow-step-label">Confirm</div></div>
+    </div>
+
+    <div id="enroll-step-1">
+      <div class="section-label mb-12">Customer Information</div>
+      <div class="form-row">
+        <div class="form-group"><label>First Name</label><input placeholder="e.g. Sarah"></div>
+        <div class="form-group"><label>Last Name</label><input placeholder="e.g. Johnson"></div>
+      </div>
+      <div class="form-group"><label>Email Address</label><input type="email" placeholder="sarah.johnson@email.ca"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input placeholder="403-555-0100"></div>
+        <div class="form-group"><label>Customer Type</label><select><option>Residential</option><option>Industrial</option></select></div>
+      </div>
+      <div class="form-group"><label>Service Address</label><input placeholder="1234 Energy Ave, Calgary, AB T2P 1J9"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Assigned Marketer</label><select><option>NRG Direct</option><option>PrairieEnergy</option><option>GreenPath</option><option>AltaEnergy</option></select></div>
+        <div class="form-group"><label>Requested Start Date</label><input type="date" value="2026-04-01"></div>
+      </div>
+      <div class="flex justify-end gap-8 mt-20">
+        <button class="btn btn-ghost" onclick="closeModal('enrollmentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="enrollNext(2)">Continue → Credit Check</button>
+      </div>
+    </div>
+
+    <div id="enroll-step-2" style="display:none">
+      <div class="section-label mb-12">Credit Verification</div>
+      <div class="card card-teal mb-16">
+        <div class="flex items-center gap-12">
+          <div style="font-size:24px" id="creditIcon">⏳</div>
+          <div>
+            <div style="font:600 13px var(--font-ui);color:var(--light)" id="creditStatus">Running credit check…</div>
+            <div style="font:400 11px var(--font-ui);color:var(--muted)" id="creditSub">Connecting to Equifax bureau · Please wait</div>
+          </div>
+        </div>
+      </div>
+      <div id="creditResult" style="display:none">
+        <div class="form-row-3">
+          <div class="card" style="padding:14px;background:var(--s2)"><div class="kpi-label">Credit Score</div><div class="kpi-value" style="font-size:20px;color:var(--success)">742</div></div>
+          <div class="card" style="padding:14px;background:var(--s2)"><div class="kpi-label">Risk Band</div><div class="kpi-value" style="font-size:16px;color:var(--success)">Low</div></div>
+          <div class="card" style="padding:14px;background:var(--s2)"><div class="kpi-label">Decision</div><div class="kpi-value" style="font-size:16px;color:var(--success)">Approved</div></div>
+        </div>
+        <div class="alert alert-success mt-12">✓ Credit check passed — customer approved for standard enrollment without deposit</div>
+      </div>
+      <div class="flex justify-between gap-8 mt-20">
+        <button class="btn btn-ghost" onclick="enrollNext(1)">← Back</button>
+        <button class="btn btn-primary" id="creditNextBtn" disabled onclick="enrollNext(3)">Continue → Plan Selection</button>
+      </div>
+    </div>
+
+    <div id="enroll-step-3" style="display:none">
+      <div class="section-label mb-12">Energy Plan Selection</div>
+      <div class="grid-2 gap-16 mb-16">
+        <div class="card plan-option" id="plan-variable" onclick="selectPlan('variable')" style="cursor:pointer;transition:all 0.15s">
+          <div class="flex items-center justify-between mb-10"><div style="font:700 15px var(--font-ui);color:var(--light)">Variable Rate</div><div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border)" id="plan-var-radio"></div></div>
+          <div class="font-mono text-teal" style="font-size:18px;font-weight:700">$0.0854/kWh</div>
+          <div class="font-mono text-muted mt-4" style="font-size:10px">Current March rate · Adjusts monthly with AESO</div>
+          <ul style="margin-top:10px;padding-left:16px;font:500 11px var(--font-ui);color:var(--text);line-height:1.8">
+            <li>Tracks market pricing</li><li>No long-term commitment</li><li>Month-to-month flexibility</li>
+          </ul>
+        </div>
+        <div class="card plan-option" id="plan-fixed" onclick="selectPlan('fixed')" style="cursor:pointer;transition:all 0.15s">
+          <div class="flex items-center justify-between mb-10"><div style="font:700 15px var(--font-ui);color:var(--light)">Fixed Rate</div><div style="width:20px;height:20px;border-radius:50%;border:2px solid var(--border)" id="plan-fix-radio"></div></div>
+          <div class="font-mono text-teal" style="font-size:18px;font-weight:700">$0.0922/kWh</div>
+          <div class="font-mono text-muted mt-4" style="font-size:10px">Locked 12 months · Rate certainty guaranteed</div>
+          <ul style="margin-top:10px;padding-left:16px;font:500 11px var(--font-ui);color:var(--text);line-height:1.8">
+            <li>Price certainty for 12 months</li><li>Protected from market spikes</li><li>Early termination: $50 fee</li>
+          </ul>
+        </div>
+      </div>
+      <div class="flex justify-between gap-8 mt-20">
+        <button class="btn btn-ghost" onclick="enrollNext(2)">← Back</button>
+        <button class="btn btn-primary" onclick="enrollNext(4)">Continue → Banking Info</button>
+      </div>
+    </div>
+
+    <div id="enroll-step-4" style="display:none">
+      <div class="section-label mb-12">Pre-Authorized Debit (PAD) Setup</div>
+      <div class="alert alert-info mb-16">ℹ Pre-authorized debit enables automatic monthly billing. Customer must sign PAD agreement.</div>
+      <div class="form-row">
+        <div class="form-group"><label>Bank Name</label><select><option>RBC Royal Bank</option><option>TD Canada Trust</option><option>Scotiabank</option><option>BMO</option><option>CIBC</option></select></div>
+        <div class="form-group"><label>Account Type</label><select><option>Chequing</option><option>Savings</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Transit Number</label><input placeholder="12345" maxlength="5"></div>
+        <div class="form-group"><label>Institution Number</label><input placeholder="003" maxlength="3"></div>
+      </div>
+      <div class="form-group"><label>Account Number</label><input placeholder="1234567" maxlength="12"></div>
+      <div class="form-group mt-12">
+        <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+          <input type="checkbox" style="width:auto"> I authorize UTILITYnet to debit my account monthly as per the PAD agreement terms
+        </label>
+      </div>
+      <div class="flex justify-between gap-8 mt-20">
+        <button class="btn btn-ghost" onclick="enrollNext(3)">← Back</button>
+        <button class="btn btn-primary" onclick="enrollNext(5)">Continue → Confirm</button>
+      </div>
+    </div>
+
+    <div id="enroll-step-5" style="display:none">
+      <div class="section-label mb-12">Enrollment Confirmation</div>
+      <div class="card card-gold mb-16">
+        <div style="font:700 15px var(--font-ui);color:var(--light);margin-bottom:14px">Review & Confirm</div>
+        <div class="metric-row"><span class="metric-label">Customer</span><span class="metric-value">Sarah Johnson</span></div>
+        <div class="metric-row"><span class="metric-label">Service Address</span><span class="metric-value">1234 Energy Ave, Calgary</span></div>
+        <div class="metric-row"><span class="metric-label">Plan</span><span class="metric-value">Variable · $0.0854/kWh</span></div>
+        <div class="metric-row"><span class="metric-label">Marketer</span><span class="metric-value">NRG Direct</span></div>
+        <div class="metric-row"><span class="metric-label">Service Start</span><span class="metric-value">April 1, 2026</span></div>
+        <div class="metric-row"><span class="metric-label">PAD Setup</span><span class="metric-value text-success">✓ Authorized</span></div>
+        <div class="metric-row"><span class="metric-label">Credit Status</span><span class="metric-value text-success">✓ Approved (Score: 742)</span></div>
+      </div>
+      <div id="enrollSuccess" style="display:none">
+        <div class="alert alert-success">✓ Enrollment complete! Customer ID <strong>C-10483</strong> created. Welcome email sent to sarah.johnson@email.ca · Service begins April 1, 2026.</div>
+      </div>
+      <div class="flex justify-between gap-8 mt-20">
+        <button class="btn btn-ghost" onclick="enrollNext(4)">← Back</button>
+        <button class="btn btn-primary" id="enrollSubmitBtn" onclick="submitEnrollment()">✓ Enroll Customer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer 360 Modal -->
+<div class="modal-overlay" id="customerModal">
+  <div class="modal" style="width:700px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Customer 360 — Nguyen Family Holdings</div>
+        <div class="font-mono text-muted mt-4" style="font-size:10px">C-10478 · Industrial · Active since November 2023</div>
+      </div>
+      <span class="modal-close" onclick="closeModal('customerModal')">✕</span>
+    </div>
+    <div class="tabs" style="margin-bottom:20px">
+      <div class="tab active" onclick="switchTab('cust360', 'overview', this)">Overview</div>
+      <div class="tab" onclick="switchTab('cust360', 'billing', this)">Billing History</div>
+      <div class="tab" onclick="switchTab('cust360', 'cases', this)">Cases</div>
+    </div>
+    <div id="cust360-overview-tab">
+      <div class="grid-2 gap-16 mb-16">
+        <div><div class="section-label mb-8">Contact Info</div>
+          <div class="metric-row"><span class="metric-label text-muted">Email</span><span class="metric-value font-mono" style="font-size:11px">admin@nguyenhold.ca</span></div>
+          <div class="metric-row"><span class="metric-label text-muted">Phone</span><span class="metric-value">780-555-0241</span></div>
+          <div class="metric-row"><span class="metric-label text-muted">Address</span><span class="metric-value">8820 Industrial Pkwy, Edmonton</span></div>
+          <div class="metric-row"><span class="metric-label text-muted">Marketer</span><span class="metric-value">GreenPath</span></div>
+        </div>
+        <div><div class="section-label mb-8">Account Status</div>
+          <div class="metric-row"><span class="metric-label text-muted">Plan</span><span class="metric-value">Variable Rate</span></div>
+          <div class="metric-row"><span class="metric-label text-muted">Outstanding</span><span class="metric-value text-error">$8,400.00</span></div>
+          <div class="metric-row"><span class="metric-label text-muted">Status</span><span class="metric-value"><span class="pill pill-error">Exception</span></span></div>
+          <div class="metric-row"><span class="metric-label text-muted">Last Payment</span><span class="metric-value">Jan 28, 2026</span></div>
+        </div>
+      </div>
+      <div class="alert alert-error">⚠ BILLING EXCEPTION — Missing meter read March 1-8. Invoice EXC-0311-A blocked. Estimated: $4,200 at risk. <button class="btn btn-primary btn-sm" style="margin-left:8px" onclick="openEmberlyn('customer-C10478')">✦ Emberlyn Assist</button></div>
+      <div class="flex gap-8 mt-16">
+        <button class="btn btn-primary btn-sm" onclick="openEmberlyn('draft-email-C10478')">✦ Draft Customer Email</button>
+        <button class="btn btn-secondary btn-sm">📞 Log Call</button>
+        <button class="btn btn-ghost btn-sm">⊕ Create Case</button>
+        <button class="btn btn-ghost btn-sm">📋 View Contract</button>
+      </div>
+    </div>
+    <div id="cust360-billing-tab" style="display:none">
+      <table>
+        <thead><tr><th>Invoice</th><th>Period</th><th>Usage</th><th>Amount</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="td-mono">INV-2026-14801</td><td>Feb 2026</td><td class="td-mono">44,200 kWh</td><td class="td-mono text-error">$8,400</td><td><span class="pill pill-error">Overdue</span></td></tr>
+          <tr><td class="td-mono">INV-2026-14780</td><td>Jan 2026</td><td class="td-mono">41,800 kWh</td><td class="td-mono">$3,940</td><td><span class="pill pill-success">Paid</span></td></tr>
+          <tr><td class="td-mono">INV-2025-14612</td><td>Dec 2025</td><td class="td-mono">51,200 kWh</td><td class="td-mono">$4,820</td><td><span class="pill pill-success">Paid</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="cust360-cases-tab" style="display:none">
+      <table>
+        <thead><tr><th>Case ID</th><th>Type</th><th>Created</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="td-mono">CS-8821</td><td>Billing Dispute — Feb invoice</td><td>Mar 11</td><td><span class="pill pill-error">Open</span></td></tr>
+          <tr><td class="td-mono">CS-8742</td><td>Meter read discrepancy</td><td>Jan 15</td><td><span class="pill pill-success">Resolved</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app-body -->
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+// ══════════════════════════════════════════════════════════════════
+// CONFIGURATION
+// ══════════════════════════════════════════════════════════════════
+const ANTHROPIC_API_KEY = 'YOUR_API_KEY_HERE'; // Replace before demo
+
+// ══════════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════════
+let emberlynOpen = false;
+let currentModule = 'dashboard';
+let enrollStep = 1;
+let chartInstances = {};
+let thenaOpen = false;
+let emberlynHistory = [];  // conversation history for Emberlyn
+let thenaHistory = [];     // conversation history for Thena
+
+// ══════════════════════════════════════════════════════════════════
+// RESPONSE CACHE — pre-written polished responses for demo flows
+// Cache key = normalized phrase fingerprint
+// ══════════════════════════════════════════════════════════════════
+const RESPONSE_CACHE = {
+
+  // ── FLOW 1: Customer Service + Emberlyn ──────────────────────────
+
+  'summarize customer issues': `<strong>Nguyen Family Holdings — Account Summary (C-10478)</strong><br><br>Three active issues require attention:<br><br>• <strong>Billing exception EXC-0311-A</strong> — Missing AESO meter read for Mar 1–8. Invoice blocked. Estimated exposure: <strong>$4,200</strong>.<br>• <strong>Open case CS-8821</strong> — Billing dispute filed Mar 11, unresolved. Customer called twice about the Feb invoice discrepancy.<br>• <strong>Outstanding balance $8,400</strong> — Feb 2026 invoice overdue 31 days. Last payment Jan 28. Payment history has been reliable for 26 of 27 prior months.<br><br>Root cause: the meter read gap likely triggered the dispute. Resolving EXC-0311-A unblocks the invoice and gives us grounds to close CS-8821.<br><br>Shall I draft a response to the customer explaining the delay and resolution timeline?`,
+
+  'draft customer email': `__ACTION_PREVIEW__
+  <div class="action-preview-label">📧 Proposed Email — Nguyen Family Holdings</div>
+  <div style="font:500 12px var(--font-ui);color:var(--light);margin-bottom:8px"><strong>To:</strong> admin@nguyenhold.ca &nbsp;|&nbsp; <strong>Subject:</strong> Update on Your March 2026 Invoice — Account C-10478</div>
+  <div style="font:400 12px var(--font-ui);color:var(--text);line-height:1.7">Dear Nguyen Family Holdings team,<br><br>We are writing regarding your March 2026 invoice, which has been temporarily held pending resolution of a meter data gap affecting March 1–8. This is related to an AESO data submission issue impacting several industrial accounts in the Edmonton area, and is not a result of any issue on your end.<br><br>We expect this to be resolved within <strong>3 business days</strong>. Once confirmed, we will issue your invoice using the verified read. In the meantime, no payment is required and no late fees will be assessed.<br><br>We apologize for the inconvenience and will follow up directly once resolved.<br><br>UTILITYnet Customer Operations</div>
+  <div style="margin-top:12px;font:500 10px var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;color:var(--gold)">Also: Update Case CS-8821 → In Progress + create follow-up task due Mar 14</div>`,
+
+  'create follow-up task': `__ACTION_PREVIEW__
+  <div class="action-preview-label">⚙ Actions to Apply</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font:500 12px var(--font-ui);color:var(--light)">
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--success)">✓</span> Case CS-8821 status → <strong>In Progress</strong></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--success)">✓</span> Follow-up task created — "Confirm meter read resolution + close CS-8821" due <strong>Mar 14</strong></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--success)">✓</span> Internal note added: "Meter read gap confirmed, email sent to customer Mar 11"</div>
+  </div>`,
+
+  // ── FLOW 2: Billing Exception + Emberlyn ─────────────────────────
+
+  'explain billing exception': `<strong>EXC-0311-A — Root Cause Analysis</strong><br><br>This is a missing AESO meter read for Nguyen Family Holdings (C-10478), covering <strong>March 1–8, 2026</strong>.<br><br><strong>What happened:</strong> AESO's automated data submission excluded 6 industrial sites at 8820 Industrial Pkwy. The gap appears linked to a firmware update on their smart meter array deployed Feb 28 — the same pattern affects 2 other Edmonton industrial accounts this cycle.<br><br><strong>Financial impact:</strong> Estimated <strong>$4,200</strong> based on prior-period average (Dec–Feb avg: 44,400 kWh/month at current AESO pricing).<br><br><strong>Resolution options:</strong><br>1. Apply prior-period average — fastest, requires customer acknowledgement<br>2. Request manual read from ATCO — 3–5 business days<br>3. Partial invoice for available data, true-up next cycle<br><br>I recommend option 1. Shall I prepare the calculation and draft the customer notification?`,
+
+  'what changed since last bill': `<strong>Feb vs. March Billing Comparison — C-10478</strong><br><br>• <strong>Feb (INV-2026-14780):</strong> 41,800 kWh · $3,940 · Paid on time<br>• <strong>Mar (EXC-0311-A):</strong> 0 kWh read · Invoice blocked<br><br>The only change is the AESO meter read gap. No rate changes, no plan modifications, no contract amendments since November 2023. This is entirely a data feed issue — not a customer behaviour change.<br><br>Payment history context: this account has paid on time for <strong>26 of 27 months</strong>. The Feb overdue balance is almost certainly a downstream effect of the meter dispute, not a credit risk.`,
+
+  'recommend next step exception': `__ACTION_PREVIEW__
+  <div class="action-preview-label">⚙ Recommended Resolution — EXC-0311-A</div>
+  <div style="display:flex;flex-direction:column;gap:8px;font:500 12px var(--font-ui);color:var(--light)">
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--teal)">→</span> Apply prior-period average: <strong>44,400 kWh → $4,180 invoice</strong></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--teal)">→</span> Mark EXC-0311-A as <strong>Resolved — Prior Period Applied</strong></div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--teal)">→</span> Release invoice for distribution</div>
+    <div style="display:flex;align-items:center;gap:8px"><span style="color:var(--teal)">→</span> Create customer notification email (Emberlyn can draft)</div>
+  </div>`,
+
+  // ── FLOW 3: Settlement + Emberlyn ────────────────────────────────
+
+  'draft response altagas': `__ACTION_PREVIEW__
+  <div class="action-preview-label">📧 Proposed Response — AltaGas Retail</div>
+  <div style="font:500 12px var(--font-ui);color:var(--light);margin-bottom:8px"><strong>To:</strong> settlements@altagasretail.ca &nbsp;|&nbsp; <strong>Re:</strong> INV-2026-0312 Variance Resolution</div>
+  <div style="font:400 12px var(--font-ui);color:var(--text);line-height:1.7">Dear AltaGas Settlements Team,<br><br>Following our review of the variance on INV-2026-0312, we are writing to formally present UTILITYnet's position.<br><br>Our calculation of <strong>$481,600.00</strong> is derived from AESO-certified settlement data received March 5, 2026, covering 2,408 confirmed customer accounts. Your submission of $483,240.00 reflects an overcount of approximately 1,640 kWh, which we believe is attributable to a data refresh timing issue on your end affecting 8 site records.<br><br>Per section 4.2 of our MSA, AESO data is authoritative in settlement disputes. We are attaching the relevant AESO extract for your review.<br><br>If we do not receive an updated submission by <strong>March 15</strong>, we will issue your commission statement at the UTILITYnet-calculated figure.<br><br>UTILITYnet Settlement Operations</div>`,
+
+  'root cause settlement': `<strong>AltaGas Retail — Settlement Mismatch Root Cause</strong><br><br>The <strong>$1,640.00 variance</strong> on INV-2026-0312 is caused by 8 site meter reads not included in AltaGas's submission.<br><br>AESO settlement data (received Mar 5) confirms <strong>2,408 customers and 481,600 kWh</strong> total consumption. AltaGas submitted 483,240 kWh — an overcount mapped at blended average rate.<br><br><strong>Supporting evidence:</strong> AESO data is authoritative under the AUC settlement framework. Our calculation aligns precisely with AESO. AltaGas's variance likely reflects a manual override or data refresh timing issue on their end — this is a known pattern with 3 other Alberta retailers this quarter.<br><br><strong>Status:</strong> AltaGas notified Mar 8. No response received as of Mar 11. If unresolved by Mar 15, commission statement will issue at UTILITYnet's figure per MSA clause 4.2.<br><br>Shall I draft the formal dispute response?`,
+
+  'what to resolve before closing': `Before closing the March 2026 settlement cycle, <strong>3 items need resolution:</strong><br><br>1. <strong>AltaGas Retail (INV-2026-0312)</strong> — $1,640 variance. Formal response required. Target: Mar 13.<br>2. <strong>Calgary Energy</strong> — Commission reconciliation pending their updated submission. Target: Mar 14.<br>3. <strong>SolarEdge minor exception</strong> — $180 rounding discrepancy. Auto-eligible for resolution under the $500 threshold rule. Can close immediately.<br><br>Once these three close, commission statements issue to all 52 marketers. <strong>Final settlement target: March 20.</strong> Currently tracking 2 days ahead of last cycle — strong position.`,
+
+  // ── FLOW 4: Thena Analytics Prescriptive ─────────────────────────
+
+  'top revenue risks q2': `<strong>Q2 2026 Revenue Risk Assessment</strong><br><br><strong>1. Late Payment Exposure — $41,200 (High · 82% confidence)</strong><br>17 accounts show payment delay indicators based on billing complaint frequency, variable plan exposure, and AESO price volatility. Proactive outreach in the next 7 days historically recovers 60–70% of at-risk balance without escalation.<br><br><strong>2. Churn Risk — $84,000 LTV at risk (Medium · 79% confidence)</strong><br>42 accounts match the churn pattern: 3+ billing complaints plus variable plan mismatch. Most have been on variable plans since AESO prices spiked in Q4 2025. A targeted fixed-rate offer at $0 switch cost would retain an estimated 28–35 of these accounts.<br><br><strong>3. Marketer Underperformance — $68,000 revenue gap (Medium)</strong><br>GreenPath, AltaEnergy, and SolarEdge combined have 40% above-average lead quality but 28% below-average conversion. Coaching gap, not a lead problem. One structured enablement session typically closes this within 6 weeks.<br><br><strong>Priority order:</strong> Collections outreach first (fastest cash). Marketer enablement in parallel. Retention campaign in week 3.`,
+
+  'which accounts prioritize': `<strong>Late Payment Priority — Top 10 of 17 Accounts</strong><br><br>Ranked by composite risk score (balance × payment history × AESO exposure):<br><br>1. <strong>Nguyen Family Holdings</strong> (C-10478) — $8,400 outstanding · 31 days overdue · High AESO exposure<br>2. <strong>Lakeside Industrial Ltd.</strong> (C-10481) — $14,200 pending · New account risk flag<br>3. <strong>Moreau, Jean-Pierre</strong> (C-10391) — $124 NSF flagged · Recurring late payment pattern<br>4. <strong>Wilson, Barbara</strong> (C-10470) — $124 balance dispute · Rate mismatch unresolved<br>5. <strong>Pemberton Resources Corp</strong> (C-10468) — $2,800 net overdue · Q1 deterioration<br>...<br><br>Accounts 1–5 represent <strong>87% of total exposure</strong> ($26,100 of $41,200). I recommend starting outreach there. Shall I draft the collections email for the top 5?`,
+
+  '30 day action plan': `<strong>UTILITYnet — 30-Day Prescriptive Action Plan</strong><br><em>Projected combined impact: CAD $182,500</em><br><br><strong>Week 1 (Mar 11–17) — Collections</strong><br>Target 17 at-risk accounts with proactive outreach. Expected recovery: $24,700–$30,500 (60–74% of $41,200 exposure).<br><br><strong>Week 2 (Mar 18–24) — Marketer Enablement</strong><br>Schedule GreenPath, AltaEnergy, SolarEdge enablement sessions. Focus: conversion script and fixed-rate offer positioning. Expected uplift: $68,000 annualized if conversion normalizes to benchmark.<br><br><strong>Week 3 (Mar 25–31) — Retention Campaign</strong><br>Launch fixed-rate offer to 42 churn-risk accounts. $0 switch cost, 6-month rate lock. Expected retained LTV: $56,000–$84,000.<br><br><strong>Week 4 (Apr 1–7) — Hedge Review</strong><br>Increase industrial hedge coverage from 61% → 75% before April billing. AESO forward pricing +6.2% — unhedged exposure grows weekly. Expected risk reduction: ~$28,000 April billing variance.<br><br>Confidence: 76% overall. Want me to generate the Week 1 outreach email?`,
+
+  'reduce late payments': `<strong>Prescriptive Recommendations — Late Payment Risk</strong><br><br><strong>Immediate (this week):</strong><br>• Send proactive outreach to 17 at-risk accounts. Emberlyn can draft personalized emails segmented by risk tier. Expected to prevent $24,700–$30,500 in collections escalation.<br>• Flag the top 5 accounts for personal phone follow-up — these represent 87% of exposure.<br><br><strong>Structural (this month):</strong><br>• Auto-enroll variable-plan customers with 2+ late payments in a payment plan offer — reduces NSF risk by approximately 40% based on historical data.<br>• Add payment reminder automation at 7-day and 3-day pre-due triggers. Currently only 30-day notices go out.<br><br><strong>Platform lever:</strong><br>The $41,200 risk exposure correlates 91% with variable plan accounts during AESO price volatility periods. Long-term fix is a more aggressive fixed-rate conversion offer during high-volatility months.<br><br>Start with the outreach — it's this week's lever.`,
+
+  // ── FLOW 5: Thena Executive Q&A ──────────────────────────────────
+
+  'forecast april revenue': `<strong>April 2026 Revenue Forecast</strong><br><br><strong>Base case: $2.21M–$2.47M</strong> (confidence: 76%)<br><br><strong>Growth drivers:</strong><br>• +310–380 net new enrollments expected. Current pipeline conversion rate 68% (30-day rolling). Residential leads up 12% from March.<br>• AESO forward pricing +6.2% avg benefits revenue on industrial accounts — net effect positive ~$80K.<br><br><strong>Headwinds:</strong><br>• 42 churn-risk accounts could reduce revenue $28,000–$42,000 if no retention action taken.<br>• Collections risk ($41,200) shifts timing of cash recognition.<br><br><strong>Upside scenario ($2.58M):</strong> Collections outreach succeeds at 74%+ recovery + marketer conversion improves to benchmark.<br><br><strong>Downside scenario ($1.94M):</strong> Churn materializes + AESO pricing spike triggers industrial disputes.<br><br>March MTD is $2.34M with 20 days completed — strong base. April looks solid if collections and retention actions launch this week.`,
+
+  'marketers below target': `<strong>Marketer Performance Alert — 3 Below Benchmark</strong><br><br><table style="font:500 11px var(--font-ui);width:100%;border-collapse:collapse"><thead><tr style="border-bottom:1px solid rgba(242,240,236,0.13)"><th style="text-align:left;padding:4px 8px;opacity:0.6">Marketer</th><th style="text-align:right;padding:4px 8px;opacity:0.6">Conv. Rate</th><th style="text-align:right;padding:4px 8px;opacity:0.6">Benchmark</th><th style="text-align:right;padding:4px 8px;opacity:0.6">Gap/mo</th></tr></thead><tbody><tr style="border-bottom:1px solid rgba(242,240,236,0.07)"><td style="padding:6px 8px">GreenPath</td><td style="text-align:right;padding:6px 8px;color:#E74C3C">31%</td><td style="text-align:right;padding:6px 8px;opacity:0.6">52%</td><td style="text-align:right;padding:6px 8px;color:#E74C3C">−$28,400</td></tr><tr style="border-bottom:1px solid rgba(242,240,236,0.07)"><td style="padding:6px 8px">AltaEnergy</td><td style="text-align:right;padding:6px 8px;color:#E74C3C">34%</td><td style="text-align:right;padding:6px 8px;opacity:0.6">52%</td><td style="text-align:right;padding:6px 8px;color:#E74C3C">−$22,100</td></tr><tr><td style="padding:6px 8px">SolarEdge</td><td style="text-align:right;padding:6px 8px;color:#D4A017">38%</td><td style="text-align:right;padding:6px 8px;opacity:0.6">52%</td><td style="text-align:right;padding:6px 8px;color:#D4A017">−$17,500</td></tr></tbody></table><br><strong>Combined revenue gap: ~$68,000/month</strong> if brought to benchmark conversion.<br><br>Key finding: all three have <strong>above-average lead quality</strong> (7.7–8.2/10). This is a conversion problem, not a lead problem — it's fixable through coaching, not recruitment.<br><br>Pattern: top performers NRG Direct and PrairieEnergy lead with fixed-rate offers and switch after first objection. Recommend a structured sales script update + one enablement call within 2 weeks. GreenPath first — largest absolute gap.`,
+
+  'top drivers billing exceptions': `<strong>Billing Exception Root Cause Analysis — March 2026</strong><br><br>This month's 3 exceptions share a common upstream cause: <strong>AESO meter data gaps</strong> affecting Edmonton industrial accounts post-firmware update (Feb 28 deployment).<br><br>• <strong>EXC-0311-A (Nguyen, $4,200):</strong> 8-day meter gap, firmware-related<br>• <strong>EXC-0311-B (Wilson, $38.40):</strong> Rate table mismatch — variable rate cache not refreshed<br>• <strong>EXC-0311-C (Moreau, $124):</strong> NSF payment return — unrelated to AESO<br><br>Historical context: billing accuracy is 99.9% (2,847 invoices, 3 exceptions). The AESO firmware issue is an anomaly — expect it to clear next cycle once ATCO confirms patch deployment.<br><br>Structural recommendation: add a pre-batch validation rule that flags any account with zero kWh reads vs. prior period for manual review before invoice generation. This would have caught EXC-0311-A automatically.`,
+
+};
+
+// ══════════════════════════════════════════════════════════════════
+// CACHE KEY NORMALIZATION — maps free-text to cache keys
+// ══════════════════════════════════════════════════════════════════
+function getCacheKey(text) {
+  const t = text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  const patterns = [
+    ['summarize customer issues', ['summarize', 'recent issue', 'account summary', 'what happened', 'history']],
+    ['draft response altagas', ['altagas']],
+    ['draft customer email', ['draft', 'email', 'response', 'customer', 'write']],
+    ['create follow-up task', ['follow-up', 'followup', 'create task', 'update case', 'apply']],
+    ['explain billing exception', ['explain', 'exc-0311', 'exc 0311', 'why exception', 'why flagged', 'root cause exception', 'what caused']],
+    ['what changed since last bill', ['what changed', 'changed since', 'vs last', 'previous bill', 'comparison']],
+    ['recommend next step exception', ['next step', 'recommend', 'how to resolve', 'resolution']],
+    ['root cause settlement', ['root cause', 'mismatch', 'why variance', 'what caused settlement', 'settlement cause']],
+    ['what to resolve before closing', ['before closing', 'what needs', 'resolve before', 'checklist']],
+    ['top revenue risks q2', ['revenue risk', 'top risk', 'q2 risk', 'biggest risk', 'business risk']],
+    ['which accounts prioritize', ['which account', 'prioritize', 'who are the 17', 'priority list']],
+    ['30 day action plan', ['30 day', 'action plan', 'what to do', '30-day']],
+    ['reduce late payments', ['reduce late', 'late payment', 'collections', 'payment risk', 'at-risk account']],
+    ['forecast april revenue', ['forecast', 'april', 'revenue forecast', 'next month revenue']],
+    ['marketers below target', ['below target', 'underperform', 'marketer performance', 'which marketer', 'trending below']],
+    ['top drivers billing exceptions', ['top driver', 'billing exception driver', 'exception cause', 'why exception this month']],
+  ];
+  for (const [key, triggers] of patterns) {
+    if (triggers.some(trigger => t.includes(trigger))) return key;
+  }
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TYPEWRITER EFFECT — makes cached responses look like live streaming
+// ══════════════════════════════════════════════════════════════════
+function typewriterStream(el, html, onDone) {
+  // Stream at word level for natural feel
+  const words = html.split(/(?<=\s)/);
+  let i = 0;
+  let current = '';
+  const interval = setInterval(() => {
+    if (i >= words.length) {
+      clearInterval(interval);
+      el.innerHTML = html; // ensure final state is exact
+      if (onDone) onDone();
+      return;
+    }
+    current += words[i++];
+    el.innerHTML = current;
+    el.closest('.emberlyn-messages, .thena-messages') && (el.closest('.emberlyn-messages, .thena-messages').scrollTop = 99999);
+  }, 18);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ACTION PREVIEW RENDERING
+// ══════════════════════════════════════════════════════════════════
+function renderActionPreview(container, htmlContent, confirmFn) {
+  const preview = document.createElement('div');
+  preview.className = 'action-preview';
+  preview.innerHTML = htmlContent;
+
+  const btns = document.createElement('div');
+  btns.className = 'action-btns';
+  btns.innerHTML = `<button class="btn btn-primary btn-sm" id="confirmBtn">✓ Apply</button><button class="btn btn-ghost btn-sm" id="cancelBtn">Cancel</button>`;
+  preview.appendChild(btns);
+
+  const wrapper = document.createElement('div');
+  wrapper.appendChild(preview);
+  container.appendChild(wrapper);
+  container.scrollTop = 99999;
+
+  btns.querySelector('#confirmBtn').onclick = () => {
+    wrapper.innerHTML = `<div class="bubble-ai fade-up" style="border-color:var(--success);color:var(--success)">✓ Done — changes applied successfully.</div>`;
+    if (confirmFn) confirmFn();
+    container.scrollTop = 99999;
+  };
+  btns.querySelector('#cancelBtn').onclick = () => {
+    wrapper.innerHTML = `<div class="bubble-ai fade-up" style="opacity:0.5">Action cancelled.</div>`;
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SYSTEM PROMPTS
+// ══════════════════════════════════════════════════════════════════
+const THENA_SYSTEM_PROMPT = `You are Thena, UTILITYnet's analytics and business finance intelligence specialist. You are distinct from Emberlyn (the operations copilot) — you specialize in forecasting, financial analysis, business trends, and prescriptive strategy.
+
+You have deep analytical knowledge of UTILITYnet's business:
+- Revenue: Q1 2026 at $6.82M (+8.1% vs Q4 2025). March MTD $2.34M. Residential $1.48M, Industrial $0.86M.
+- Customers: 14,291 active (10,820 residential, 3,471 industrial). Net adds Q1: +842. Churn rate 1.4%.
+- Churn risk: 42 accounts flagged for Q2 — pattern: 3+ billing complaints + variable plan mismatch. LTV at risk: $84,000.
+- Late payment risk: 17 accounts, $41,200 exposure, 82% confidence.
+- Marketer performance: NRG Direct $841K/month leads. GreenPath, AltaEnergy, SolarEdge show strong leads but below-benchmark conversion (~$68K/month gap).
+- Billing accuracy: 99.9%. Settlement turnaround: 4 days avg vs 7.2 days in October.
+- Finance: Cash $1.82M (RBC). AR $184,200. AP $1.21M due Mar 15. Hedge reserve $420K.
+- Energy: AESO forward pricing +6.2% expected March avg. Industrial hedge coverage 61% (recommend 75%).
+- Growth forecast: April +310–380 new enrollments (76% confidence).
+
+Your persona: Senior data strategist. Lead with the number, then the implication, then the action. Cite confidence levels for forecasts. Be specific — "$2.1M" not "significant revenue." Never hedge without stating why. Short, direct. Bullet points only when listing distinct items.`;
+
+const EMBERLYN_SYSTEM_PROMPT = `You are Emberlyn, UTILITYnet's AI Operations Copilot embedded in the ERP platform. You are a retail energy company in Alberta, Canada serving 14,000+ customers through 52 energy marketer partners.
+
+Deep operational knowledge:
+- Customer data: 14,291 active accounts, Residential + Industrial segments
+- Billing: Current batch B-2026-0311 (March 2026), 2,847 invoices, 3 exceptions (EXC-0311-A: missing meter read Nguyen Holdings $4,200; EXC-0311-B: rate mismatch Wilson Barbara $38.40; EXC-0311-C: NSF Moreau $124)
+- Settlement: 52 marketers, AltaGas Retail exception ($1,640 variance INV-2026-0312), Calgary Energy in review
+- Finance: Revenue MTD $2.34M, AR outstanding $184,200, AP due $1.21M commissions, RBC cash $1.82M
+- Predictive Insights: 17 accounts late payment risk ($41,200 exposure, 82% confidence), 3 marketers underperforming
+- AESO: Alberta Electric System Operator feed live, March settlement data received Mar 5
+- Top marketers: NRG Direct ($841K, 4,821 customers), PrairieEnergy ($612K), AltaGas ($482K exception)
+
+Your persona: Direct. Specific. Confident. Always cite numbers. Propose next actions. When suggesting data changes, describe the action clearly and show a preview. Never be vague. Keep responses 3–5 sentences typically. Format with short paragraphs.`;
+
+// ══════════════════════════════════════════════════════════════════
+// THENA PANEL
+// ══════════════════════════════════════════════════════════════════
+function openThena(context) {
+  thenaOpen = true;
+  document.getElementById('thenaPanel').classList.add('open');
+  document.getElementById('main').classList.add('panel-open');
+  document.getElementById('thenaToggle').style.display = 'none';
+
+  const suggestionSets = {
+    'analytics':            ['What are the top revenue risks in Q2?','Which marketers are trending below target?','Forecast April revenue'],
+    'prescriptive':         ['Build me a 30-day action plan','What actions reduce late payments?','Which 17 accounts should we prioritize?'],
+    'collections-outreach': ['Which 17 accounts should we prioritize?','What is the expected recovery rate?','Draft outreach for at-risk accounts'],
+    'retention':            ['Which 42 accounts are highest priority?','What offer prevents churn best?','Estimate LTV impact of fixed-rate conversion'],
+  };
+  const suggestions = suggestionSets[context] || suggestionSets['analytics'];
+  const el = document.getElementById('thenaSuggestions');
+  el.innerHTML = '<div class="sugg-label">Suggested Analysis</div>';
+  suggestions.forEach(s => {
+    el.innerHTML += `<button class="suggestion-chip" style="border-color:var(--teal-bdr)" onclick="sendThena(this.textContent)">${s}</button>`;
+  });
+}
+
+function closeThena() {
+  thenaOpen = false;
+  document.getElementById('thenaPanel').classList.remove('open');
+  document.getElementById('main').classList.remove('panel-open');
+  if (currentModule === 'analytics') document.getElementById('thenaToggle').style.display = 'flex';
+}
+
+async function sendThena(text) {
+  const input = document.getElementById('thenaInput');
+  const msg = text || input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const msgs = document.getElementById('thenaMessages');
+  msgs.innerHTML += `<div class="flex flex-col items-end"><div class="bubble-label text-right">You</div><div class="bubble-user fade-up">${msg}</div></div>`;
+
+  const thinkId = 'thena-think-' + Date.now();
+  msgs.innerHTML += `<div id="${thinkId}"><div class="bubble-label">Thena</div><div class="bubble-ai" style="border-color:var(--teal-bdr)"><span class="thinking-dots"><span>●</span><span>●</span><span>●</span></span></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  document.getElementById('thenaSend').disabled = true;
+
+  thenaHistory.push({ role: 'user', content: msg });
+
+  // Check cache first
+  const cacheKey = getCacheKey(msg);
+  if (cacheKey && RESPONSE_CACHE[cacheKey]) {
+    await new Promise(r => setTimeout(r, 600 + Math.random() * 400)); // realistic thinking delay
+    const cached = RESPONSE_CACHE[cacheKey];
+
+    if (cached.startsWith('__ACTION_PREVIEW__')) {
+      const htmlContent = cached.replace('__ACTION_PREVIEW__', '');
+      const thinkEl = document.getElementById(thinkId);
+      thinkEl.innerHTML = `<div class="bubble-label">Thena</div>`;
+      const previewContainer = document.createElement('div');
+      thinkEl.appendChild(previewContainer);
+      renderActionPreview(previewContainer, htmlContent, null);
+    } else {
+      const thinkEl = document.getElementById(thinkId);
+      thinkEl.innerHTML = `<div class="bubble-label">Thena</div><div class="bubble-ai fade-up" style="border-color:var(--teal-bdr)" id="thena-resp-${thinkId}"></div>`;
+      const respEl = document.getElementById(`thena-resp-${thinkId}`);
+      typewriterStream(respEl, cached, () => { msgs.scrollTop = msgs.scrollHeight; });
+    }
+
+    thenaHistory.push({ role: 'assistant', content: cached.replace('__ACTION_PREVIEW__', '') });
+    document.getElementById('thenaSend').disabled = false;
+    return;
+  }
+
+  // Live API fallback
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 800, system: THENA_SYSTEM_PROMPT, messages: thenaHistory.slice(-8) })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Connection issue — please try again.';
+    document.getElementById(thinkId).innerHTML = `<div class="bubble-label">Thena</div><div class="bubble-ai fade-up" style="border-color:var(--teal-bdr)">${reply.replace(/\n/g,'<br>')}</div>`;
+    thenaHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    document.getElementById(thinkId).innerHTML = `<div class="bubble-label">Thena</div><div class="bubble-ai fade-up" style="color:var(--error)">Connection issue. Please try again.</div>`;
+  }
+
+  document.getElementById('thenaSend').disabled = false;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// EMBERLYN PANEL
+// ══════════════════════════════════════════════════════════════════
+function openEmberlyn(context) {
+  emberlynOpen = true;
+  document.getElementById('emberlynPanel').classList.add('open');
+  document.getElementById('main').classList.add('panel-open');
+  document.getElementById('emberlynToggle').style.display = 'none';
+
+  const suggestions = {
+    'customer-C10478':       ['Summarize this customer\'s recent issues','Draft a response explaining the last invoice','Create a follow-up task and update the case'],
+    'draft-email-C10478':    ['Draft a response explaining the last invoice','Summarize this customer\'s recent issues'],
+    'exc-A':                 ['Explain EXC-0311-A','What changed since the last bill?','Recommend the next step'],
+    'billing-exceptions':    ['Explain EXC-0311-A','What is the total financial risk of these exceptions?','Recommend the next step'],
+    'settlement-exc':        ['Draft a professional response to AltaGas','What is the root cause of this mismatch?','What should be resolved before closing?'],
+    'settlement-AltaGas':    ['Draft a professional response to AltaGas','What is the root cause of this mismatch?','What should be resolved before closing?'],
+    'late-payment':          ['Which accounts should we prioritize?','What actions reduce late payments?','Draft outreach for at-risk accounts'],
+    'finance':               ['What is our cash runway?','Which AP items need approval today?','Summarize month-end readiness'],
+    'marketer-nrg':          ['How is NRG Direct trending vs. last year?','Compare NRG Direct to PrairieEnergy','What can they improve?'],
+  };
+
+  if (context && suggestions[context]) {
+    const el = document.getElementById('emberlynSuggestions');
+    el.innerHTML = '<div class="sugg-label">Suggested Prompts</div>';
+    suggestions[context].forEach(s => {
+      el.innerHTML += `<button class="suggestion-chip" onclick="sendEmberlyn(this.textContent)">${s}</button>`;
+    });
+  }
+}
+
+function closeEmberlyn() {
+  emberlynOpen = false;
+  document.getElementById('emberlynPanel').classList.remove('open');
+  document.getElementById('main').classList.remove('panel-open');
+  document.getElementById('emberlynToggle').style.display = 'flex';
+}
+
+async function sendEmberlyn(text) {
+  const input = document.getElementById('emberlynInput');
+  const msg = text || input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const msgs = document.getElementById('emberlynMessages');
+  msgs.innerHTML += `<div class="flex flex-col items-end"><div class="bubble-label text-right">You</div><div class="bubble-user fade-up">${msg}</div></div>`;
+
+  const thinkId = 'think-' + Date.now();
+  msgs.innerHTML += `<div id="${thinkId}"><div class="bubble-label">Emberlyn</div><div class="bubble-ai"><span class="thinking-dots"><span>●</span><span>●</span><span>●</span></span></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  document.getElementById('emberlynSend').disabled = true;
+
+  emberlynHistory.push({ role: 'user', content: msg });
+
+  // Check cache first
+  const cacheKey = getCacheKey(msg);
+  if (cacheKey && RESPONSE_CACHE[cacheKey]) {
+    await new Promise(r => setTimeout(r, 700 + Math.random() * 500));
+    const cached = RESPONSE_CACHE[cacheKey];
+
+    if (cached.startsWith('__ACTION_PREVIEW__')) {
+      const htmlContent = cached.replace('__ACTION_PREVIEW__', '');
+      const thinkEl = document.getElementById(thinkId);
+      thinkEl.innerHTML = `<div class="bubble-label">Emberlyn</div>`;
+      const previewContainer = document.createElement('div');
+      thinkEl.appendChild(previewContainer);
+      renderActionPreview(previewContainer, htmlContent, null);
+    } else {
+      const thinkEl = document.getElementById(thinkId);
+      thinkEl.innerHTML = `<div class="bubble-label">Emberlyn</div><div class="bubble-ai fade-up" id="em-resp-${thinkId}"></div>`;
+      const respEl = document.getElementById(`em-resp-${thinkId}`);
+      typewriterStream(respEl, cached, () => { msgs.scrollTop = msgs.scrollHeight; });
+    }
+
+    emberlynHistory.push({ role: 'assistant', content: cached.replace('__ACTION_PREVIEW__', '') });
+    document.getElementById('emberlynSend').disabled = false;
+    return;
+  }
+
+  // Live API fallback
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 800, system: EMBERLYN_SYSTEM_PROMPT, messages: emberlynHistory.slice(-8) })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Connection issue — please try again.';
+    document.getElementById(thinkId).innerHTML = `<div class="bubble-label">Emberlyn</div><div class="bubble-ai fade-up">${reply.replace(/\n/g,'<br>')}</div>`;
+    emberlynHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    document.getElementById(thinkId).innerHTML = `<div class="bubble-label">Emberlyn</div><div class="bubble-ai fade-up" style="color:var(--error)">Connection issue. Please try again.</div>`;
+  }
+
+  document.getElementById('emberlynSend').disabled = false;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+function navigate(mod, el) {
+  document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('module-' + mod).classList.add('active');
+  if (el) el.classList.add('active');
+  else document.querySelector('[data-module="' + mod + '"]').classList.add('active');
+
+  const enteringAnalytics = mod === 'analytics';
+  if (enteringAnalytics) {
+    if (emberlynOpen) closeEmberlyn();
+    document.getElementById('emberlynToggle').style.display = 'none';
+    document.getElementById('thenaToggle').style.display = 'flex';
+    document.body.classList.add('thena-mode');
+    document.getElementById('main').style.background = '#111210';
+  } else {
+    if (thenaOpen) closeThena();
+    document.getElementById('thenaToggle').style.display = 'none';
+    document.getElementById('emberlynToggle').style.display = emberlynOpen ? 'none' : 'flex';
+    document.body.classList.remove('thena-mode');
+    document.getElementById('main').style.background = '';
+  }
+
+  currentModule = mod;
+  updateEmberlynContext();
+  setTimeout(() => initChartsForModule(mod), 100);
+}
+
+function updateEmberlynContext() {
+  const labels = {dashboard:'Dashboard',customers:'Customers',billing:'Billing Engine',settlement:'Settlement',marketers:'Marketers',analytics:'Analytics',finance:'Finance',admin:'Admin'};
+  document.getElementById('emberlynContext').textContent = 'CONTEXT: ' + (labels[currentModule]||currentModule) + ' · UTILITYnet ERP · March 2026';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// THEME TOGGLE
+// ══════════════════════════════════════════════════════════════════
+function toggleMode() {
+  const root = document.documentElement;
+  const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  root.setAttribute('data-theme', next);
+  localStorage.setItem('un-theme', next);
+  document.getElementById('modeBtn').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════════════════════════════
+function openEnrollmentModal() {
+  enrollStep = 1;
+  for (let i = 1; i <= 5; i++) {
+    const s = document.getElementById('enroll-step-' + i);
+    if (s) s.style.display = i === 1 ? 'block' : 'none';
+  }
+  updateWorkflowSteps(1);
+  document.getElementById('enrollSuccess').style.display = 'none';
+  document.getElementById('enrollSubmitBtn').style.display = 'inline-flex';
+  document.getElementById('enrollmentModal').classList.add('open');
+}
+
+function openCustomerModal(id) { document.getElementById('customerModal').classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════════════════════════
+// ENROLLMENT FLOW
+// ══════════════════════════════════════════════════════════════════
+function enrollNext(step) {
+  for (let i = 1; i <= 5; i++) {
+    const s = document.getElementById('enroll-step-' + i);
+    if (s) s.style.display = i === step ? 'block' : 'none';
+  }
+  updateWorkflowSteps(step);
+}
+
+function updateWorkflowSteps(activeStep) {
+  document.querySelectorAll('.workflow-step').forEach((s, i) => {
+    s.classList.toggle('active', i + 1 === activeStep);
+    s.classList.toggle('done', i + 1 < activeStep);
+  });
+}
+
+function submitEnrollment() {
+  document.getElementById('enrollSuccess').style.display = 'block';
+  document.getElementById('enrollSubmitBtn').style.display = 'none';
+  for (let i = 1; i <= 5; i++) {
+    const s = document.getElementById('enroll-step-' + i);
+    if (s) s.style.display = 'none';
+  }
+}
+
+function runCreditCheck() {
+  const btn = document.querySelector('#enroll-step-2 .btn-primary');
+  if (btn) { btn.textContent = 'Running…'; btn.disabled = true; }
+  setTimeout(() => {
+    document.getElementById('creditResult').style.display = 'block';
+    if (btn) { btn.textContent = 'Run Credit Check'; btn.disabled = false; }
+  }, 1800);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// TABS & UI HELPERS
+// ══════════════════════════════════════════════════════════════════
+function switchTab(prefix, tab, el) {
+  document.querySelectorAll('[id^="' + prefix + '-"][id$="-tab"]').forEach(t => t.style.display = 'none');
+  const target = document.getElementById(prefix + '-' + tab + '-tab');
+  if (target) target.style.display = 'block';
+  if (el) {
+    const parent = el.closest('.tabs');
+    parent && parent.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+}
+
+function filterTable(tableId, query) {
+  document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function resolveSettlement() {
+  const el = document.getElementById('settlement-exc-card');
+  if (el) {
+    el.style.borderColor = 'var(--success)';
+    el.innerHTML = `<div class="section-label" style="color:var(--success)">Exception Resolved — AltaGas Retail</div>
+      <div style="font:700 14px var(--font-ui);color:var(--light);margin:8px 0">Settlement accepted at UTILITYnet figures: $481,600.00</div>
+      <div style="font:400 12px var(--font-ui);color:var(--muted)">Commission statement queued for March 15 disbursement. Variance documentation filed.</div>
+      <div class="flex gap-8 mt-14"><button class="btn btn-ghost btn-sm">⬇ Download Final Statement</button></div>`;
+  }
+}
+
+function openSettlementDetail(name) { openEmberlyn('settlement-' + name); }
+
+// ══════════════════════════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════════════════════════
+function isThenaMode() { return document.body.classList.contains('thena-mode'); }
+function getColor(a) { const t = document.documentElement.getAttribute('data-theme'); return t === 'dark' ? `rgba(30,136,180,${a})` : `rgba(22,120,160,${a})`; }
+function getGold(a) { const t = document.documentElement.getAttribute('data-theme'); return t === 'dark' ? `rgba(236,179,36,${a})` : `rgba(212,160,23,${a})`; }
+function getTextColor() { const t = document.documentElement.getAttribute('data-theme'); return t === 'dark' ? '#A8BFCC' : '#4A5568'; }
+
+function chartDefaults() {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#162B52' : '#fff', titleColor: getTextColor(), bodyColor: getTextColor(), borderColor: getColor(0.3), borderWidth: 1, padding: 10 } },
+    scales: { x: { grid: { color: getColor(0.06) }, ticks: { color: getTextColor(), font: { family: 'JetBrains Mono', size: 10 } } }, y: { grid: { color: getColor(0.06) }, ticks: { color: getTextColor(), font: { family: 'JetBrains Mono', size: 10 } } } }
+  };
+}
+
+function thenaChartDefaults() {
+  return {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1c1d19', titleColor: '#C8C4BF', bodyColor: '#C8C4BF', borderColor: 'rgba(242,240,236,0.13)', borderWidth: 1, padding: 10 } },
+    scales: { x: { grid: { color: 'rgba(242,240,236,0.06)' }, ticks: { color: '#C8C4BF', font: { family: 'DM Mono', size: 10 } } }, y: { grid: { color: 'rgba(242,240,236,0.06)' }, ticks: { color: '#C8C4BF', font: { family: 'DM Mono', size: 10 } } } }
+  };
+}
+
+function destroyChart(key) { if (chartInstances[key]) { chartInstances[key].destroy(); delete chartInstances[key]; } }
+
+function initChartsForModule(mod) {
+  if (mod === 'dashboard') initDashboardCharts();
+  if (mod === 'marketers') initMarketerChart();
+  if (mod === 'analytics') { initAnalyticsCharts(); setTimeout(() => initPaymentRiskChart(), 50); }
+}
+
+function initDashboardCharts() {
+  destroyChart('revenue');
+  const ctx = document.getElementById('revenueChart');
+  if (!ctx) return;
+  chartInstances['revenue'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'],
+      datasets: [{ data: [1.62,1.71,1.68,1.74,1.79,1.84,1.88,1.97,1.83,1.70,1.76,2.34], borderColor: getColor(1), backgroundColor: getColor(0.1), fill: true, tension: 0.4, pointRadius: 3, pointBackgroundColor: getColor(1) }]
+    },
+    options: { ...chartDefaults(), plugins: { ...chartDefaults().plugins }, scales: { x: { ...chartDefaults().scales.x }, y: { ...chartDefaults().scales.y, ticks: { ...chartDefaults().scales.y.ticks, callback: v => '$' + v + 'M' } } } }
+  });
+  // Marketer performance bars
+  const perf = document.getElementById('marketerPerfList');
+  if (perf) {
+    const data = [['NRG Direct','$841K',92],['PrairieEnergy','$612K',78],['AltaGas Retail','$482K',61],['GreenPath','$389K',49],['Calgary Energy','$220K',28]];
+    perf.innerHTML = data.map(([name,rev,pct]) => `<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font:500 12px var(--font-ui);color:var(--light);margin-bottom:5px"><span>${name}</span><span class="font-mono">${rev}</span></div><div style="height:6px;background:var(--border);border-radius:3px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--teal);border-radius:3px;transition:width 0.8s cubic-bezier(0.4,0,0.2,1)"></div></div></div>`).join('');
+  }
+}
+
+function initMarketerChart() {
+  destroyChart('marketer');
+  const ctx = document.getElementById('marketerChart');
+  if (!ctx) return;
+  chartInstances['marketer'] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: ['NRG Direct','PrairieEnergy','AltaGas','GreenPath','Calgary Energy','AltaEnergy','SolarEdge'], datasets: [{ data: [841,612,482,389,220,179,142], backgroundColor: getColor(0.7), borderRadius: 4 }] },
+    options: { ...chartDefaults(), scales: { x: { ...chartDefaults().scales.x }, y: { ...chartDefaults().scales.y, ticks: { ...chartDefaults().scales.y.ticks, callback: v => '$' + v + 'K' } } } }
+  });
+}
+
+function initAnalyticsCharts() {
+  const thena = isThenaMode();
+  const accent = thena ? (a) => `rgba(212,64,40,${a})` : getColor;
+  const defaults = thena ? thenaChartDefaults() : chartDefaults();
+
+  destroyChart('segment');
+  const seg = document.getElementById('segmentChart');
+  if (seg) {
+    chartInstances['segment'] = new Chart(seg, {
+      type: 'doughnut',
+      data: { labels: ['Residential','Industrial'], datasets: [{ data: [1480,860], backgroundColor: [accent(0.85), accent(0.35)], borderColor: thena ? '#161714' : 'var(--surface)', borderWidth: 3 }] },
+      options: { ...defaults, cutout: '68%', plugins: { ...defaults.plugins, legend: { display: true, position: 'bottom', labels: { color: thena ? '#C8C4BF' : getTextColor(), font: { family: thena ? 'DM Mono' : 'JetBrains Mono', size: 10 } } } } }
+    });
+  }
+
+  destroyChart('issue');
+  const iss = document.getElementById('issueChart');
+  if (iss) {
+    chartInstances['issue'] = new Chart(iss, {
+      type: 'bar',
+      data: { labels: ['Billing Q','Meter Issue','Plan Change','Enrollment','Settlement','Other'], datasets: [{ data: [142,38,71,29,14,44], backgroundColor: accent(0.7), borderRadius: 4 }] },
+      options: defaults
+    });
+  }
+
+  destroyChart('settlement');
+  const set = document.getElementById('settlementChart');
+  if (set) {
+    chartInstances['settlement'] = new Chart(set, {
+      type: 'line',
+      data: { labels: ['Oct','Nov','Dec','Jan','Feb','Mar'], datasets: [{ data: [7.2,6.8,6.1,5.4,4.8,4.0], borderColor: thena ? '#D44028' : getColor(1), backgroundColor: accent(0.08), fill: true, tension: 0.4, pointRadius: 4 }] },
+      options: { ...defaults, scales: { x: { ...defaults.scales.x }, y: { ...defaults.scales.y, ticks: { ...defaults.scales.y.ticks, callback: v => v + 'd' } } } }
+    });
+  }
+}
+
+function initPaymentRiskChart() {
+  destroyChart('paymentRisk');
+  const ctx = document.getElementById('paymentRiskChart');
+  if (!ctx) return;
+  const thena = isThenaMode();
+  const defaults = thena ? thenaChartDefaults() : chartDefaults();
+  chartInstances['paymentRisk'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Week 1','Week 2','Week 3','Week 4'],
+      datasets: [
+        { label: 'High Risk', data: [4,8,3,2], backgroundColor: thena ? 'rgba(212,64,40,0.85)' : 'rgba(231,76,60,0.7)', borderRadius: 4 },
+        { label: 'Medium Risk', data: [6,5,7,4], backgroundColor: thena ? 'rgba(212,64,40,0.45)' : getGold(0.7), borderRadius: 4 },
+        { label: 'Low Risk', data: [12,9,11,8], backgroundColor: thena ? 'rgba(242,240,236,0.12)' : getColor(0.6), borderRadius: 4 }
+      ]
+    },
+    options: { ...defaults, plugins: { ...defaults.plugins, legend: { display: true, labels: { color: thena ? '#C8C4BF' : getTextColor(), font: { family: thena ? 'DM Mono' : 'JetBrains Mono', size: 10 } } } } }
+  });
+}
+
+function initAllCharts() {
+  if (currentModule === 'dashboard') initDashboardCharts();
+  if (currentModule === 'marketers') initMarketerChart();
+  if (currentModule === 'analytics') initAnalyticsCharts();
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  const saved = localStorage.getItem('un-theme');
+  if (saved) { document.documentElement.setAttribute('data-theme', saved); document.getElementById('modeBtn').textContent = saved === 'dark' ? '☀️' : '🌙'; }
+  setTimeout(initDashboardCharts, 300);
+});
+</script>
+-e </body>
+</html>
