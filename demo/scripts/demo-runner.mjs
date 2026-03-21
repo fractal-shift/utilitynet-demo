@@ -16,7 +16,20 @@ const _dirname = dirname(fileURLToPath(import.meta.url));
 import os from 'os';
 
 const _dir = _dirname;
-const BASE_URL = process.env.DEMO_BASE_URL || 'http://localhost:5173';
+
+async function getBaseUrl() {
+  for (const port of [5173, 5174, 5175]) {
+    try {
+      const res = await fetch(`http://localhost:${port}`, { signal: AbortSignal.timeout(1000) });
+      if (res.ok || res.status < 500) return `http://localhost:${port}`;
+    } catch {
+      // port not responding, try next
+    }
+  }
+  return 'http://localhost:5173';
+}
+
+const BASE_URL = process.env.DEMO_BASE_URL || await getBaseUrl();
 const STEP_PAUSE_MS = parseInt(process.env.DEMO_STEP_PAUSE_MS || '5000', 10);
 const SUMMARY_PAUSE_MS = parseInt(process.env.DEMO_SUMMARY_PAUSE_MS || '8000', 10);
 const CURSOR_MOVE_MS = parseInt(process.env.DEMO_CURSOR_MOVE_MS || '600', 10);
@@ -140,6 +153,7 @@ export async function showScenarioSummary(page, title, description) {
  * @param {() => Promise<void>} [fn] - Optional action to run after pause
  */
 export async function step(page, status, fn) {
+  console.log(`  → ${status}`);
   await page.evaluate(
     (s) => {
       window.postMessage({ type: 'demo-status', status: s }, '*');
@@ -154,6 +168,7 @@ export async function step(page, status, fn) {
  * Show status without running an action (e.g. before a multi-step sequence).
  */
 export async function showStatus(page, status) {
+  console.log(`  → ${status}`);
   await page.evaluate(
     (s) => {
       window.postMessage({ type: 'demo-status', status: s }, '*');
