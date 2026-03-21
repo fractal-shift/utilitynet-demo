@@ -161,7 +161,7 @@ Bank reconciliation: Balanced as of March 10`;
   return (
     <div className="flex min-h-screen flex-col" style={{ background: 'var(--bg)' }}>
       <Navbar onToggleMode={handleToggleMode} theme={theme} />
-      <div className="mt-14 flex flex-1 flex-col overflow-hidden">
+      <div className="mt-14 flex flex-1 overflow-hidden">
         <Sidebar
           currentModule={currentModule}
           onNavigate={(mod) => handleNavigate(mod)}
@@ -171,10 +171,7 @@ Bank reconciliation: Balanced as of March 10`;
           className="flex-1 overflow-y-auto px-7 py-7"
           style={{
             marginLeft: 220,
-            marginRight: (emberlynOpen && !isThena) || (thenaOpen && isThena) ? 340 : 0,
-            maxWidth: (emberlynOpen && !isThena) || (thenaOpen && isThena)
-              ? 'calc(100% - 560px)'
-              : 1100,
+            maxWidth: 1100,
             background: isThena ? '#111210' : undefined,
           }}
         >

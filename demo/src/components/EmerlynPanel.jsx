@@ -245,12 +245,11 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
         </button>
       )}
 
-      <div
-        className="fixed top-14 right-0 bottom-0 z-[60] flex w-[340px] flex-col border-l transition-transform duration-300 ease-out"
+      {isOpen && <div
+        className="flex w-[340px] flex-shrink-0 flex-col border-l"
         style={{
           background: 'var(--surface)',
           borderColor: 'var(--border)',
-          transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
         }}
       >
         <div
@@ -384,7 +383,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
             </button>
           </div>
         </div>
-      </div>
+      </div>}
     </>
   );
 }
