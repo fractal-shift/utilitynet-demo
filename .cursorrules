@@ -1,0 +1,94 @@
+═══════════════════════════════════════════════════════════════
+CURSOR RULES — UTILITYNET DEMO — READ BEFORE EVERY ACTION
+═══════════════════════════════════════════════════════════════
+
+ANTI-HALLUCINATION RULES (non-negotiable):
+
+1. PROVE FILES EXIST BEFORE TOUCHING THEM
+   Before referencing any file as existing, run: ls [filepath]
+   Show the output. If ls fails, the file does not exist.
+
+2. NEVER CLAIM A COMMAND PASSED WITHOUT SHOWING OUTPUT
+   Wrong: "validate.mjs ran successfully — all checks passed"
+   Right: [paste the actual terminal output]
+   If you cannot show output, you did not run the command.
+
+3. NEVER STUB A CHECK SCRIPT
+   Every file in scripts/checks/ must test real behavior.
+   return { pass: true } is forbidden. No exceptions.
+   If you cannot write a real check yet, stop and say why.
+
+4. SKIP ≠ PASS
+   If validate.mjs shows all SKIP, nothing has been validated.
+   Do not proceed as if features are complete.
+
+5. ONE FEATURE AT A TIME
+   Build → run heal.mjs → show output → lock → next feature.
+   Never batch multiple features in one response.
+
+6. LOCKED = UNTOUCHABLE
+   Never modify a LOCKED feature for any reason.
+   New requirements get new feature IDs.
+
+═══════════════════════════════════════════════════════════════
+TECHNICAL RULES:
+
+- AppStore uses React Context + useReducer. NO Zustand. Ever.
+- Do not touch auto-heal.mjs.
+- Both servers must be running for Playwright checks:
+  Terminal 1: npm run dev:full
+  Terminal 2: validation commands
+
+═══════════════════════════════════════════════════════════════
+SESSION START — DO THIS FIRST, EVERY TIME:
+
+Run these exact commands and show me the full output before
+doing anything else:
+
+  ls demo/FEATURE_REGISTRY.json
+  ls demo/scripts/validate.mjs
+  ls demo/scripts/heal.mjs
+  ls demo/mock-server.mjs
+  head -5 demo/src/modules/Finance.jsx
+  head -5 demo/src/modules/Admin.jsx
+  cat demo/package.json | grep -E '"mock"|"validate"|"express"'
+
+This tells me exactly what is and isn't built.
+Do not proceed until I confirm I have seen this output.
+
+═══════════════════════════════════════════════════════════════
+CURRENT REPO STATE (as of last verified commit):
+
+NOTHING from NORTH_STAR.md has been built yet. Specifically:
+- Finance.jsx = Phase 2 placeholder only
+- Admin.jsx = 3-integration stub only  
+- No mock-server.mjs
+- No validate.mjs, heal.mjs, or checks/ folder
+- No FEATURE_REGISTRY.json
+- No express, cors, concurrently in package.json
+- No CoachRail, ScenarioPanel, TutorialModeToggle
+- No services/, hooks/, or tutorial-scenarios.js
+
+═══════════════════════════════════════════════════════════════
+FIRST TASK (after session start verification above):
+
+1. npm install express cors concurrently
+
+2. Create validation infrastructure from cursor-validation-system.md:
+   - demo/FEATURE_REGISTRY.json
+   - demo/scripts/validate.mjs
+   - demo/scripts/heal.mjs
+   - All 20 check scripts in demo/scripts/checks/
+   - Update demo/package.json scripts
+
+3. Run: node scripts/validate.mjs
+   Expected: all SKIP (app not running). Show me the full output.
+   Do not build any features until I confirm this is correct.
+
+═══════════════════════════════════════════════════════════════
+REFERENCE DOCUMENTS IN THIS REPO:
+- NORTH_STAR.md — what to build and exact specs
+- cursor-validation-system.md — validation infrastructure
+
+Read both before writing any code.
+═══════════════════════════════════════════════════════════════

@@ -92,12 +92,12 @@
   "T2-003-marketers-flows": {
     "tier": "T2",
     "name": "Marketers — Margin, Prudential, Statements",
-    "status": "LOCKED",
+    "status": "FAILED",
     "validationScript": "scripts/checks/marketers-flows.mjs",
-    "failureCount": 0,
-    "lastError": null,
-    "lastValidated": "2026-03-21T14:01:57.266Z",
-    "lockedAt": "2026-03-21T14:02:53.061Z"
+    "failureCount": 3,
+    "lastError": "Playwright: browserType.launch: Executable doesn't exist at /var/folders/rx/0hvdtmzn37b_6kxdshm5qr500000gn/T/cursor-sandbox-cache/0777f7897fce134ff372f2db2550d2f1/playwright/chromium_headless_shell-12",
+    "lastValidated": null,
+    "lockedAt": null
   },
   "T2-004-analytics-flows": {
     "tier": "T2",

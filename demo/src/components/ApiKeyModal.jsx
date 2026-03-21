@@ -12,6 +12,7 @@ export default function ApiKeyModal({ onSubmit, onSkip }) {
 
   return (
     <div
+      data-demo="api-key-modal"
       className="fixed inset-0 z-[200] flex items-center justify-center"
       style={{ background: 'rgba(10, 22, 40, 0.6)' }}
     >
@@ -66,7 +67,7 @@ export default function ApiKeyModal({ onSubmit, onSkip }) {
             <button
               type="button"
               onClick={onSkip}
-              data-demo="api-key-skip"
+              data-demo="api-key-dismiss"
               className="rounded-lg border px-5 py-2.5 font-medium text-sm"
               style={{
                 background: 'transparent',

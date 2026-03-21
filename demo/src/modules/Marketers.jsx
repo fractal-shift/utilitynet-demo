@@ -61,7 +61,7 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
       {/* Prudential / cash call card */}
       <div className="mb-6 rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
         <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Prudential / Cash Call</div>
-        <div className="text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>AltaGas: Required $420K · Held $380K · Shortfall $40K ⚠ · Cash Call Issued Mar 8 · Due Mar 22</div>
+        <div className="text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>AltaGas: Required $420,000 · Held $380,000 · Shortfall $40,000 ⚠ · Cash Call Issued Mar 8 · Due Mar 22</div>
         <button type="button" data-demo="btn-cash-call-reminder" className="mt-3 rounded-lg px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', border: '1px solid', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Send Cash Call Reminder</button>
       </div>
 
@@ -72,8 +72,8 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
         {statementModal && (
           <div className="mt-4 p-4 rounded-lg border" style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)' }}>
             <div className="text-sm font-medium mb-2" style={{ color: 'var(--light)' }}>Summary Preview</div>
-            <div className="text-[13px] mb-3" style={{ color: 'var(--text)' }}>{statementModal.customers} customers · ${statementModal.net.toLocaleString()} net to marketer</div>
-            <button type="button" onClick={() => { showToast?.('Statement posted to Finance (Hook 3)'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
+            <div className="text-[13px] mb-3" style={{ color: 'var(--text)' }}>{statementModal.customers} customers · {'$' + statementModal.net.toLocaleString()} net to marketer</div>
+            <button type="button" data-demo="btn-post-commissions-to-gl" onClick={() => { showToast?.('Statement posted to Finance (Hook 3)'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
           </div>
         )}
       </div>

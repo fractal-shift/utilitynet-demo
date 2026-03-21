@@ -31,9 +31,15 @@ const MODULES = {
   admin: Admin,
 };
 
+const MODULE_IDS = Object.keys(MODULES);
+
 export default function Layout({ apiKey }) {
   const { state, actions } = useAppStore();
-  const [currentModule, setCurrentModule] = useState('dashboard');
+  const [currentModule, setCurrentModule] = useState(() => {
+    if (typeof window === 'undefined') return 'dashboard';
+    const m = new URLSearchParams(window.location.search).get('module');
+    return m && MODULE_IDS.includes(m) ? m : 'dashboard';
+  });
 
   useEffect(() => {
     const handleKey = (e) => {

@@ -258,7 +258,7 @@ export async function setMockScenario(name) {
  * Dismiss API key modal if present (click Skip to use cached only).
  */
 export async function dismissApiKeyModal(page) {
-  const skip = page.locator('[data-demo="api-key-skip"]');
+  const skip = page.locator('[data-demo="api-key-dismiss"]');
   if (await skip.isVisible().catch(() => false)) {
     await skip.click();
     await page.waitForTimeout(500);
