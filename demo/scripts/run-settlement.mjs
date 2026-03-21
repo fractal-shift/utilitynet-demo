@@ -68,7 +68,8 @@ export async function runScenario(page) {
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
-    await clickWithCursor(page, 'btn-send-settlement-to-finance');
+    await page.locator('[data-demo="btn-send-settlement-to-finance"]').scrollIntoViewIfNeeded();
+    await page.locator('[data-demo="btn-send-settlement-to-finance"]').click();
     await page.waitForTimeout(2000);
   });
 
