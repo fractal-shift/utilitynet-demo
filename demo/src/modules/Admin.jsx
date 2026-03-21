@@ -70,6 +70,51 @@ export default function Admin() {
               <div className="text-[12px]" style={{ color: 'var(--muted)' }}>Loading feeds… (mock server required)</div>
             )}
           </div>
+
+          <div data-demo="watchdog-job-queue" className="mt-5">
+            <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Job Queue</div>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  {['Job', 'Last Run', 'Status', 'Duration'].map((h) => (
+                    <th key={h} className="pb-2 text-left text-[9px] font-medium tracking-[0.08em] uppercase" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', borderBottom: '1px solid var(--border)' }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { job: 'Billing Batch Processor', lastRun: 'Mar 11 · 00:01', status: '✓ Completed', duration: '4m 12s', running: false },
+                  { job: 'Settlement Reconciliation', lastRun: 'Mar 11 · 06:00', status: '✓ Completed', duration: '7m 44s', running: false },
+                  { job: 'GL Posting — Nightly', lastRun: 'Mar 11 · 02:00', status: '✓ Completed', duration: '1m 03s', running: false },
+                  { job: 'AR Aging Refresh', lastRun: 'Mar 11 · 08:00', status: '⏳ Running', duration: '—', running: true },
+                ].map((row) => (
+                  <tr key={row.job}>
+                    <td className="py-2.5 pr-4 text-[12px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)', borderBottom: '1px solid var(--border)' }}>{row.job}</td>
+                    <td className="py-2.5 pr-4 text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', borderBottom: '1px solid var(--border)' }}>{row.lastRun}</td>
+                    <td className="py-2.5 pr-4 text-[11px]" style={{ color: row.running ? 'var(--teal)' : 'var(--success)', fontFamily: 'var(--font-mono)', borderBottom: '1px solid var(--border)' }}>{row.status}</td>
+                    <td className="py-2.5 text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)', borderBottom: '1px solid var(--border)' }}>{row.duration}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div data-demo="watchdog-anomaly-feed" className="mt-5">
+            <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Recent Alerts</div>
+            <div className="flex flex-col gap-2">
+              {[
+                { icon: '🟡', text: 'Mar 11, 09:14 — AltaGas feed delayed · Auto-retry in 47 min' },
+                { icon: '✅', text: 'Mar 11, 08:02 — Billing batch completed · 4,821 invoices · 3 exceptions' },
+                { icon: '✅', text: 'Mar 10, 23:58 — Nightly GL posting completed · All accounts balanced' },
+                { icon: 'ℹ', text: 'Mar 10, 18:30 — Unusual login · Admin account · Resolved' },
+              ].map((entry, idx) => (
+                <div key={idx} className="flex items-start gap-2.5 rounded-lg border p-3" style={{ background: 'var(--s2)', borderColor: 'var(--border)' }}>
+                  <span className="mt-0.5 text-[13px] leading-none">{entry.icon}</span>
+                  <span className="text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
       {tab === 'security' && (
