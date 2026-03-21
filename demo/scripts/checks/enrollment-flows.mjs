@@ -1,6 +1,6 @@
 /**
- * Validates enrollment failed-credit, deposit, and activation-date flows.
- * Uses static analysis (Playwright may be unavailable).
+ * T1-005: Enrollment — Failed Credit + Deposit + Activation Date
+ * Static source inspection: proves the code is there. No Playwright.
  */
 import fs from 'fs';
 import path from 'path';
@@ -15,10 +15,20 @@ export async function check() {
 
   const content = fs.readFileSync(enrollPath, 'utf-8');
 
-  if (!content.includes('toggle-failed-credit')) errors.push('Failed credit toggle not found');
-  if (!content.includes('btn-require-deposit')) errors.push('Require deposit button not found');
-  if (!content.includes('btn-mark-deposit-received')) errors.push('Mark deposit received button not found');
-  if (!content.includes('activation-date-field')) errors.push('Activation date field not found');
+  const requiredDataDemo = [
+    'toggle-failed-credit',
+    'credit-failed-state',
+    'btn-require-deposit',
+    'btn-reject-enrollment',
+    'btn-manual-override',
+    'btn-mark-deposit-received',
+    'activation-date-field',
+    'activation-date-confirmation',
+  ];
+
+  for (const req of requiredDataDemo) {
+    if (!content.includes(req)) errors.push(`Missing in EnrollmentModal: ${req}`);
+  }
 
   return { pass: errors.length === 0, errors };
 }

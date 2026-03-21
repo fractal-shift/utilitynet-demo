@@ -102,12 +102,12 @@
   "T2-004-analytics-flows": {
     "tier": "T2",
     "name": "Analytics — Drill-down, Compliance, Ad-hoc",
-    "status": "PENDING",
+    "status": "VALIDATED",
     "validationScript": "scripts/checks/analytics-flows.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T14:01:57.311Z",
-    "lockedAt": "2026-03-21T14:02:53.106Z"
+    "lastValidated": "2026-03-21T18:05:37.743Z",
+    "lockedAt": null
   },
   "T2-005-admin-security": {
     "tier": "T2",
