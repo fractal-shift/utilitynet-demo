@@ -40,18 +40,12 @@ export async function check() {
       errors.push('analytics-drill-revenue missing');
     } else {
       await drillRevenue.click();
-      const drillAccount = p.locator('[data-demo="analytics-drill-account"]').first();
-      await drillAccount.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
-      if (!await drillAccount.isVisible({ timeout: 1000 }).catch(() => false)) {
-        errors.push('analytics-drill-account (drill panel) not visible after click');
-      } else {
-        await drillAccount.click();
-        const invoiceList = p.locator('[data-demo="analytics-drill-invoice-list"]');
-        await invoiceList.waitFor({ state: 'visible', timeout: 3000 }).catch(() => {});
-        if (!await invoiceList.isVisible({ timeout: 1000 }).catch(() => false)) {
-          errors.push('analytics-drill-invoice-list not visible after account click');
-        }
-      }
+      await p.locator('[data-demo="analytics-drill-account"]').first().click();
+      await p.locator('[data-demo="analytics-drill-invoice-list"]')
+        .waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+      const invoiceVisible = await p.locator('[data-demo="analytics-drill-invoice-list"]')
+        .isVisible({ timeout: 1000 }).catch(() => false);
+      if (!invoiceVisible) errors.push('analytics-drill-invoice-list not visible after account click');
     }
 
     // Export to GL

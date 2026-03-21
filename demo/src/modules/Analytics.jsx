@@ -89,18 +89,16 @@ export default function Analytics({ onOpenThena, showToast }) {
               <div className="mt-3 pt-3 border-t space-y-1" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
                 <div className="text-[10px] mb-2 uppercase opacity-70" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Top 5 contributing accounts</div>
                 {drillAccounts.map((a) => (
-                  <div
+                  <button
                     key={a.name}
+                    type="button"
                     data-demo="analytics-drill-account"
-                    role="button"
-                    tabIndex={0}
                     onClick={() => setSelectedAccount(a.name)}
-                    onKeyDown={(e) => e.key === 'Enter' && setSelectedAccount(a.name)}
-                    className="cursor-pointer hover:opacity-80 py-1.5 px-2 rounded text-[11px]"
-                    style={{ color: '#C8C4BF', background: selectedAccount === a.name ? 'rgba(212,64,40,0.15)' : 'transparent' }}
+                    className="cursor-pointer hover:opacity-80 py-1.5 px-2 rounded text-[11px] w-full text-left border-none"
+                    style={{ color: '#C8C4BF', background: selectedAccount === a.name ? 'rgba(212,64,40,0.15)' : 'transparent', fontFamily: 'inherit' }}
                   >
                     {a.name} — ${a.value}K
-                  </div>
+                  </button>
                 ))}
                 {selectedAccount && (
                   <div data-demo="analytics-drill-invoice-list" className="mt-3 pt-2 border-t space-y-1.5" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>

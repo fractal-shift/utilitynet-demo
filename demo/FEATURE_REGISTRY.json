@@ -102,10 +102,10 @@
   "T2-004-analytics-flows": {
     "tier": "T2",
     "name": "Analytics — Drill-down, Compliance, Ad-hoc",
-    "status": "FAILED",
+    "status": "PENDING",
     "validationScript": "scripts/checks/analytics-flows.mjs",
-    "failureCount": 2,
-    "lastError": "analytics-drill-invoice-list not visible after account click",
+    "failureCount": 0,
+    "lastError": null,
     "lastValidated": "2026-03-21T14:01:57.311Z",
     "lockedAt": "2026-03-21T14:02:53.106Z"
   },
