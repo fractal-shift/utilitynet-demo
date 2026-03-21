@@ -5,6 +5,9 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
   const { state } = useAppStore();
   const { marketers, finance } = state;
   const [postingCommissions, setPostingCommissions] = useState(false);
+  const [margin, setMargin] = useState(0.85);
+  const [statementModal, setStatementModal] = useState(null);
+  const customerRate = (4.82 + margin).toFixed(2);
 
   const journalEntries = finance?.pendingJournalEntries?.filter((e) => e.account?.includes('2100')) || [
     { id: 'JE-2026-0088', source: 'Marketer Commissions — February 2026', amount: 1208400, account: '2100' },
@@ -32,6 +35,49 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
           <button type="button" onClick={onOpenOnboardMarketerModal ?? (() => onOpenEmberlyn?.())} data-demo="btn-onboard-marketer" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>+ Onboard Marketer</button>
         </div>
       </div>
+      {/* Margin management card */}
+      <div className="mb-6 rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
+        <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Margin Management</div>
+        <div className="grid grid-cols-4 gap-4 items-end">
+          <div>
+            <div className="text-[10px] mb-1" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>Base Rate (read-only)</div>
+            <div className="text-base font-mono" style={{ color: 'var(--text)' }}>$4.82/GJ</div>
+          </div>
+          <div>
+            <div className="text-[10px] mb-1" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>Marketer Margin</div>
+            <input data-demo="marketer-margin-input" type="number" step="0.01" value={margin} onChange={(e) => setMargin(parseFloat(e.target.value) || 0)} className="w-24 rounded border px-2 py-1.5 text-sm font-mono" style={{ background: 'var(--s2)', borderColor: 'var(--border)', color: 'var(--text)' }} />
+            <span className="ml-1 text-[12px]" style={{ color: 'var(--muted)' }}>/GJ</span>
+          </div>
+          <div>
+            <div className="text-[10px] mb-1" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>Customer Rate</div>
+            <div className="text-base font-mono font-bold" style={{ color: 'var(--teal)' }}>${customerRate}/GJ</div>
+          </div>
+          <div>
+            <button type="button" data-demo="btn-save-margin" onClick={() => showToast?.('Margin updated — effective April 1, 2026 · Rate card distributed to 847 customers')} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Save Margin</button>
+          </div>
+        </div>
+      </div>
+
+      {/* Prudential / cash call card */}
+      <div className="mb-6 rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
+        <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Prudential / Cash Call</div>
+        <div className="text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>AltaGas: Required $420K · Held $380K · Shortfall $40K ⚠ · Cash Call Issued Mar 8 · Due Mar 22</div>
+        <button type="button" data-demo="btn-cash-call-reminder" className="mt-3 rounded-lg px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', border: '1px solid', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Send Cash Call Reminder</button>
+      </div>
+
+      {/* Statement generation */}
+      <div className="mb-6 rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
+        <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Monthly Statement Generation</div>
+        <button type="button" data-demo="btn-generate-statement" onClick={() => setStatementModal({ customers: 847, net: 13520 })} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Generate Monthly Statement</button>
+        {statementModal && (
+          <div className="mt-4 p-4 rounded-lg border" style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)' }}>
+            <div className="text-sm font-medium mb-2" style={{ color: 'var(--light)' }}>Summary Preview</div>
+            <div className="text-[13px] mb-3" style={{ color: 'var(--text)' }}>{statementModal.customers} customers · ${statementModal.net.toLocaleString()} net to marketer</div>
+            <button type="button" onClick={() => { showToast?.('Statement posted to Finance (Hook 3)'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
+          </div>
+        )}
+      </div>
+
       <div className="mb-6 grid grid-cols-4 gap-4">
         <div className="rounded-xl border p-5" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)', boxShadow: 'var(--card-shadow)' }}>
           <div className="mb-1.5 text-[8px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Total Partner Revenue — MTD</div>

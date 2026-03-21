@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 
+const EXCEPTION_CATEGORIES = ['Volume Variance', 'Rate Dispute', 'Missing Data', 'Timing'];
+
 export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
   const { state, actions } = useAppStore();
   const [sendingToFinance, setSendingToFinance] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState('All');
   const { settlementData } = state;
+  const filteredData = categoryFilter === 'All'
+    ? settlementData
+    : settlementData.filter((row) => row.status === 'Reconciled' || ((row.status === 'Exception' || row.status === 'In Review') && row.category === categoryFilter));
 
   const handleSendToFinance = () => {
     setSendingToFinance(true);
@@ -65,6 +71,12 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
               <span className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[8px] font-medium" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)', color: 'var(--gold)', fontFamily: 'var(--font-mono)' }}>March 2026 Cycle</span>
             </div>
           </div>
+          <div data-demo="settlement-exception-filter" className="flex flex-wrap gap-2 px-5 py-3 border-b" style={{ borderColor: 'var(--border)', background: 'var(--s2)' }}>
+            <button type="button" onClick={() => setCategoryFilter('All')} className={`rounded-full border px-2.5 py-1 text-[10px] font-medium ${categoryFilter === 'All' ? 'border-teal' : ''}`} style={{ borderColor: categoryFilter === 'All' ? 'var(--teal)' : 'var(--border)', background: categoryFilter === 'All' ? 'var(--teal-dim)' : 'transparent', color: categoryFilter === 'All' ? 'var(--teal)' : 'var(--text)' }}>All</button>
+            {EXCEPTION_CATEGORIES.map((cat) => (
+              <button key={cat} type="button" onClick={() => setCategoryFilter(cat)} className={`rounded-full border px-2.5 py-1 text-[10px] font-medium ${categoryFilter === cat ? 'border-teal' : ''}`} style={{ borderColor: categoryFilter === cat ? 'var(--teal)' : 'var(--border)', background: categoryFilter === cat ? 'var(--teal-dim)' : 'transparent', color: categoryFilter === cat ? 'var(--teal)' : 'var(--text)' }}>{cat}</button>
+            ))}
+          </div>
           <table className="w-full text-left">
             <thead>
               <tr className="border-b-2" style={{ borderColor: 'var(--teal)', background: 'var(--s2)' }}>
@@ -76,23 +88,29 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
               </tr>
             </thead>
             <tbody>
-              {settlementData.map((row) => (
+              {filteredData.map((row) => (
                 <tr key={row.name} className="border-b" style={{ borderColor: 'var(--border)' }}>
                   <td className="px-3 py-2.5 font-medium text-[12px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{row.name}</td>
                   <td className="px-3 py-2.5 text-[11px]" style={{ fontFamily: 'var(--font-mono)' }}>{row.customers}</td>
                   <td className="px-3 py-2.5 text-[11px]" style={{ fontFamily: 'var(--font-mono)', color: row.status === 'Exception' ? 'var(--error)' : 'var(--success)' }}>{row.revenue}</td>
                   <td className="px-3 py-2.5">
-                    <span
-                      className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[8px] font-medium"
-                      style={{
-                        background: row.status === 'Reconciled' ? 'rgba(39,174,96,0.10)' : row.status === 'Exception' ? 'rgba(229,62,62,0.10)' : 'var(--gold-dim)',
-                        borderColor: row.status === 'Reconciled' ? 'rgba(39,174,96,0.30)' : row.status === 'Exception' ? 'rgba(229,62,62,0.30)' : 'var(--gold-bdr)',
-                        color: row.status === 'Reconciled' ? 'var(--success)' : row.status === 'Exception' ? 'var(--error)' : 'var(--gold)',
-                        fontFamily: 'var(--font-mono)',
-                      }}
-                    >
-                      {row.status === 'Exception' && altaGasResolved ? 'Resolved' : row.status}
-                    </span>
+                    {row.status === 'Exception' && row.category ? (
+                      <span className="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[8px] font-medium" style={{ background: 'rgba(229,62,62,0.10)', borderColor: 'rgba(229,62,62,0.30)', color: 'var(--error)', fontFamily: 'var(--font-mono)' }}>
+                        {row.category}{row.variance ? ` · $${row.variance.toLocaleString()} delta` : ''}
+                      </span>
+                    ) : (
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[8px] font-medium"
+                        style={{
+                          background: row.status === 'Reconciled' ? 'rgba(39,174,96,0.10)' : row.status === 'Exception' ? 'rgba(229,62,62,0.10)' : 'var(--gold-dim)',
+                          borderColor: row.status === 'Reconciled' ? 'rgba(39,174,96,0.30)' : row.status === 'Exception' ? 'rgba(229,62,62,0.30)' : 'var(--gold-bdr)',
+                          color: row.status === 'Reconciled' ? 'var(--success)' : row.status === 'Exception' ? 'var(--error)' : 'var(--gold)',
+                          fontFamily: 'var(--font-mono)',
+                        }}
+                      >
+                        {row.status === 'Exception' && altaGasResolved ? 'Resolved' : row.status}
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-2.5">
                     {row.status === 'Exception' && row.name === 'AltaGas Retail' && (

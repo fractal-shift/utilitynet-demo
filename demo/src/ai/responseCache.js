@@ -83,6 +83,10 @@ export const CACHE = {
   'forecast service call volume': `22–28 cases (71% confidence) for next month.<br><br>Based on March 28-day trend + AESO schedule. What would push it higher: billing exception backlog.`,
 
   'top drivers billing exceptions': `<strong>Billing Exception Root Cause Analysis — March 2026</strong><br><br>This month's 3 exceptions share a common upstream cause: <strong>AESO meter data gaps</strong> affecting Edmonton industrial accounts post-firmware update (Feb 28 deployment).<br><br>• <strong>EXC-0311-A (MacGregor, $4,200):</strong> 8-day meter gap, firmware-related<br>• <strong>EXC-0311-B (Wilson, $38.40):</strong> Rate table mismatch — variable rate cache not refreshed<br>• <strong>EXC-0311-C (Moreau, $124):</strong> NSF payment return — unrelated to AESO<br><br>Historical context: billing accuracy is 99.9% (2,847 invoices, 3 exceptions). The AESO firmware issue is an anomaly — expect it to clear next cycle once ATCO confirms patch deployment.<br><br>Structural recommendation: add a pre-batch validation rule that flags any account with zero kWh reads vs. prior period for manual review before invoice generation. This would have caught EXC-0311-A automatically.`,
+
+  // ── FLOW: Finance — AP / Month-End Close ─────────────────────────
+
+  'ap items blocking month end': `<strong>AP Items Blocking Month-End Close — March 2026</strong><br><br><strong>1 remaining blocker:</strong><br>• <strong>AltaGas Settlement Payable</strong> — $6.82M · Awaiting final settlement reconciliation (target Mar 15). Once AltaGas variance is resolved, JE-2026-0091 will post and March close can complete.<br><br>Marketer commissions (JE-2026-0088) were approved earlier — that blocker is cleared. The AP queue shows $1.19M approved and posted. Only the AltaGas settlement item is holding month-end.<br><br>Recommendation: prioritize the AltaGas reconciliation response this week. Settlement team has the formal draft ready — once AltaGas confirms, the journal entry posts automatically and Finance can close March.`,
 };
 
 export function getCacheKey(text, context = '') {
@@ -98,6 +102,7 @@ export function getCacheKey(text, context = '') {
     ['draft customer email', ['draft', 'email', 'response', 'customer', 'write', 'explaining', 'last invoice']],
     ['create follow-up task', ['follow-up', 'followup', 'create task', 'update case', 'apply']],
     ['explain billing exception', ['explain', 'exc-0311', 'exc 0311', 'why exception', 'why flagged', 'root cause exception', 'what caused']],
+    ['ap items blocking month end', ['ap item', 'blocking', 'month-end', 'month end close', 'blocking month']],
     ['what changed since last bill', ['what changed', 'changed since', 'vs last', 'previous bill', 'comparison']],
     ['recommend next step exception', ['next step', 'recommend', 'how to resolve', 'resolution']],
     ['root cause settlement', ['root cause', 'mismatch', 'why variance', 'what caused settlement', 'settlement cause']],

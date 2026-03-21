@@ -11,6 +11,7 @@
     "mock": "node mock-server.mjs",
     "dev:full": "concurrently \"npm run mock\" \"npm run dev\"",
     "gen-audio": "node scripts/generate-audio.mjs",
+    "predev": "node -e \"const fs=require('fs'),p='src/apiKey.js';if(!fs.existsSync(p)){fs.copyFileSync('src/apiKey.example.js',p);console.log('[predev] Created apiKey.js from example — edit it with your Anthropic key]');}\"",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",

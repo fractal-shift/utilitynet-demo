@@ -27,9 +27,9 @@ export const marketers = [
 export const settlementData = [
   { name: 'NRG Direct', customers: 4821, revenue: '$841,200', commission: '$42,060', status: 'Reconciled' },
   { name: 'PrairieEnergy', customers: 3112, revenue: '$612,400', commission: '$30,620', status: 'Reconciled' },
-  { name: 'AltaGas Retail', customers: 2408, revenue: '$481,600', commission: '$—', status: 'Exception', variance: 1640, utilitynetCalc: 481600, altagasSubmitted: 483240 },
+  { name: 'AltaGas Retail', customers: 2408, revenue: '$481,600', commission: '$—', status: 'Exception', category: 'Volume Variance', variance: 1640, utilitynetCalc: 481600, altagasSubmitted: 483240 },
   { name: 'GreenPath', customers: 1944, revenue: '$388,800', commission: '$19,440', status: 'Reconciled' },
-  { name: 'Calgary Energy', customers: 1102, revenue: '$220,400', commission: '$—', status: 'In Review' },
+  { name: 'Calgary Energy', customers: 1102, revenue: '$220,400', commission: '$—', status: 'Exception', category: 'Rate Dispute', variance: 420 },
   { name: 'AltaEnergy', customers: 893, revenue: '$178,600', commission: '$8,930', status: 'Reconciled' },
 ];
 

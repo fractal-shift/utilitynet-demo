@@ -1,6 +1,9 @@
 /**
  * UTILITYnet Demo — Master Validation Runner
  *
+ * NOTE: LOCKED features are SKIPPED. So validate always "passes" when all features are LOCKED.
+ * To re-validate a LOCKED feature, remove it from registry or set status to PENDING.
+ *
  * Usage:
  *   node scripts/validate.mjs                          — run all checks
  *   node scripts/validate.mjs --feature [feature-id]  — run one feature check

@@ -1,17 +1,21 @@
 /**
  * Shared helpers for Playwright demo automation.
  * - step(): show status, pause, then run action
- * - showScenarioSummary(): show title + description at scenario start
+ * - showScenarioSummary(): title + description at scenario start
  * - showStatus(): post status to app overlay
- * - clickWithCursor(): move visible cursor to element, then click
+ * - clickWithCursor(): uses .first() when multiple match (e.g. btn-approve-ap)
+ * - setMockScenario(): POST to mock server localhost:3101/scenario/:name
+ * - createDemoContext(): injects API key from apiKey.js so Emberlyn/Thena use real Claude
  */
 
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+
+const _dirname = dirname(fileURLToPath(import.meta.url));
 import os from 'os';
 
-const _dir = dirname(fileURLToPath(import.meta.url));
+const _dir = _dirname;
 const BASE_URL = process.env.DEMO_BASE_URL || 'http://localhost:5173';
 const STEP_PAUSE_MS = parseInt(process.env.DEMO_STEP_PAUSE_MS || '5000', 10);
 const SUMMARY_PAUSE_MS = parseInt(process.env.DEMO_SUMMARY_PAUSE_MS || '8000', 10);
@@ -27,6 +31,19 @@ export const DEMO_VIEWPORT = { width: DEMO_VIEWPORT_WIDTH, height: DEMO_VIEWPORT
 
 export async function setDemoViewport(page) {
   await page.setViewportSize(DEMO_VIEWPORT);
+}
+
+// Demo injects key from env or from hardcoded apiKey.js
+function getDemoApiKey() {
+  const fromEnv = process.env.VITE_CLAUDE_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.CLAUDE_API_KEY;
+  if (fromEnv?.trim()) return fromEnv.trim();
+  try {
+    const apiKeyPath = join(_dirname, '../src/apiKey.js');
+    const content = readFileSync(apiKeyPath, 'utf-8');
+    const m = content.match(/CLAUDE_API_KEY\s*=\s*['"]([^'"]+)['"]/);
+    const k = m?.[1]?.trim();
+    return k && !k.includes('REPLACE') ? k : '';
+  } catch { return ''; }
 }
 
 export async function createDemoContext(browser, scenario = 'demo') {
@@ -45,6 +62,17 @@ export async function createDemoContext(browser, scenario = 'demo') {
     ...(recordVideo && { recordVideo }),
   });
   const page = await context.newPage();
+
+  // Pre-fill API key so Emberlyn/Thena use real Claude
+  const demoKey = getDemoApiKey();
+  if (demoKey) {
+    await page.addInitScript((key) => {
+      if (key && typeof sessionStorage !== 'undefined') {
+        sessionStorage.setItem('claude-api-key', key);
+      }
+    }, demoKey);
+  }
+
   page.setDefaultTimeout(15000);
   return { context, page };
 }
@@ -141,7 +169,8 @@ export async function showStatus(page, status) {
  * @param {string} selector - data-demo value (e.g. "nav-customers") or full selector
  */
 export async function clickWithCursor(page, selector) {
-  const locator = selector.startsWith('[') || selector.includes('=') ? page.locator(selector) : page.locator(`[data-demo="${selector}"]`);
+  const loc = selector.startsWith('[') || selector.includes('=') ? page.locator(selector) : page.locator(`[data-demo="${selector}"]`);
+  const locator = loc.first();
   try {
     await locator.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'smooth' }));
     await page.waitForTimeout(300);

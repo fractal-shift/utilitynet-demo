@@ -3,6 +3,7 @@ import { CACHE, getCacheKey } from '../ai/responseCache';
 import { streamClaude } from '../ai/claudeClient';
 import { EMBERLYN_SYSTEM_PROMPT } from '../ai/prompts';
 import { parseCreateBillingBatchIntent } from '../ai/intentActions';
+import { CLAUDE_API_KEY } from '../apiKey';
 
 const SUGGESTIONS = {
   'customer-C10482': [
@@ -60,7 +61,7 @@ function typewriterStream(html, onUpdate, onDone) {
   }, 18);
 }
 
-const getApiKey = () => import.meta.env.VITE_CLAUDE_API_KEY?.trim() || sessionStorage.getItem('claude-api-key');
+const getApiKey = () => CLAUDE_API_KEY?.trim() || import.meta.env.VITE_CLAUDE_API_KEY?.trim() || sessionStorage.getItem('claude-api-key');
 
 export default function EmerlynPanel({ isOpen, onClose, onToggle, context, suggestionContext = 'default', apiKey, onConfirmAction, onExecuteAction }) {
   const effectiveApiKey = apiKey?.trim() || getApiKey();

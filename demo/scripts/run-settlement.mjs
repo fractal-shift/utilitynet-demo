@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 /**
  * Demo: Settlement Exception + Emberlyn
- * Navigates to Settlement, opens Emberlyn for AltaGas,
- * asks root cause, drafts response, confirms resolution.
+ * Uses setMockScenario('altagas-variance') before invoice ingest so Emberlyn
+ * has real invoice data. Adds btn-send-settlement-to-finance step.
+ * Resets to altagas-clean at end.
  */
 
 import { chromium } from 'playwright';
@@ -16,6 +17,7 @@ import {
   dismissApiKeyModal,
   clickWithCursor,
   scrollReadEmberlynResponse,
+  setMockScenario,
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
@@ -29,7 +31,12 @@ export async function runScenario(page) {
 
   await dismissApiKeyModal(page);
 
-  await showScenarioSummary(page, 'Settlement Reconciliation + Emberlyn', 'AltaGas submitted an invoice that doesn\'t match UTILITYnet\'s calculations ($1,640 variance). We\'ll ask Emberlyn for the root cause, draft the formal response, and accept UTILITYnet figures. No more 3-day email back-and-forth.');
+  await showScenarioSummary(page, 'Settlement Reconciliation + Emberlyn', 'AltaGas submitted an invoice that doesn\'t match UTILITYnet\'s calculations ($1,640 variance). We\'ll set altagas-variance scenario before ingest, ask Emberlyn for root cause, draft the response, accept UTILITYnet figures, send to Finance, then reset to altagas-clean.');
+
+  await step(page, 'Setting mock scenario altagas-variance before invoice ingest...', async () => {
+    await setMockScenario('altagas-variance');
+    await page.waitForTimeout(500);
+  });
 
   await step(page, 'Navigating to Settlement...', async () => {
     await clickWithCursor(page, 'nav-settlement');
@@ -55,11 +62,22 @@ export async function runScenario(page) {
     if (await confirm.isVisible().catch(() => false)) {
       await confirm.click();
     } else {
-      await page.click('[data-demo="btn-resolve-altagas"]');
+      await page.locator('[data-demo="btn-resolve-altagas"]').click();
     }
+    await page.waitForTimeout(1000);
   });
 
-  await showStatus(page, 'Settlement exception resolved!');
+  await step(page, 'Sending settlement to Finance...', async () => {
+    await clickWithCursor(page, 'btn-send-settlement-to-finance');
+    await page.waitForTimeout(2000);
+  });
+
+  await step(page, 'Resetting scenario to altagas-clean...', async () => {
+    await setMockScenario('altagas-clean');
+    await page.waitForTimeout(500);
+  });
+
+  await showStatus(page, 'Settlement exception resolved and sent to Finance!');
   await clearStatus(page);
 }
 

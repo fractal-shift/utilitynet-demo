@@ -3,9 +3,25 @@
  * Returns { edits: [{ file, oldString, newString }] }
  */
 
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { getRelevantFiles } from './resolve-context.mjs';
 
-const API_KEY = process.env.ANTHROPIC_API_KEY || process.env.VITE_CLAUDE_API_KEY;
+const _dir = dirname(fileURLToPath(import.meta.url));
+
+function getApiKey() {
+  const fromEnv = process.env.ANTHROPIC_API_KEY || process.env.VITE_CLAUDE_API_KEY;
+  if (fromEnv?.trim()) return fromEnv.trim();
+  try {
+    const content = readFileSync(join(_dir, '../src/apiKey.js'), 'utf-8');
+    const m = content.match(/CLAUDE_API_KEY\s*=\s*['"]([^'"]+)['"]/);
+    const k = m?.[1]?.trim();
+    return k && !k.includes('REPLACE') ? k : '';
+  } catch { return ''; }
+}
+
+const API_KEY = getApiKey();
 
 const SYSTEM_PROMPT = `You are a debugging assistant for a React demo app. A Playwright automation script failed.
 
@@ -23,7 +39,7 @@ Rules:
 
 async function requestFixes(failure) {
   if (!API_KEY) {
-    throw new Error('ANTHROPIC_API_KEY or VITE_CLAUDE_API_KEY required for auto-heal');
+    throw new Error('Add your Claude API key to demo/src/apiKey.js (or set ANTHROPIC_API_KEY / VITE_CLAUDE_API_KEY)');
   }
 
   const files = getRelevantFiles(failure);

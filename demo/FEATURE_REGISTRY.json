@@ -2,141 +2,201 @@
   "T1-001-finance-module": {
     "tier": "T1",
     "name": "Finance Module — Full React Implementation",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/finance-module.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.034Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:56.317Z",
+    "lockedAt": "2026-03-21T14:02:52.657Z"
   },
   "T1-002-mock-server": {
     "tier": "T1",
     "name": "Mock Integration Server",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/mock-server.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.060Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:56.402Z",
+    "lockedAt": "2026-03-21T14:02:52.701Z"
   },
   "T1-003-integration-hooks": {
     "tier": "T1",
     "name": "Finance Integration Hooks (all 4)",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/integration-hooks.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.063Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:56.804Z",
+    "lockedAt": "2026-03-21T14:02:52.746Z"
   },
   "T1-004-billing-workflows": {
     "tier": "T1",
     "name": "Billing — Rebill / Reversal / Correction",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/billing-workflows.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.064Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:56.853Z",
+    "lockedAt": "2026-03-21T14:02:52.793Z"
   },
   "T1-005-enrollment-flows": {
     "tier": "T1",
     "name": "Enrollment — Failed Credit + Deposit + Activation Date",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/enrollment-flows.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.064Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:56.899Z",
+    "lockedAt": "2026-03-21T14:02:52.838Z"
   },
   "T1-006-playwright-finance": {
     "tier": "T1",
     "name": "Playwright run-finance.mjs",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/playwright-finance.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.205Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.082Z",
+    "lockedAt": "2026-03-21T14:02:52.882Z"
   },
   "T1-007-playwright-enrollment-extended": {
     "tier": "T1",
     "name": "Playwright run-enrollment — credit failure extension",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/playwright-enrollment.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.205Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.128Z",
+    "lockedAt": "2026-03-21T14:02:52.926Z"
   },
   "T2-001-coach-rail": {
     "tier": "T2",
     "name": "Coach Rail + Tutorial Mode",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/coach-rail.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.206Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.174Z",
+    "lockedAt": "2026-03-21T14:02:52.971Z"
   },
   "T2-002-audio-generation": {
     "tier": "T2",
     "name": "ElevenLabs Audio Generation Script",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/audio-files.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.206Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.220Z",
+    "lockedAt": "2026-03-21T14:02:53.016Z"
   },
   "T2-003-marketers-flows": {
     "tier": "T2",
     "name": "Marketers — Margin, Prudential, Statements",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/marketers-flows.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.207Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.266Z",
+    "lockedAt": "2026-03-21T14:02:53.061Z"
   },
   "T2-004-analytics-flows": {
     "tier": "T2",
     "name": "Analytics — Drill-down, Compliance, Ad-hoc",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/analytics-flows.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.208Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.311Z",
+    "lockedAt": "2026-03-21T14:02:53.106Z"
   },
   "T2-005-admin-security": {
     "tier": "T2",
     "name": "Admin Security Controls Display",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/admin-security.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.208Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.356Z",
+    "lockedAt": "2026-03-21T14:02:53.150Z"
   },
   "T2-006-watchdog-panel": {
     "tier": "T2",
     "name": "Watchdog OS Monitoring Panel",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/watchdog-panel.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.208Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.401Z",
+    "lockedAt": "2026-03-21T14:02:53.194Z"
   },
   "T2-007-crm-propagation": {
     "tier": "T2",
     "name": "CRM Change Propagation to Billing + Finance",
-    "status": "VALIDATED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/crm-propagation.mjs",
     "failureCount": 0,
     "lastError": null,
-    "lastValidated": "2026-03-21T13:53:58.208Z",
-    "lockedAt": null
+    "lastValidated": "2026-03-21T14:01:57.448Z",
+    "lockedAt": "2026-03-21T14:02:53.240Z"
+  },
+  "T2-008-playwright-marketers-extended": {
+    "tier": "T2",
+    "name": "Playwright run-marketers — margin + statement extension",
+    "status": "LOCKED",
+    "validationScript": "scripts/checks/playwright-marketers.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T14:04:02.273Z",
+    "lockedAt": "2026-03-21T14:04:02.278Z"
+  },
+  "T2-009-playwright-settlement-extended": {
+    "tier": "T2",
+    "name": "Playwright run-settlement — scenario switching extension",
+    "status": "LOCKED",
+    "validationScript": "scripts/checks/playwright-settlement.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T14:04:09.531Z",
+    "lockedAt": "2026-03-21T14:04:09.533Z"
+  },
+  "T2-010-playwright-analytics-extended": {
+    "tier": "T2",
+    "name": "Playwright run-analytics — drill-down extension",
+    "status": "LOCKED",
+    "validationScript": "scripts/checks/playwright-analytics.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T14:04:32.181Z",
+    "lockedAt": "2026-03-21T14:04:32.186Z"
+  },
+  "T3-001-settlement-exception-categories": {
+    "tier": "T3",
+    "name": "Settlement Exception Categorization",
+    "status": "LOCKED",
+    "validationScript": "scripts/checks/settlement-categories.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T16:18:32.863Z",
+    "lockedAt": "2026-03-21T16:18:32.866Z"
+  },
+  "T3-002-enrollment-thin-file": {
+    "tier": "T3",
+    "name": "Enrollment — Thin File Scenario",
+    "status": "LOCKED",
+    "validationScript": "scripts/checks/enrollment-thin-file.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T16:18:46.315Z",
+    "lockedAt": "2026-03-21T16:18:46.319Z"
+  },
+  "T3-003-watchdog-feed-down-demo": {
+    "tier": "T3",
+    "name": "Watchdog Feed-Down Demo Moment",
+    "status": "LOCKED",
+    "validationScript": "scripts/checks/watchdog-feed-down.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T16:19:05.812Z",
+    "lockedAt": "2026-03-21T16:19:05.837Z"
   }
 }

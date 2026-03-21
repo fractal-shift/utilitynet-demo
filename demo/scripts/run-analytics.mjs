@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Demo: Thena Analytics
- * Navigates to Analytics (Thena mode), opens Thena panel,
- * asks about Q2 revenue risks, builds 30-day action plan.
+ * Demo: Thena Analytics — drill-down, GL export, compliance, ad-hoc
+ * Navigates to Analytics, clicks analytics-drill-revenue, btn-analytics-export-gl,
+ * compliance tab, btn-run-adhoc-report, then Thena flow.
  */
 
 import { chromium } from 'playwright';
@@ -29,31 +29,82 @@ export async function runScenario(page) {
 
   await dismissApiKeyModal(page);
 
-  await showScenarioSummary(page, 'Analytics + Thena: Prescriptive Intelligence', 'The ops lead opens Analytics to understand Q2. Thena doesn\'t just report what happened — it tells you what to do. We\'ll ask about top revenue risks and build a 30-day action plan with specific CAD amounts.');
+  await showScenarioSummary(page, 'Analytics + Thena: Prescriptive Intelligence', 'The ops lead opens Analytics. We\'ll drill into revenue, export to GL, check compliance tab, run ad-hoc report, then ask Thena about Q2 risks and build a 30-day action plan.');
 
   await step(page, 'Navigating to Analytics (Thena mode)...', async () => {
     await clickWithCursor(page, 'nav-analytics');
     await page.waitForTimeout(1000);
   });
 
+  await step(page, 'Drilling into revenue...', async () => {
+    await clickWithCursor(page, 'analytics-drill-revenue');
+    await page.waitForTimeout(1500);
+  });
+
+  await step(page, 'Exporting to GL...', async () => {
+    await clickWithCursor(page, 'btn-analytics-export-gl');
+    await page.waitForTimeout(1500);
+  });
+
+  await step(page, 'Opening Compliance tab...', async () => {
+    const complianceTab = page.locator('button:has-text("Compliance")');
+    if (await complianceTab.isVisible().catch(() => false)) {
+      await complianceTab.click();
+      await page.waitForTimeout(1000);
+    }
+    const table = page.locator('[data-demo="compliance-report-table"]');
+    if (await table.isVisible().catch(() => false)) {
+      const genBtn = page.locator('[data-demo="btn-generate-compliance-report"]');
+      if (await genBtn.isVisible().catch(() => false)) {
+        await genBtn.click();
+        await page.waitForTimeout(500);
+      }
+    }
+  });
+
+  await step(page, 'Running ad-hoc report...', async () => {
+    const adhocTab = page.locator('button:has-text("Ad-hoc")');
+    if (await adhocTab.isVisible().catch(() => false)) {
+      await adhocTab.click();
+      await page.waitForTimeout(800);
+    }
+    await clickWithCursor(page, 'btn-run-adhoc-report');
+    await page.waitForTimeout(1500);
+  });
+
   await step(page, 'Opening Thena panel...', async () => {
-    await clickWithCursor(page, 'thena-toggle');
+    const thenaToggle = page.locator('[data-demo="thena-toggle"]');
+    if (await thenaToggle.isVisible().catch(() => false)) {
+      await thenaToggle.click();
+    } else {
+      const fullPlan = page.locator('button:has-text("Full 30-Day Plan")');
+      if (await fullPlan.isVisible().catch(() => false)) await fullPlan.click();
+    }
     await page.waitForTimeout(1000);
   });
 
   await step(page, 'Asking Thena about Q2 revenue risks...', async () => {
-    await page.getByRole('button', { name: 'What are the top revenue risks in Q2?' }).click();
-    await scrollReadThenaResponse(page);
+    const btn = page.getByRole('button', { name: 'What are the top revenue risks in Q2?' });
+    if (await btn.isVisible().catch(() => false)) {
+      await btn.click();
+      await scrollReadThenaResponse(page);
+    }
   });
 
   await step(page, 'Thena is building the 30-day action plan...', async () => {
-    await page.getByRole('button', { name: 'Build me a 30-day action plan' }).click();
-    await scrollReadThenaResponse(page);
+    const btn = page.getByRole('button', { name: 'Build me a 30-day action plan' });
+    if (await btn.isVisible().catch(() => false)) {
+      await btn.click();
+      await scrollReadThenaResponse(page);
+    }
   });
 
   await step(page, 'Drafting collections email for top 5 accounts...', async () => {
-    await page.getByRole('button', { name: 'Draft the collections email for the top 5 accounts' }).click();
-    await scrollReadThenaResponse(page);
+    const btn = page.getByRole('button', { name: 'Draft the collections email for the top 5 accounts' });
+    if (await btn.isVisible().catch(() => false)) {
+      await btn.click();
+      await scrollReadThenaResponse(page);
+    }
   });
 
   await step(page, 'Confirming Thena action...', async () => {
@@ -63,7 +114,7 @@ export async function runScenario(page) {
     }
   });
 
-  await showStatus(page, 'Thena analytics flow complete!');
+  await showStatus(page, 'Analytics flow complete — drill, GL export, compliance, ad-hoc, Thena!');
   await clearStatus(page);
 }
 

@@ -3,8 +3,9 @@ import { AppStoreProvider } from './store/AppStore';
 import Layout from './components/Layout';
 import ApiKeyModal from './components/ApiKeyModal';
 import DemoStatusOverlay from './components/DemoStatusOverlay';
+import { CLAUDE_API_KEY } from './apiKey';
 
-const envApiKey = import.meta.env.VITE_CLAUDE_API_KEY?.trim();
+const envApiKey = CLAUDE_API_KEY?.trim() || import.meta.env.VITE_CLAUDE_API_KEY?.trim();
 
 function App() {
   const [apiKey, setApiKey] = useState(() => envApiKey || sessionStorage.getItem('claude-api-key'));

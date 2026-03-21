@@ -11,6 +11,8 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
   const [creditDone, setCreditDone] = useState(false);
   const [creditFailed, setCreditFailed] = useState(false);
   const [simulateFail, setSimulateFail] = useState(false);
+  const [simulateThin, setSimulateThin] = useState(false);
+  const [creditThin, setCreditThin] = useState(false);
   const [depositOptionSelected, setDepositOptionSelected] = useState(false);
   const [depositReceived, setDepositReceived] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -53,18 +55,28 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
 
   const runCreditCheck = async () => {
     if (simulateFail) await setScenario('credit-fail').catch(() => {});
+    if (simulateThin) await setScenario('credit-thin').catch(() => {});
     setCreditRunning(true);
     setTimeout(() => {
       setCreditRunning(false);
       setCreditDone(true);
       setCreditFailed(simulateFail);
-    }, simulateFail ? 2000 : 1800);
+      setCreditThin(simulateThin);
+    }, (simulateFail || simulateThin) ? 2000 : 1800);
   };
 
   const handleToggleFail = () => {
     setSimulateFail((s) => !s);
     setCreditDone(false);
     setCreditFailed(false);
+  };
+
+  const handleToggleThin = () => {
+    setSimulateThin((s) => !s);
+    setCreditDone(false);
+    setCreditThin(false);
+    if (!simulateThin) setScenario('credit-thin').catch(() => {});
+    else setScenario('credit-pass').catch(() => {});
   };
 
   const handleSubmit = () => {
@@ -151,9 +163,15 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
               <label className="mb-1 block text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Service Address</label>
               <input value={form.address} onChange={(e) => update('address', e.target.value)} placeholder="1234 Energy Ave, Calgary, AB" className="w-full rounded-lg border py-2 px-3 text-[13px]" style={{ background: 'var(--input-bg)', borderColor: 'var(--border)', color: 'var(--light)', fontFamily: 'var(--font-ui)' }} />
             </div>
-            <div className="mb-4 flex items-center gap-2">
-              <label className="text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Simulate Failed Credit Check</label>
-              <button type="button" data-demo="toggle-failed-credit" onClick={handleToggleFail} className={`rounded px-2 py-1 text-[11px] font-medium ${simulateFail ? 'opacity-100' : 'opacity-60'}`} style={{ background: simulateFail ? 'var(--error)' : 'var(--s2)', color: simulateFail ? '#fff' : 'var(--text)', fontFamily: 'var(--font-ui)', border: simulateFail ? 'none' : '1px solid var(--border)' }}>{simulateFail ? 'ON' : 'OFF'}</button>
+            <div className="mb-4 flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Simulate Failed Credit Check</label>
+                <button type="button" data-demo="toggle-failed-credit" onClick={handleToggleFail} className={`rounded px-2 py-1 text-[11px] font-medium ${simulateFail ? 'opacity-100' : 'opacity-60'}`} style={{ background: simulateFail ? 'var(--error)' : 'var(--s2)', color: simulateFail ? '#fff' : 'var(--text)', fontFamily: 'var(--font-ui)', border: simulateFail ? 'none' : '1px solid var(--border)' }}>{simulateFail ? 'ON' : 'OFF'}</button>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Simulate Thin File</label>
+                <button type="button" data-demo="toggle-thin-file" onClick={handleToggleThin} className={`rounded px-2 py-1 text-[11px] font-medium ${simulateThin ? 'opacity-100' : 'opacity-60'}`} style={{ background: simulateThin ? 'var(--gold)' : 'var(--s2)', color: simulateThin ? '#fff' : 'var(--text)', fontFamily: 'var(--font-ui)', border: simulateThin ? 'none' : '1px solid var(--border)' }}>{simulateThin ? 'ON' : 'OFF'}</button>
+              </div>
             </div>
             <div className="mb-6 grid grid-cols-2 gap-4">
               <div>
@@ -178,7 +196,21 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
         {step === 2 && (
           <>
             <div className="mb-4 text-[10px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Credit Verification</div>
-            {creditFailed ? (
+            {creditThin ? (
+              <div data-demo="credit-thin-state" className="mb-6 rounded-lg border p-4" style={{ background: 'rgba(236,179,36,0.08)', borderColor: 'rgba(236,179,36,0.3)' }}>
+                <div className="font-semibold mb-2" style={{ color: 'var(--gold)', fontFamily: 'var(--font-ui)' }}>CONDITIONAL — Thin File · No Credit History</div>
+                <div className="text-[12px] mb-4" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Deposit required: <strong>$150</strong></div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" data-demo="btn-require-deposit-thin" onClick={() => setDepositOptionSelected(true)} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Require Deposit — $150</button>
+                </div>
+                {depositOptionSelected && (
+                  <div className="mt-4 pt-4 border-t" style={{ borderColor: 'var(--border)' }}>
+                    <div className="text-[11px] mb-2" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Deposit amount: $150 · Payment method: Prudential hold</div>
+                    <button type="button" onClick={() => { setDepositReceived(true); showToast?.('Deposit of $150.00 received — prudential hold applied'); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--success)', color: '#fff', fontFamily: 'var(--font-ui)' }}>Mark Deposit Received</button>
+                  </div>
+                )}
+              </div>
+            ) : creditFailed ? (
               <div data-demo="credit-failed-state" className="mb-6 rounded-lg border p-4" style={{ background: 'rgba(229,62,62,0.08)', borderColor: 'rgba(229,62,62,0.3)' }}>
                 <div className="font-semibold mb-2" style={{ color: 'var(--error)', fontFamily: 'var(--font-ui)' }}>⚠ Credit Check Failed — Score: 492 (Minimum: 550)</div>
                 <div className="text-[12px] mb-4" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Select an option:</div>
@@ -223,7 +255,7 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
             )}
             <div className="flex justify-between gap-4">
               <button type="button" onClick={() => setStep(1)} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>← Back</button>
-              {(creditDone && !creditFailed) || (creditFailed && depositReceived) ? (
+              {(creditDone && !creditFailed && !creditThin) || (creditFailed && depositReceived) || (creditThin && depositReceived) ? (
                 <button type="button" onClick={() => setStep(3)} data-demo="enrollment-continue-2" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Continue → Plan Selection</button>
               ) : (
                 <button type="button" onClick={runCreditCheck} disabled={creditRunning} data-demo="enrollment-run-credit" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>{creditRunning ? 'Running…' : 'Run Credit Check'}</button>

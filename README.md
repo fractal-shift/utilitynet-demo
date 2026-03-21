@@ -2,6 +2,8 @@
 
 Alberta energy retail operations demo — customers, billing, settlement, marketers, analytics, and AI assistants (Emberlyn, Thena).
 
+**Project status:** See [PROJECT_STATUS.md](PROJECT_STATUS.md) for Claude/AI visibility — what's implemented, stub checks, known issues.
+
 **Repo:** [github.com/fractal-shift/utilitynet-demo](https://github.com/fractal-shift/utilitynet-demo)
 
 ## Quick start
@@ -14,11 +16,9 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
-## API key (optional)
+## API key (required for real Emberlyn/Thena)
 
-For live AI responses, copy `demo/.env.example` to `demo/.env` and add your `VITE_CLAUDE_API_KEY` from [console.anthropic.com](https://console.anthropic.com/). Cached responses work without it.
-
-For demo auto-heal scripts, use `ANTHROPIC_API_KEY` or `VITE_CLAUDE_API_KEY`.
+Edit `demo/src/apiKey.js` and replace `REPLACE_WITH_YOUR_KEY` with your Claude API key from [console.anthropic.com](https://console.anthropic.com/). The key is used everywhere — app and demo scripts. To avoid accidentally committing your key: `git update-index --skip-worktree demo/src/apiKey.js`
 
 ## Demo automation
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Chart, registerables } from 'chart.js';
 
 Chart.register(...registerables);
@@ -11,9 +11,11 @@ const marketerRanking = [
   { name: 'Calgary Energy', value: 220, pct: 26, error: false },
 ];
 
-export default function Analytics({ onOpenThena }) {
+export default function Analytics({ onOpenThena, showToast }) {
   const segmentChartRef = useRef(null);
   const chartInstance = useRef(null);
+  const [tab, setTab] = useState('overview');
+  const [drillOpen, setDrillOpen] = useState(false);
 
   useEffect(() => {
     if (!segmentChartRef.current) return;
@@ -54,6 +56,12 @@ export default function Analytics({ onOpenThena }) {
         <p className="mt-4 text-[10px] font-medium tracking-widest uppercase" style={{ color: 'rgba(200,196,191,0.5)', fontFamily: 'DM Mono, monospace' }}>
           Reporting · Predictive · Prescriptive · UTILITYnet Q1 2026
         </p>
+        <div className="mt-4 flex gap-2">
+          <button type="button" data-demo="btn-analytics-export-gl" onClick={() => showToast?.('GL reconciliation export — Revenue $2,340,120 matches GL account 4000 · No variance')} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: '#D44028', color: '#fff' }}>Export to GL</button>
+          <button type="button" onClick={() => setTab('overview')} className={`rounded-lg px-3 py-1.5 text-[11px] ${tab === 'overview' ? 'border-2' : ''}`} style={{ borderColor: tab === 'overview' ? '#D44028' : 'rgba(242,240,236,0.13)', background: tab === 'overview' ? 'rgba(212,64,40,0.15)' : 'transparent', color: '#C8C4BF' }}>Overview</button>
+          <button type="button" onClick={() => setTab('compliance')} className={`rounded-lg px-3 py-1.5 text-[11px] ${tab === 'compliance' ? 'border-2' : ''}`} style={{ borderColor: tab === 'compliance' ? '#D44028' : 'rgba(242,240,236,0.13)', background: tab === 'compliance' ? 'rgba(212,64,40,0.15)' : 'transparent', color: '#C8C4BF' }}>Compliance</button>
+          <button type="button" onClick={() => setTab('adhoc')} className={`rounded-lg px-3 py-1.5 text-[11px] ${tab === 'adhoc' ? 'border-2' : ''}`} style={{ borderColor: tab === 'adhoc' ? '#D44028' : 'rgba(242,240,236,0.13)', background: tab === 'adhoc' ? 'rgba(212,64,40,0.15)' : 'transparent', color: '#C8C4BF' }}>Ad-hoc</button>
+        </div>
       </div>
 
       {/* Descriptive */}
@@ -64,10 +72,15 @@ export default function Analytics({ onOpenThena }) {
           <span className="rounded px-2 py-0.5 text-[8px]" style={{ background: '#1c1d19', color: '#C8C4BF', border: '1px solid rgba(242,240,236,0.13)', fontFamily: 'DM Mono, monospace' }}>What happened</span>
         </div>
         <div className="mb-4 grid grid-cols-4 gap-3">
-          <div className="rounded-xl border p-5" style={{ background: 'rgba(212,64,40,0.10)', borderColor: 'rgba(212,64,40,0.28)' }}>
+          <div data-demo="analytics-drill-revenue" role="button" tabIndex={0} onClick={() => setDrillOpen(!drillOpen)} onKeyDown={(e) => e.key === 'Enter' && setDrillOpen(!drillOpen)} className="rounded-xl border p-5 cursor-pointer hover:opacity-90 transition" style={{ background: 'rgba(212,64,40,0.10)', borderColor: 'rgba(212,64,40,0.28)' }}>
             <div className="mb-2 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Total Revenue — Q1</div>
             <div className="text-[26px] font-bold tracking-tight" style={{ color: '#F2F0EC', fontFamily: 'Syne, sans-serif' }}>$6.82M</div>
             <div className="mt-1 text-[11px] font-semibold" style={{ color: '#27AE60', fontFamily: 'Syne, sans-serif' }}>↑ 8.1% vs Q4 2025</div>
+            {drillOpen && (
+              <div className="mt-3 pt-3 border-t space-y-1" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
+                <div className="text-[11px]" style={{ color: '#C8C4BF' }}>Top 5: NRG Direct $841K, PrairieEnergy $612K, AltaGas $482K, GreenPath $389K, Calgary Energy $220K</div>
+              </div>
+            )}
           </div>
           <div className="rounded-xl border p-5" style={{ background: '#161714', borderColor: 'rgba(242,240,236,0.07)' }}>
             <div className="mb-2 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Net New Customers</div>
@@ -212,6 +225,70 @@ export default function Analytics({ onOpenThena }) {
           </div>
         </div>
       </div>
+
+      {/* Compliance tab */}
+      {tab === 'compliance' && (
+        <div className="mb-9">
+          <div className="mb-4 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}>Compliance Reports</div>
+          <div data-demo="compliance-report-table" className="rounded-xl border overflow-hidden" style={{ background: '#161714', borderColor: 'rgba(242,240,236,0.07)' }}>
+            <table className="w-full text-left text-[12px]">
+              <thead>
+                <tr style={{ background: 'rgba(212,64,40,0.1)' }}>
+                  <th className="px-4 py-2 font-medium" style={{ color: '#C8C4BF' }}>Report</th>
+                  <th className="px-4 py-2 font-medium" style={{ color: '#C8C4BF' }}>Status</th>
+                  <th className="px-4 py-2 font-medium" style={{ color: '#C8C4BF' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { name: 'AUC', status: 'Complete', date: 'Mar 10' },
+                  { name: 'AESO', status: 'Complete', date: 'Mar 9' },
+                  { name: 'PIPEDA', status: 'Complete', date: 'Mar 8' },
+                  { name: 'AUC Pending', status: 'Pending', date: '—' },
+                ].map((r) => (
+                  <tr key={r.name} className="border-t" style={{ borderColor: 'rgba(242,240,236,0.07)' }}>
+                    <td className="px-4 py-2" style={{ color: '#F2F0EC' }}>{r.name}</td>
+                    <td className="px-4 py-2" style={{ color: r.status === 'Complete' ? '#27AE60' : '#F39C12' }}>{r.status}</td>
+                    <td className="px-4 py-2">
+                      {r.status === 'Pending' && <button type="button" data-demo="btn-generate-compliance-report" className="rounded px-2 py-1 text-[11px] font-medium" style={{ background: '#D44028', color: '#fff' }}>Generate Report</button>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Ad-hoc tab */}
+      {tab === 'adhoc' && (
+        <div className="mb-9">
+          <div className="mb-4 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}>Ad-hoc Report Builder</div>
+          <div className="rounded-xl border p-5" style={{ background: '#161714', borderColor: 'rgba(242,240,236,0.07)' }}>
+            <div className="flex flex-wrap gap-4 items-end mb-4">
+              <div>
+                <label className="block text-[10px] mb-1" style={{ color: '#C8C4BF' }}>Report On</label>
+                <select className="rounded px-3 py-2 text-[12px] bg-[#1c1d19] border" style={{ borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF' }}>
+                  <option>Billing</option>
+                  <option>Marketers</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] mb-1" style={{ color: '#C8C4BF' }}>Date Range</label>
+                <input type="text" defaultValue="Mar 1–31, 2026" className="rounded px-3 py-2 text-[12px] bg-[#1c1d19] border w-36" style={{ borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF' }} />
+              </div>
+              <div>
+                <label className="block text-[10px] mb-1" style={{ color: '#C8C4BF' }}>Group By</label>
+                <select className="rounded px-3 py-2 text-[12px] bg-[#1c1d19] border" style={{ borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF' }}>
+                  <option>Marketer</option>
+                  <option>Customer</option>
+                </select>
+              </div>
+              <button type="button" data-demo="btn-run-adhoc-report" onClick={() => showToast?.('Report generated — 847 rows')} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: '#D44028', color: '#fff' }}>Run Report</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
