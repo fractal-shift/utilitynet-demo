@@ -1,8 +1,24 @@
+import { useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 
-export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal }) {
+export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, showToast }) {
   const { state } = useAppStore();
-  const { marketers } = state;
+  const { marketers, finance } = state;
+  const [postingCommissions, setPostingCommissions] = useState(false);
+
+  const journalEntries = finance?.pendingJournalEntries?.filter((e) => e.account?.includes('2100')) || [
+    { id: 'JE-2026-0088', source: 'Marketer Commissions — February 2026', amount: 1208400, account: '2100' },
+    { id: 'JE-2026-0087', source: 'Marketer Commissions — January 2026', amount: 1189200, account: '2100' },
+  ].slice(0, 2);
+
+  const handlePostCommissions = () => {
+    setPostingCommissions(true);
+    setTimeout(() => {
+      showToast?.('✓ Commission run approved — Journal Entry JE-2026-0088 · Account 2100 · $1,208,400');
+      setPostingCommissions(false);
+    }, 1500);
+  };
+
   return (
     <div>
       <div className="mb-6 flex items-start justify-between">
@@ -11,7 +27,10 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal }
           <div className="mt-2 h-0.5 w-12 rounded-sm" style={{ background: 'var(--gold)' }} />
           <p className="mt-3.5 text-[13px] font-medium" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Partner directory · Margin management · Performance</p>
         </div>
-        <button type="button" onClick={onOpenOnboardMarketerModal ?? (() => onOpenEmberlyn?.())} data-demo="btn-onboard-marketer" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>+ Onboard Marketer</button>
+        <div className="flex gap-2">
+          <button type="button" data-demo="btn-post-commissions-to-gl" disabled={postingCommissions} onClick={handlePostCommissions} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>{postingCommissions ? 'Posting…' : 'Approve & Post Commissions'}</button>
+          <button type="button" onClick={onOpenOnboardMarketerModal ?? (() => onOpenEmberlyn?.())} data-demo="btn-onboard-marketer" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>+ Onboard Marketer</button>
+        </div>
       </div>
       <div className="mb-6 grid grid-cols-4 gap-4">
         <div className="rounded-xl border p-5" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)', boxShadow: 'var(--card-shadow)' }}>
@@ -33,6 +52,31 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal }
           <div className="mb-1.5 text-[8px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Onboarding Pipeline</div>
           <div className="text-2xl font-bold tracking-tight" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>4</div>
           <div className="mt-1.5 text-[10px] font-semibold" style={{ color: 'var(--gold)', fontFamily: 'var(--font-ui)' }}>2 pending approval</div>
+        </div>
+      </div>
+      <div className="mb-6 rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
+        <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Journal Entries</div>
+        <div data-demo="marketer-journal-entries-table" className="overflow-x-auto rounded border" style={{ borderColor: 'var(--border)' }}>
+          <table className="w-full text-left text-[12px]">
+            <thead>
+              <tr style={{ background: 'var(--s2)' }}>
+                <th className="px-3 py-2 font-medium">Entry</th>
+                <th className="px-3 py-2 font-medium">Source</th>
+                <th className="px-3 py-2 font-medium">Amount</th>
+                <th className="px-3 py-2 font-medium">Account</th>
+              </tr>
+            </thead>
+            <tbody>
+              {journalEntries.map((e) => (
+                <tr key={e.id} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                  <td className="px-3 py-2 font-mono" style={{ color: 'var(--light)' }}>{e.id}</td>
+                  <td className="px-3 py-2" style={{ color: 'var(--text)' }}>{e.source}</td>
+                  <td className="px-3 py-2 font-mono" style={{ color: 'var(--text)' }}>${(e.amount || 0).toLocaleString()}</td>
+                  <td className="px-3 py-2" style={{ color: 'var(--muted)' }}>{e.account}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
       <div className="rounded-xl border overflow-hidden" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>

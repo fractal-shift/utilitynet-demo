@@ -1,8 +1,18 @@
+import { useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 
-export default function Settlement({ onOpenEmberlyn, onExport }) {
+export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
   const { state, actions } = useAppStore();
+  const [sendingToFinance, setSendingToFinance] = useState(false);
   const { settlementData } = state;
+
+  const handleSendToFinance = () => {
+    setSendingToFinance(true);
+    setTimeout(() => {
+      showToast?.('✓ Settlement reconciliation sent to Finance — Journal Entry JE-2026-0091 · Account 2200');
+      setSendingToFinance(false);
+    }, 1500);
+  };
   const altaGas = settlementData.find((s) => s.name === 'AltaGas Retail');
   const altaGasResolved = altaGas?.status === 'Reconciled';
 
@@ -18,7 +28,10 @@ export default function Settlement({ onOpenEmberlyn, onExport }) {
             Marketer reconciliation · Distributor invoices · AESO settlement
           </p>
         </div>
-        <button type="button" onClick={onExport} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⬇ Export</button>
+        <div className="flex gap-2">
+          <button type="button" data-demo="btn-send-settlement-to-finance" disabled={sendingToFinance} onClick={handleSendToFinance} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>{sendingToFinance ? 'Sending…' : 'Send Reconciliation to Finance'}</button>
+          <button type="button" onClick={onExport} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⬇ Export</button>
+        </div>
       </div>
 
       <div className="mb-6 grid grid-cols-4 gap-4">

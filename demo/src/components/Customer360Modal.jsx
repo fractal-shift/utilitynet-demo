@@ -1,14 +1,22 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 
-const MOCK_BILLING = [
+export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmberlyn, showToast }) {
+  const { state, actions } = useAppStore();
+  const [propagationShown, setPropagationShown] = useState(false);
+
+  const handleApplyCredit = () => {
+    actions.addPendingJournalEntry?.({ id: 'JE-2026-0092', account: '1100', amount: 85 });
+    setPropagationShown(true);
+    showToast?.('Credit applied — propagation complete');
+  };
+
+  const MOCK_BILLING = [
   { invoice: 'INV-2026-14801', period: 'Feb 2026', usage: '44,200 kWh', amount: '$8,400', status: 'Overdue' },
   { invoice: 'INV-2026-14780', period: 'Jan 2026', usage: '41,800 kWh', amount: '$3,940', status: 'Paid' },
   { invoice: 'INV-2025-14612', period: 'Dec 2025', usage: '51,200 kWh', amount: '$4,820', status: 'Paid' },
-];
+  ];
 
-export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmberlyn }) {
-  const { state } = useAppStore();
   const cases = (customer ? state.cases.filter((c) => c.customerId === customer.id) : []) || [];
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -87,6 +95,20 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
         )}
 
         {activeTab === 'billing' && (
+          <>
+          {propagationShown && (
+            <div data-demo="crm-propagation-confirmation" className="mb-4 rounded-lg border-l-4 p-4" style={{ background: 'rgba(39,174,96,0.08)', borderLeftColor: 'var(--success)' }}>
+              <div className="font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>✓ Adjustment propagated</div>
+              <div className="mt-2 text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
+                Billing: Credit memo CM-2026-0041 created ($85.00)<br />
+                Finance: AR updated — account 1100 reduced by $85.00<br />
+                GL entry: JE-2026-0092 pending approval
+              </div>
+            </div>
+          )}
+          <div className="mb-3">
+            <button type="button" data-demo="crm-billing-link" onClick={handleApplyCredit} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Apply Credit</button>
+          </div>
           <div className="overflow-x-auto rounded-xl border" style={{ background: 'var(--s2)', borderColor: 'var(--border)' }}>
             <table className="w-full text-left">
               <thead>
@@ -113,6 +135,7 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         {activeTab === 'cases' && (

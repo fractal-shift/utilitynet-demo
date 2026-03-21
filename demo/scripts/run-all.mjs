@@ -12,9 +12,11 @@ import { runScenario as runBilling } from './run-billing.mjs';
 import { runScenario as runSettlement } from './run-settlement.mjs';
 import { runScenario as runMarketers } from './run-marketers.mjs';
 import { runScenario as runAnalytics } from './run-analytics.mjs';
+import { runFinance } from './run-finance.mjs';
 
 const SCENARIOS = [
   ['dashboard', runDashboard],
+  ['finance', runFinance],
   ['enrollment', runEnrollment],
   ['customer-service', runCustomerService],
   ['billing', runBilling],

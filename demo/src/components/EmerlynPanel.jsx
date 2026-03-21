@@ -31,6 +31,12 @@ const SUGGESTIONS = {
     'What is the root cause of this mismatch?',
     'What should be resolved before closing?',
   ],
+  finance: [
+    'What is our current AR risk exposure?',
+    'Which AP items are blocking month-end close?',
+    'Show me journal entries posted from billing this month',
+    'Summarize the March reconciliation status',
+  ],
   default: [
     "Summarize this customer's recent issues",
     'Draft a response explaining the last invoice',

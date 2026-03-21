@@ -1,13 +1,30 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 
-export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExport, initialTab }) {
+export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExport, initialTab, showToast }) {
   const { state, actions } = useAppStore();
-  const { billingBatches, billingExceptions } = state;
+  const { billingBatches, billingExceptions, finance } = state;
   const [activeTab, setActiveTab] = useState(initialTab ?? 'batches');
+  const [postingToGL, setPostingToGL] = useState(false);
+
+  const MOCK_INVOICES = [
+    { id: 'INV-2026-0342', customer: 'Sunrise Industrial Ltd.', amount: '$42,400', status: 'Dispute Resolved' },
+    { id: 'INV-2026-0311', customer: 'Lakeview Homes', amount: '$890', status: 'Paid' },
+    { id: 'INV-2026-0298', customer: 'Peak Energy Partners', amount: '$41,070', status: 'Overdue' },
+  ];
 
   const unresolvedCount = billingExceptions.filter((e) => e.status === 'Unresolved').length;
   const currentBatch = billingBatches[0];
+  const billingPostedAt = finance?.billingPostedAt;
+
+  const handlePostToGL = () => {
+    setPostingToGL(true);
+    setTimeout(() => {
+      actions.postBillingToGL('Mar 11, 2026');
+      showToast?.('✓ Revenue posted to GL — Journal Entry JE-2026-0089 created · Account 4000');
+      setPostingToGL(false);
+    }, 1500);
+  };
 
   return (
     <div>
@@ -109,7 +126,16 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
                     <td className="px-3 py-2.5 text-[12px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{batch.invoices}</td>
                     <td className="px-3 py-2.5"><span className="rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: batchExcCount > 0 ? 'var(--error)' : 'var(--s2)', color: batchExcCount > 0 ? '#fff' : 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{batchExcCount || batch.exceptions}</span></td>
                     <td className="px-3 py-2.5"><span className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[8px] font-medium" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)', color: 'var(--gold)', fontFamily: 'var(--font-mono)' }}>{batch.status}</span></td>
-                    <td className="px-3 py-2.5"><button type="button" onClick={() => setActiveTab('exceptions')} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Review</button></td>
+                    <td className="px-3 py-2.5">
+                      <div className="flex gap-2 items-center">
+                      {billingPostedAt ? (
+                        <span className="text-[11px]" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>✓ Posted to GL — {billingPostedAt}</span>
+                      ) : (
+                        <button type="button" data-demo="btn-post-billing-to-gl" disabled={postingToGL} onClick={handlePostToGL} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>{postingToGL ? 'Posting…' : 'Post Revenue to GL'}</button>
+                      )}
+                      <button type="button" onClick={() => setActiveTab('exceptions')} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Review</button>
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
@@ -158,6 +184,7 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
                 )}
                 <div className="flex gap-2">
                   <button type="button" onClick={() => actions.resolveBillingException(exc.id)} data-demo={`btn-resolve-${exc.id}`} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>✓ Apply Suggested Fix</button>
+                  <button type="button" data-demo="btn-correct-repost" onClick={() => showToast?.('Correction applied — posted to GL')} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Correct & Repost</button>
                   <button
                     type="button"
                     onClick={() => onOpenEmberlyn?.(exc.id === 'EXC-0311-A' ? 'exc-A' : 'billing-exceptions')}
@@ -174,9 +201,39 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
         </>
       )}
 
-      {activeTab !== 'batches' && activeTab !== 'exceptions' && (
+      {activeTab === 'invoices' && (
+        <div className="overflow-x-auto rounded-xl border" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b-2" style={{ borderColor: 'var(--teal)', background: 'var(--s2)' }}>
+                <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase">Customer</th>
+                <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase">Invoice #</th>
+                <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase">Amount</th>
+                <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase">Status</th>
+                <th className="px-3 py-2.5" />
+              </tr>
+            </thead>
+            <tbody>
+              {MOCK_INVOICES.map((inv) => (
+                <tr key={inv.id} className="border-b" style={{ borderColor: 'var(--border)' }}>
+                  <td className="px-3 py-2.5 text-[12px]" style={{ color: 'var(--light)' }}>{inv.customer}</td>
+                  <td className="px-3 py-2.5 font-mono text-[11px]" style={{ color: 'var(--text)' }}>{inv.id}</td>
+                  <td className="px-3 py-2.5 font-mono text-[11px]" style={{ color: 'var(--text)' }}>{inv.amount}</td>
+                  <td className="px-3 py-2.5"><span className="rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: inv.status === 'Dispute Resolved' ? 'rgba(39,174,96,0.10)' : 'var(--s2)', border: '1px solid', borderColor: inv.status === 'Dispute Resolved' ? 'rgba(39,174,96,0.30)' : 'var(--border)', color: inv.status === 'Dispute Resolved' ? 'var(--success)' : 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{inv.status}</span></td>
+                  <td className="px-3 py-2.5">
+                    {inv.status === 'Dispute Resolved' && <button type="button" data-demo={`btn-rebill-${inv.id}`} onClick={() => showToast?.('Rebill queued')} className="rounded px-2 py-1 text-[11px] font-semibold mr-1" style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}>Rebill</button>}
+                    <button type="button" data-demo="btn-reverse-invoice" onClick={() => showToast?.('Reversal CM-2026-0038 created — pending Finance approval')} className="rounded px-2 py-1 text-[11px]" style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Reverse</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {activeTab === 'rates' && (
         <div className="rounded-xl border p-8 text-center" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
-          <div className="text-[13px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Tab content coming soon</div>
+          <div className="text-[13px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Rate configuration coming soon</div>
         </div>
       )}
     </div>

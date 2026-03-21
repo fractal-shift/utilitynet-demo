@@ -41,6 +41,10 @@ const initialState = {
   settlementData: initialSettlement,
   timelineItems: initialTimeline,
   cases: initialCases,
+  finance: {
+    pendingJournalEntries: [],
+    billingPostedAt: null,
+  },
 };
 
 function mergePersisted(init, persisted) {
@@ -54,6 +58,7 @@ function mergePersisted(init, persisted) {
     settlementData: persisted.settlementData ?? init.settlementData,
     timelineItems: persisted.timelineItems ?? init.timelineItems,
     cases: persisted.cases ?? init.cases,
+    finance: persisted.finance ?? init.finance,
   };
 }
 
@@ -137,6 +142,24 @@ function reducer(state, action) {
         ),
       };
       break;
+    case 'ADD_PENDING_JOURNAL_ENTRY':
+      next = {
+        ...state,
+        finance: {
+          ...state.finance,
+          pendingJournalEntries: [...(state.finance?.pendingJournalEntries || []), action.payload],
+        },
+      };
+      break;
+    case 'POST_BILLING_TO_GL':
+      next = {
+        ...state,
+        finance: {
+          ...state.finance,
+          billingPostedAt: action.payload,
+        },
+      };
+      break;
     default:
       return state;
   }
@@ -158,6 +181,10 @@ export function AppStoreProvider({ children }) {
     dispatch({ type: 'UPDATE_TIMELINE_ITEM', payload: { index, updates } });
   const updateCaseStatus = (id, status) =>
     dispatch({ type: 'UPDATE_CASE_STATUS', payload: { id, status } });
+  const addPendingJournalEntry = (entry) =>
+    dispatch({ type: 'ADD_PENDING_JOURNAL_ENTRY', payload: entry });
+  const postBillingToGL = (date) =>
+    dispatch({ type: 'POST_BILLING_TO_GL', payload: date });
 
   const actions = {
     addCustomer,
@@ -167,6 +194,8 @@ export function AppStoreProvider({ children }) {
     addMarketer,
     updateTimelineItem,
     updateCaseStatus,
+    addPendingJournalEntry,
+    postBillingToGL,
     nextCustomerId: () => nextCustomerId(state.customers),
     nextMarketerId: () => nextMarketerId(state.marketers),
   };

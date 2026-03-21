@@ -217,6 +217,15 @@ export async function scrollReadThenaResponse(page) {
 }
 
 /**
+ * Set mock server scenario via HTTP. Used by enrollment credit-fail flow.
+ * @param {string} name - Scenario name (e.g. 'credit-fail', 'credit-pass')
+ */
+export async function setMockScenario(name) {
+  const res = await fetch(`http://localhost:3101/scenario/${name}`, { method: 'POST' });
+  return res.json();
+}
+
+/**
  * Dismiss API key modal if present (click Skip to use cached only).
  */
 export async function dismissApiKeyModal(page) {

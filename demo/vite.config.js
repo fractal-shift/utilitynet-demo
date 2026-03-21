@@ -6,4 +6,16 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
+  server: {
+    proxy: {
+      '/api/mock': {
+        target: 'http://localhost:3101',
+        changeOrigin: true,
+      },
+      '/scenario': {
+        target: 'http://localhost:3101',
+        changeOrigin: true,
+      },
+    },
+  },
 });
