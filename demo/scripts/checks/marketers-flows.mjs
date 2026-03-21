@@ -49,10 +49,11 @@ export async function check() {
     // Statement
     if (!await p.locator('[data-demo="btn-generate-statement"]').isVisible({ timeout: 3000 }).catch(() => false)) { errors.push('btn-generate-statement missing'); }
     else {
-      await p.locator('[data-demo="btn-generate-statement"]').click(); await p.waitForTimeout(600);
-      if (!await p.locator('text=847').isVisible({ timeout: 2000 }).catch(() => false)) errors.push('Statement: customer count 847 not shown');
+      await p.locator('[data-demo="btn-generate-statement"]').click();
+      await p.waitForTimeout(800);
+      if (!await p.locator('text=847 customers').isVisible({ timeout: 2000 }).catch(() => false)) errors.push('Statement: customer count 847 not shown');
       if (!await p.locator('text=$13,520').isVisible({ timeout: 2000 }).catch(() => false)) errors.push('Statement: net to marketer $13,520 not shown');
-      if (!await p.locator('[data-demo="btn-post-commissions-to-gl"]').isVisible({ timeout: 2000 }).catch(() => false)) errors.push('Statement: Approve & Post to Finance button missing');
+      if (!await p.locator('[data-demo="btn-post-commissions-to-gl-modal"]').isVisible({ timeout: 2000 }).catch(() => false)) errors.push('Statement: Approve & Post to Finance button missing');
     }
 
     if (!await p.locator('[data-demo="marketer-journal-entries-table"]').isVisible({ timeout: 3000 }).catch(() => false)) errors.push('marketer-journal-entries-table missing');
