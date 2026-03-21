@@ -94,8 +94,8 @@ export default function Analytics({ onOpenThena, showToast }) {
                     data-demo="analytics-drill-account"
                     role="button"
                     tabIndex={0}
-                    onClick={() => setSelectedAccount(selectedAccount === a.name ? null : a.name)}
-                    onKeyDown={(e) => e.key === 'Enter' && setSelectedAccount(selectedAccount === a.name ? null : a.name)}
+                    onClick={() => setSelectedAccount(a.name)}
+                    onKeyDown={(e) => e.key === 'Enter' && setSelectedAccount(a.name)}
                     className="cursor-pointer hover:opacity-80 py-1.5 px-2 rounded text-[11px]"
                     style={{ color: '#C8C4BF', background: selectedAccount === a.name ? 'rgba(212,64,40,0.15)' : 'transparent' }}
                   >
@@ -103,9 +103,11 @@ export default function Analytics({ onOpenThena, showToast }) {
                   </div>
                 ))}
                 {selectedAccount && (
-                  <div data-demo="analytics-drill-invoice-list" className="mt-3 pt-2 border-t space-y-1" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
+                  <div data-demo="analytics-drill-invoice-list" className="mt-3 pt-2 border-t space-y-1.5" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
                     <div className="text-[10px] mb-1" style={{ color: '#C8C4BF' }}>Sample invoices</div>
-                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0124 $42,100 · INV-2026-0118 $38,200 · INV-2026-0109 $29,400</div>
+                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0124 $42,100</div>
+                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0118 $38,200</div>
+                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0109 $29,400</div>
                   </div>
                 )}
               </div>
