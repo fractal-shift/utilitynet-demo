@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const BASE_URL = process.env.VITE_DEV_URL || 'http://localhost:5173';
 
 async function checkWithPlaywright() {
   const { chromium } = await import('playwright');
@@ -16,7 +17,7 @@ async function checkWithPlaywright() {
   try {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle', timeout: 10000 });
+    await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 10000 });
 
     const dismissModal = async () => {
       const modal = page.locator('[data-demo="api-key-modal"], [data-demo="api-key-dismiss"]');

@@ -1,13 +1,14 @@
 /**
  * Validates Finance module renders correctly and all interactive elements exist.
  * Uses Playwright headless when available; falls back to static analysis if browser fails to launch.
- * Prerequisite for Playwright: app must be running on localhost:5173.
+ * Prerequisite for Playwright: app must be running (default localhost:5173, or set VITE_DEV_URL).
  */
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const BASE_URL = process.env.VITE_DEV_URL || 'http://localhost:5173';
 
 async function checkWithPlaywright() {
   const { chromium } = await import('playwright');
@@ -17,7 +18,7 @@ async function checkWithPlaywright() {
   try {
     browser = await chromium.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle', timeout: 10000 });
+    await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 10000 });
 
     const modal = page.locator('[data-demo="api-key-modal"], [data-demo="api-key-dismiss"]');
     if (await modal.first().isVisible().catch(() => false)) {

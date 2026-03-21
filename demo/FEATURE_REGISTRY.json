@@ -94,8 +94,8 @@
     "name": "Marketers — Margin, Prudential, Statements",
     "status": "FAILED",
     "validationScript": "scripts/checks/marketers-flows.mjs",
-    "failureCount": 3,
-    "lastError": "Playwright: browserType.launch: Executable doesn't exist at /var/folders/rx/0hvdtmzn37b_6kxdshm5qr500000gn/T/cursor-sandbox-cache/0777f7897fce134ff372f2db2550d2f1/playwright/chromium_headless_shell-12",
+    "failureCount": 4,
+    "lastError": "marketer-margin-input missing | btn-save-margin missing | btn-cash-call-reminder missing | Prudential required amount $420,000 not found | Prudential shortfall $40,000 not found | btn-generate-stateme",
     "lastValidated": null,
     "lockedAt": null
   },

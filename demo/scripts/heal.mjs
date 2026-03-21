@@ -32,6 +32,7 @@ try {
   execSync(`node scripts/validate.mjs --feature ${featureId}`, {
     stdio: 'inherit',
     cwd: path.join(__dirname, '..'),
+    env: process.env,
   });
   // Exit 0 — passed
   console.log(`\n✅ ${featureId} — VALIDATED. Marking LOCKED in registry.`);

@@ -1,5 +1,7 @@
 import { chromium } from 'playwright';
 
+const BASE_URL = process.env.VITE_DEV_URL || 'http://localhost:5173';
+
 export async function check() {
   const errors = [];
   let browser, p;
@@ -13,7 +15,7 @@ export async function check() {
       }
     });
     p = await context.newPage();
-    await p.goto('http://localhost:5173?module=marketers', { waitUntil: 'networkidle', timeout: 15000 });
+    await p.goto(`${BASE_URL}?module=marketers`, { waitUntil: 'networkidle', timeout: 15000 });
     try {
       const dismissBtn = p.locator('[data-demo="api-key-dismiss"]');
       if (await dismissBtn.isVisible({ timeout: 2000 }).catch(() => false)) {

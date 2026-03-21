@@ -9,6 +9,8 @@
  *   node scripts/validate.mjs --feature [feature-id]  — run one feature check
  *   node scripts/validate.mjs --tier T1               — run all T1 checks
  *
+ *   VITE_DEV_URL=http://localhost:5175 node scripts/validate.mjs  — when app runs on non-default port
+ *
  * Exit codes:
  *   0 — all checks passed
  *   1 — one or more checks failed
