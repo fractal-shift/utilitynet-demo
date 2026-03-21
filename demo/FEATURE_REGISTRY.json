@@ -102,7 +102,7 @@
   "T2-004-analytics-flows": {
     "tier": "T2",
     "name": "Analytics — Drill-down, Compliance, Ad-hoc",
-    "status": "LOCKED",
+    "status": "PENDING",
     "validationScript": "scripts/checks/analytics-flows.mjs",
     "failureCount": 0,
     "lastError": null,

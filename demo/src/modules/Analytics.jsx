@@ -16,6 +16,15 @@ export default function Analytics({ onOpenThena, showToast }) {
   const chartInstance = useRef(null);
   const [tab, setTab] = useState('overview');
   const [drillOpen, setDrillOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+
+  const drillAccounts = [
+    { name: 'NRG Direct', value: 841 },
+    { name: 'PrairieEnergy', value: 612 },
+    { name: 'AltaGas Retail', value: 482 },
+    { name: 'GreenPath', value: 389 },
+    { name: 'Calgary Energy', value: 220 },
+  ];
 
   useEffect(() => {
     if (!segmentChartRef.current) return;
@@ -78,7 +87,27 @@ export default function Analytics({ onOpenThena, showToast }) {
             <div className="mt-1 text-[11px] font-semibold" style={{ color: '#27AE60', fontFamily: 'Syne, sans-serif' }}>↑ 8.1% vs Q4 2025</div>
             {drillOpen && (
               <div className="mt-3 pt-3 border-t space-y-1" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
-                <div className="text-[11px]" style={{ color: '#C8C4BF' }}>Top 5: NRG Direct $841K, PrairieEnergy $612K, AltaGas $482K, GreenPath $389K, Calgary Energy $220K</div>
+                <div className="text-[10px] mb-2 uppercase opacity-70" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Top 5 contributing accounts</div>
+                {drillAccounts.map((a) => (
+                  <div
+                    key={a.name}
+                    data-demo="analytics-drill-account"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setSelectedAccount(selectedAccount === a.name ? null : a.name)}
+                    onKeyDown={(e) => e.key === 'Enter' && setSelectedAccount(selectedAccount === a.name ? null : a.name)}
+                    className="cursor-pointer hover:opacity-80 py-1.5 px-2 rounded text-[11px]"
+                    style={{ color: '#C8C4BF', background: selectedAccount === a.name ? 'rgba(212,64,40,0.15)' : 'transparent' }}
+                  >
+                    {a.name} — ${a.value}K
+                  </div>
+                ))}
+                {selectedAccount && (
+                  <div data-demo="analytics-drill-invoice-list" className="mt-3 pt-2 border-t space-y-1" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
+                    <div className="text-[10px] mb-1" style={{ color: '#C8C4BF' }}>Sample invoices</div>
+                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0124 $42,100 · INV-2026-0118 $38,200 · INV-2026-0109 $29,400</div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -250,7 +279,7 @@ export default function Analytics({ onOpenThena, showToast }) {
                     <td className="px-4 py-2" style={{ color: '#F2F0EC' }}>{r.name}</td>
                     <td className="px-4 py-2" style={{ color: r.status === 'Complete' ? '#27AE60' : '#F39C12' }}>{r.status}</td>
                     <td className="px-4 py-2">
-                      {r.status === 'Pending' && <button type="button" data-demo="btn-generate-compliance-report" className="rounded px-2 py-1 text-[11px] font-medium" style={{ background: '#D44028', color: '#fff' }}>Generate Report</button>}
+                      {r.status === 'Pending' && <button type="button" data-demo="btn-generate-compliance-report" onClick={() => showToast?.('Compliance report generated')} className="rounded px-2 py-1 text-[11px] font-medium" style={{ background: '#D44028', color: '#fff' }}>Generate Report</button>}
                     </td>
                   </tr>
                 ))}
