@@ -94,8 +94,8 @@
     "name": "Marketers — Margin, Prudential, Statements",
     "status": "FAILED",
     "validationScript": "scripts/checks/marketers-flows.mjs",
-    "failureCount": 4,
-    "lastError": "marketer-margin-input missing | btn-save-margin missing | btn-cash-call-reminder missing | Prudential required amount $420,000 not found | Prudential shortfall $40,000 not found | btn-generate-stateme",
+    "failureCount": 1,
+    "lastError": "Statement: customer count 847 not shown",
     "lastValidated": null,
     "lockedAt": null
   },

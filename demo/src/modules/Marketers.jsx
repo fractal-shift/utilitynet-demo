@@ -73,7 +73,7 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
           <div className="mt-4 p-4 rounded-lg border" style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)' }}>
             <div className="text-sm font-medium mb-2" style={{ color: 'var(--light)' }}>Summary Preview</div>
             <div className="text-[13px] mb-3" style={{ color: 'var(--text)' }}>{statementModal.customers} customers · {'$' + statementModal.net.toLocaleString()} net to marketer</div>
-            <button type="button" data-demo="btn-post-commissions-to-gl" onClick={() => { showToast?.('Statement posted to Finance (Hook 3)'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
+            <button type="button" data-demo="btn-post-commissions-to-gl-modal" onClick={() => { showToast?.('Statement posted to Finance (Hook 3)'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
           </div>
         )}
       </div>
