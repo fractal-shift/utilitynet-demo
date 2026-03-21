@@ -92,12 +92,12 @@
   "T2-003-marketers-flows": {
     "tier": "T2",
     "name": "Marketers — Margin, Prudential, Statements",
-    "status": "FAILED",
+    "status": "LOCKED",
     "validationScript": "scripts/checks/marketers-flows.mjs",
-    "failureCount": 1,
-    "lastError": "Statement: customer count 847 not shown",
-    "lastValidated": null,
-    "lockedAt": null
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T17:26:19.877Z",
+    "lockedAt": "2026-03-21T17:26:19.881Z"
   },
   "T2-004-analytics-flows": {
     "tier": "T2",
