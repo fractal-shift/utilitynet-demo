@@ -1,0 +1,142 @@
+{
+  "T1-001-finance-module": {
+    "tier": "T1",
+    "name": "Finance Module — Full React Implementation",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/finance-module.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.034Z",
+    "lockedAt": null
+  },
+  "T1-002-mock-server": {
+    "tier": "T1",
+    "name": "Mock Integration Server",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/mock-server.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.060Z",
+    "lockedAt": null
+  },
+  "T1-003-integration-hooks": {
+    "tier": "T1",
+    "name": "Finance Integration Hooks (all 4)",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/integration-hooks.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.063Z",
+    "lockedAt": null
+  },
+  "T1-004-billing-workflows": {
+    "tier": "T1",
+    "name": "Billing — Rebill / Reversal / Correction",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/billing-workflows.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.064Z",
+    "lockedAt": null
+  },
+  "T1-005-enrollment-flows": {
+    "tier": "T1",
+    "name": "Enrollment — Failed Credit + Deposit + Activation Date",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/enrollment-flows.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.064Z",
+    "lockedAt": null
+  },
+  "T1-006-playwright-finance": {
+    "tier": "T1",
+    "name": "Playwright run-finance.mjs",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/playwright-finance.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.205Z",
+    "lockedAt": null
+  },
+  "T1-007-playwright-enrollment-extended": {
+    "tier": "T1",
+    "name": "Playwright run-enrollment — credit failure extension",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/playwright-enrollment.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.205Z",
+    "lockedAt": null
+  },
+  "T2-001-coach-rail": {
+    "tier": "T2",
+    "name": "Coach Rail + Tutorial Mode",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/coach-rail.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.206Z",
+    "lockedAt": null
+  },
+  "T2-002-audio-generation": {
+    "tier": "T2",
+    "name": "ElevenLabs Audio Generation Script",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/audio-files.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.206Z",
+    "lockedAt": null
+  },
+  "T2-003-marketers-flows": {
+    "tier": "T2",
+    "name": "Marketers — Margin, Prudential, Statements",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/marketers-flows.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.207Z",
+    "lockedAt": null
+  },
+  "T2-004-analytics-flows": {
+    "tier": "T2",
+    "name": "Analytics — Drill-down, Compliance, Ad-hoc",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/analytics-flows.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.208Z",
+    "lockedAt": null
+  },
+  "T2-005-admin-security": {
+    "tier": "T2",
+    "name": "Admin Security Controls Display",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/admin-security.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.208Z",
+    "lockedAt": null
+  },
+  "T2-006-watchdog-panel": {
+    "tier": "T2",
+    "name": "Watchdog OS Monitoring Panel",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/watchdog-panel.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.208Z",
+    "lockedAt": null
+  },
+  "T2-007-crm-propagation": {
+    "tier": "T2",
+    "name": "CRM Change Propagation to Billing + Finance",
+    "status": "VALIDATED",
+    "validationScript": "scripts/checks/crm-propagation.mjs",
+    "failureCount": 0,
+    "lastError": null,
+    "lastValidated": "2026-03-21T13:53:58.208Z",
+    "lockedAt": null
+  }
+}
