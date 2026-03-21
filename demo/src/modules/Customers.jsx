@@ -24,6 +24,7 @@ export default function Customers({ onOpenEmberlyn, onOpenEnrollmentModal, onOpe
   const { state } = useAppStore();
   const { customers } = state;
   const [activeTab, setActiveTab] = useState('list');
+  const [crmPropagationShown, setCrmPropagationShown] = useState(false);
 
   const handleRowClick = (c) => {
     if (onOpenCustomer360) {
@@ -139,9 +140,44 @@ export default function Customers({ onOpenEmberlyn, onOpenEnrollmentModal, onOpe
         </>
       )}
 
-      {activeTab !== 'list' && (
+      {activeTab === 'enrollment' && (
         <div className="rounded-xl border p-8 text-center" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
           <div className="text-[13px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Tab content coming soon</div>
+        </div>
+      )}
+
+      {activeTab === 'service' && (
+        <div className="rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+          <div className="mb-4 text-[13px] font-medium" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Service Cases — adjust and resolve</div>
+          <button
+            type="button"
+            data-demo="crm-billing-link"
+            onClick={() => setCrmPropagationShown(true)}
+            className="rounded-lg px-4 py-2 text-[13px] font-semibold"
+            style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}
+          >
+            Apply Credit
+          </button>
+          {crmPropagationShown && (
+            <div
+              data-demo="crm-propagation-confirmation"
+              className="mt-3 rounded-lg border p-3"
+              style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)' }}
+            >
+              <div style={{ color: 'var(--teal)', fontWeight: 600, fontSize: 12 }}>
+                ✓ Adjustment propagated
+              </div>
+              <div style={{ color: 'var(--text)', fontSize: 11, marginTop: 4 }}>
+                Billing: Credit memo CM-2026-0041 created ($85.00)
+              </div>
+              <div style={{ color: 'var(--text)', fontSize: 11 }}>
+                Finance: AR updated — account 1100 reduced by $85.00
+              </div>
+              <div style={{ color: 'var(--muted)', fontSize: 11 }}>
+                GL entry: JE-2026-0092 pending approval
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
