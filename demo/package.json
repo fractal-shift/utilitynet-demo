@@ -24,6 +24,8 @@
     "demo:analytics": "node scripts/run-analytics.mjs",
     "demo:complex": "node scripts/run-complex.mjs",
     "demo:all": "node scripts/run-all.mjs",
+    "demo:record": "DEMO_RECORD_VIDEO=1 DEMO_BASE_URL=http://localhost:5173 node scripts/run-all.mjs",
+    "merge-audio": "node scripts/merge-audio-video.mjs",
     "demo:heal": "node scripts/auto-heal.mjs",
     "demo:heal:dashboard": "node scripts/auto-heal.mjs dashboard",
     "demo:heal:enrollment": "node scripts/auto-heal.mjs enrollment",
