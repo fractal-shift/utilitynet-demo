@@ -19,13 +19,15 @@ const _dir = _dirname;
 
 async function getReachableBaseUrls() {
   const urls = [];
-  for (const port of [4173, 5173, 5174, 5175]) {
-    try {
-      const url = `http://127.0.0.1:${port}`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(1000) });
-      if (res.ok || res.status < 500) urls.push(url);
-    } catch {
-      // port not responding, try next
+  for (const host of ['localhost', '127.0.0.1']) {
+    for (const port of [4173, 5173, 5174, 5175]) {
+      try {
+        const url = `http://${host}:${port}`;
+        const res = await fetch(url, { signal: AbortSignal.timeout(1000) });
+        if (res.ok || res.status < 500) urls.push(url);
+      } catch {
+        // host/port not responding, try next
+      }
     }
   }
   return urls;
@@ -45,7 +47,7 @@ async function getBaseUrl() {
   }
 
   throw new Error(
-    'No demo server is reachable on 127.0.0.1:4173, 5173, 5174, or 5175. Start one with `npm run dev` or set DEMO_BASE_URL explicitly.'
+    'No demo server is reachable on localhost or 127.0.0.1 ports 4173, 5173, 5174, or 5175. Start one with `npm run dev` or set DEMO_BASE_URL explicitly.'
   );
 }
 

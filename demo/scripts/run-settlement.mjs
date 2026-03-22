@@ -114,6 +114,22 @@ function settlementSendButton(page) {
   ).first();
 }
 
+async function ensureAppShellReady(page) {
+  const navSettlement = page.locator('[data-demo="nav-settlement"]');
+  if (await navSettlement.isVisible({ timeout: 10000 }).catch(() => false)) return;
+
+  const bootDiag = await page.evaluate(() => ({
+    url: window.location.href,
+    title: document.title,
+    bodyText: document.body?.innerText?.slice(0, 1200) || '',
+    bodyHtml: document.body?.innerHTML?.slice(0, 1200) || '',
+    rootHtml: document.getElementById('root')?.innerHTML?.slice(0, 1200) || '',
+    readyState: document.readyState,
+  }));
+
+  throw new Error(`App shell did not load. Boot diagnostics: ${JSON.stringify(bootDiag)}`);
+}
+
 async function ensureSettlementReady(page) {
   await resetSettlementViewport(page);
   const sendBtn = settlementSendButton(page);
@@ -148,6 +164,7 @@ export async function runScenario(page) {
   await step(page, 'Opening UTILITYnet demo...', async () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
+    await ensureAppShellReady(page);
   });
 
   await dismissApiKeyModal(page);
