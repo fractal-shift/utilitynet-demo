@@ -55,7 +55,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
     { id: 'ar', label: 'Accounts Receivable' },
     { id: 'ap', label: 'Accounts Payable' },
     { id: 'recon', label: 'Reconciliation' },
-    { id: 'legacylift', label: 'LegacyLift' },
+    { id: 'legacylift', label: 'GL Migration' },
   ];
 
   const handleApproveAp = (idx) => {
