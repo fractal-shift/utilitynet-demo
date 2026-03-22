@@ -45,6 +45,13 @@ const initialState = {
     pendingJournalEntries: [],
     billingPostedAt: null,
   },
+  tutorialMode: false,
+  activeScenario: null,
+  activeStepIndex: 0,
+  tutorialPaused: false,
+  tutorialComplete: false,
+  audioPlaying: false,
+  pendingScenario: null,
 };
 
 function mergePersisted(init, persisted) {
@@ -160,6 +167,53 @@ function reducer(state, action) {
         },
       };
       break;
+    case 'START_TUTORIAL':
+      next = {
+        ...state,
+        tutorialMode: true,
+        activeScenario: action.payload,
+        activeStepIndex: 0,
+        tutorialPaused: false,
+        tutorialComplete: false,
+        audioPlaying: false,
+        pendingScenario: null,
+      };
+      break;
+    case 'ADVANCE_STEP': {
+      const nextIndex = state.activeStepIndex + 1;
+      const isDone = nextIndex >= (state.activeScenario?.steps?.length || 0);
+      next = {
+        ...state,
+        activeStepIndex: isDone ? state.activeStepIndex : nextIndex,
+        tutorialComplete: isDone,
+        audioPlaying: false,
+      };
+      break;
+    }
+    case 'PAUSE_TUTORIAL':
+      next = { ...state, tutorialPaused: true, audioPlaying: false };
+      break;
+    case 'RESUME_TUTORIAL':
+      next = { ...state, tutorialPaused: false };
+      break;
+    case 'END_TUTORIAL':
+      next = {
+        ...state,
+        tutorialMode: false,
+        activeScenario: null,
+        activeStepIndex: 0,
+        tutorialPaused: false,
+        tutorialComplete: false,
+        audioPlaying: false,
+        pendingScenario: null,
+      };
+      break;
+    case 'SET_AUDIO_PLAYING':
+      next = { ...state, audioPlaying: action.payload };
+      break;
+    case 'SET_PENDING_SCENARIO':
+      next = { ...state, pendingScenario: action.payload };
+      break;
     default:
       return state;
   }
@@ -185,6 +239,13 @@ export function AppStoreProvider({ children }) {
     dispatch({ type: 'ADD_PENDING_JOURNAL_ENTRY', payload: entry });
   const postBillingToGL = (date) =>
     dispatch({ type: 'POST_BILLING_TO_GL', payload: date });
+  const startTutorial = (scenario) => dispatch({ type: 'START_TUTORIAL', payload: scenario });
+  const advanceStep = () => dispatch({ type: 'ADVANCE_STEP' });
+  const pauseTutorial = () => dispatch({ type: 'PAUSE_TUTORIAL' });
+  const resumeTutorial = () => dispatch({ type: 'RESUME_TUTORIAL' });
+  const endTutorial = () => dispatch({ type: 'END_TUTORIAL' });
+  const setAudioPlaying = (val) => dispatch({ type: 'SET_AUDIO_PLAYING', payload: val });
+  const setPendingScenario = (scenario) => dispatch({ type: 'SET_PENDING_SCENARIO', payload: scenario });
 
   const actions = {
     addCustomer,
@@ -196,6 +257,13 @@ export function AppStoreProvider({ children }) {
     updateCaseStatus,
     addPendingJournalEntry,
     postBillingToGL,
+    startTutorial,
+    advanceStep,
+    pauseTutorial,
+    resumeTutorial,
+    endTutorial,
+    setAudioPlaying,
+    setPendingScenario,
     nextCustomerId: () => nextCustomerId(state.customers),
     nextMarketerId: () => nextMarketerId(state.marketers),
   };
