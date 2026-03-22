@@ -68,14 +68,15 @@ export async function runScenario(page) {
   });
 
   await step(page, 'Closing Emberlyn panel...', async () => {
-    const closeBtn = page.locator(
-      '[data-demo="emberlyn-close"], button[aria-label="Close"]'
-    ).first();
-    if (await closeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
-      await closeBtn.click();
-    }
-    // No Escape fallback — it navigates away from Settlement
-    await page.waitForTimeout(600);
+    await page.waitForSelector('[data-demo="emberlyn-close"]', 
+      { timeout: 3000 }).catch(() => {});
+    const closed = await page.evaluate(() => {
+      const btn = document.querySelector('[data-demo="emberlyn-close"]');
+      if (btn) { btn.click(); return true; }
+      return false;
+    });
+    console.log('Emberlyn close clicked:', closed);
+    await page.waitForTimeout(800);
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
   });

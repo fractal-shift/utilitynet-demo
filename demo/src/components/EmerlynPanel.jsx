@@ -274,7 +274,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
               Operation Companion
             </div>
           </div>
-          <button type="button" onClick={onClose} className="p-1 text-lg text-[var(--muted)] hover:text-[var(--light)]">
+          <button type="button" data-demo="emberlyn-close" onClick={onClose} className="p-1 text-lg text-[var(--muted)] hover:text-[var(--light)]">
             ×
           </button>
         </div>
