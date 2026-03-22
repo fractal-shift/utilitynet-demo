@@ -79,6 +79,7 @@ export async function runScenario(page) {
     await showStatus(page, 'Enrollment complete!');
 
     // Second act: credit failure scenario
+    playNarration('enrollment', 'enrollment-credit-fail');
     await step(page, 'Switching to credit-fail scenario...', async () => {
       await setMockScenario('credit-fail');
       await page.waitForTimeout(500);
