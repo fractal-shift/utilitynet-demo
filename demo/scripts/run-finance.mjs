@@ -18,6 +18,7 @@ import {
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
+  playNarration,
 } from './demo-runner.mjs';
 
 export async function runFinance(page) {
@@ -30,6 +31,7 @@ export async function runFinance(page) {
 
   await showScenarioSummary(page, 'Finance Module — GL, AR, AP, Month-End Close', 'We\'ll walk through the chart of accounts, AR aging, AP approvals, and bank reconciliation. Finance leads because UTILITYnet\'s stated priority is Finance first.');
 
+  playNarration('finance', 'finance-overview');
   await step(page, 'Navigating to Finance...', async () => {
     await clickWithCursor(page, 'nav-finance');
     await page.waitForTimeout(800);
@@ -37,6 +39,7 @@ export async function runFinance(page) {
 
   await showStatus(page, 'Cash position $1.82M. AR at $184K. Two AP items pending approval blocking month-end.');
 
+  playNarration('finance', 'finance-gl-table');
   await step(page, 'Viewing General Ledger tab...', async () => {
     await clickWithCursor(page, 'finance-tab-gl');
     await page.waitForTimeout(400);
@@ -78,6 +81,36 @@ export async function runFinance(page) {
   });
 
   await showStatus(page, 'Bank reconciliation: RBC $1.82M matches GL $1.82M. Zero variance. February close confirmed.');
+
+  playNarration('finance', 'finance-legacylift-scan');
+  await step(page, 'Viewing LegacyLift migration scan...', async () => {
+    await clickWithCursor(page, 'finance-tab-legacylift');
+    await page.waitForTimeout(600);
+  });
+
+  await showStatus(page, 'Legacy scan complete — 3 GL codes flagged for remapping. 284 Revenue entries auto-mapped to account 4000.');
+
+  playNarration('finance', 'finance-remediation-plan');
+  await step(page, 'Reviewing remediation plan...', async () => {
+    await page.evaluate(() => {
+      const el = document.querySelector('[data-demo="finance-remediation-plan"]');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    await page.waitForTimeout(800);
+  });
+
+  await showStatus(page, '3 remediation items assigned. REM-001 in progress (Sarah M.) — due Mar 15. Period close on track.');
+
+  playNarration('finance', 'finance-confirm-cleanup');
+  await step(page, 'Confirming cleanup and locking February period...', async () => {
+    await page.evaluate(() => {
+      const btn = document.querySelector('[data-demo="btn-confirm-cleanup"]');
+      if (btn) btn.click();
+    });
+    await page.waitForTimeout(600);
+  });
+
+  await showStatus(page, 'February 2026 period locked. 3 remediations applied. Audit-ready reports generated.');
 
   await step(page, 'Opening Emberlyn Assist...', async () => {
     await clickWithCursor(page, 'btn-emberlyn-finance');
