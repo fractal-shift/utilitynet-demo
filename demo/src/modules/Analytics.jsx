@@ -53,7 +53,7 @@ export default function Analytics({ onOpenThena, showToast }) {
     <div className="min-h-[calc(100vh-56px)] px-0 pb-16 pt-1" style={{ background: '#111210', fontFamily: 'Syne, sans-serif', color: '#C8C4BF' }}>
       <div className="mb-7">
         <div className="mb-1.5 flex items-center gap-3">
-          <div className="text-[9px] font-medium tracking-[0.14em] uppercase" style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}>◈ Fractal Forge · Intelligence Layer</div>
+          <div className="text-[9px] font-medium tracking-[0.14em] uppercase" style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}>◈ Emberlyn Energy · Intelligence Layer</div>
           <div className="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[8px] font-medium" style={{ background: 'rgba(212,64,40,0.10)', borderColor: 'rgba(212,64,40,0.28)', color: '#D44028', fontFamily: 'DM Mono, monospace' }}>
             <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: '#D44028' }} /> Live · March 2026
           </div>
@@ -63,7 +63,7 @@ export default function Analytics({ onOpenThena, showToast }) {
         </h1>
         <div className="mt-2.5 h-0.5 w-12 rounded-sm" style={{ background: '#D44028' }} />
         <p className="mt-4 text-[10px] font-medium tracking-widest uppercase" style={{ color: 'rgba(200,196,191,0.5)', fontFamily: 'DM Mono, monospace' }}>
-          Reporting · Predictive · Prescriptive · UTILITYnet Q1 2026
+          Reporting · Predictive · Prescriptive · Q1 2026
         </p>
         <div className="mt-4 flex gap-2">
           <button type="button" data-demo="btn-analytics-export-gl" onClick={() => showToast?.('GL reconciliation export — Revenue $2,340,120 matches GL account 4000 · No variance')} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: '#D44028', color: '#fff' }}>Export to GL</button>

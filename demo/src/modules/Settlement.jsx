@@ -143,7 +143,7 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
             {altaGasResolved ? (
               <>
                 <div className="mb-2 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>Exception Resolved — AltaGas Retail</div>
-                <div className="mb-2 text-sm font-bold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Settlement accepted at UTILITYnet figures: $481,600.00</div>
+                <div className="mb-2 text-sm font-bold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Settlement accepted at our figures: $481,600.00</div>
                 <div className="mb-4 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Commission statement queued for March 15 disbursement. Variance documentation filed.</div>
                 <button type="button" className="rounded-lg border px-3 py-1.5 text-[12px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⬇ Download Final Statement</button>
               </>
@@ -153,7 +153,7 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
                 <div className="mb-3 text-sm font-bold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Invoice mismatch: AltaGas INV-2026-0312</div>
                 <div className="mb-3 grid grid-cols-2 gap-3">
                   <div>
-                    <div className="text-[10px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>UTILITYNET CALCULATION</div>
+                    <div className="text-[10px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>OUR CALCULATION</div>
                     <div className="text-base font-bold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>${altaGas?.utilitynetCalc?.toLocaleString()}.00</div>
                   </div>
                   <div>
@@ -162,7 +162,7 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
                   </div>
                 </div>
                 <div className="mb-2 text-[13px] font-semibold" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Variance: <strong style={{ color: 'var(--error)' }}>${altaGas?.variance?.toLocaleString()}.00</strong></div>
-                <div className="mb-4 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Root cause: 8 site meter reads not reflected in AltaGas submission. AESO data confirms UTILITYnet figures.</div>
+                <div className="mb-4 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Root cause: 8 site meter reads not reflected in AltaGas submission. AESO data confirms our figures.</div>
                 <div className="flex gap-2">
                   <button
                     type="button"

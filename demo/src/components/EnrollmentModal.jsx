@@ -345,7 +345,7 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
             </div>
             <div className="mb-6 flex items-center gap-2">
               <input type="checkbox" id="pad" checked={form.padAuthorized} onChange={(e) => update('padAuthorized', e.target.checked)} className="rounded" />
-              <label htmlFor="pad" className="text-[13px] font-medium cursor-pointer" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>I authorize UTILITYnet to debit my account monthly as per the PAD agreement terms</label>
+              <label htmlFor="pad" className="text-[13px] font-medium cursor-pointer" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>I authorize the retailer to debit my account monthly as per the PAD agreement terms</label>
             </div>
             <div className="flex justify-between gap-4">
               <button type="button" onClick={() => setStep(3)} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>← Back</button>

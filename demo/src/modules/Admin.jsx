@@ -24,6 +24,7 @@ export default function Admin() {
     { name: 'AESO Settlement Feed', status: 'Active', lastSync: 'Mar 11, 6:00 AM' },
     { name: 'RBC Banking API', status: 'Active', lastSync: 'Mar 11, 5:45 AM' },
     { name: 'ATCO Meter Data', status: 'Active', lastSync: 'Mar 10, 11:59 PM' },
+    { name: 'AltaGas Settlement API', status: 'Active', lastSync: 'Mar 11, 6:15 AM' },
   ];
 
   return (
