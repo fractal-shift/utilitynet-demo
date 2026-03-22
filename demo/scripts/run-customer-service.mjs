@@ -20,6 +20,7 @@ import {
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
+  playNarration,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -32,14 +33,17 @@ export async function runScenario(page) {
 
   await showScenarioSummary(page, 'Customer Service + Emberlyn', 'A billing complaint came in from MacGregor Industrial Ltd. ($8,400 balance, EXCEPTION). We\'ll use Customer 360 to view the account, then Emberlyn to summarize issues, draft a response, and confirm the follow-up actions.');
 
+  playNarration('enrollment', 'enrollment-start-btn');
   await step(page, 'Navigating to Customers...', async () => {
     await clickWithCursor(page, 'nav-customers');
   });
 
+  playNarration('enrollment', 'enrollment-customer-form');
   await step(page, 'Opening Customer 360 for MacGregor Industrial Ltd....', async () => {
     await clickWithCursor(page, 'row-C-10478');
   });
 
+  playNarration('enrollment', 'enrollment-credit-check');
   await step(page, 'Opening Emberlyn to draft customer email...', async () => {
     await clickWithCursor(page, 'customer360-draft-email');
     await page.waitForTimeout(1000);
@@ -55,6 +59,7 @@ export async function runScenario(page) {
     await scrollReadEmberlynResponse(page);
   });
 
+  playNarration('enrollment', 'enrollment-approve-btn');
   await step(page, "Confirming Emberlyn's proposed action...", async () => {
     const confirm = page.locator('[data-demo="emberlyn-confirm"]');
     await confirm.waitFor({ state: 'visible', timeout: 5000 });
