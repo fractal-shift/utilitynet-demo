@@ -106,6 +106,40 @@ function logDiag(d, label) {
   console.log(`[DIAG ${label}] viewport=${d.viewport?.width}x${d.viewport?.height} | emberlyn-close: inDom=${e?.inDom} inView=${e?.inViewport} | send-btn: inDom=${s?.inDom} inView=${s?.inViewport}`);
 }
 
+function settlementSendButton(page) {
+  return page.locator('[data-demo="btn-send-settlement-to-finance"]').or(
+    page.getByRole('button', { name: /Send Reconciliation to Finance/i })
+  ).or(
+    page.locator('main button:has-text("Send")')
+  ).first();
+}
+
+async function ensureSettlementReady(page) {
+  await resetSettlementViewport(page);
+  const sendBtn = settlementSendButton(page);
+
+  if (await sendBtn.isVisible({ timeout: 2500 }).catch(() => false)) return sendBtn;
+
+  const dInitial = await diagnose(page, 'ensure-settlement-ready-initial');
+  logDiag(dInitial, 'ensure-settlement-ready-initial');
+
+  const closeBtn = page.locator('[data-demo="emberlyn-close"]');
+  if (await closeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+    await clickWithCursor(page, 'emberlyn-close');
+    await page.waitForTimeout(500);
+    await resetSettlementViewport(page);
+    if (await sendBtn.isVisible({ timeout: 2500 }).catch(() => false)) return sendBtn;
+  }
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await dismissApiKeyModal(page);
+  await clickWithCursor(page, 'nav-settlement');
+  await page.waitForTimeout(800);
+  await resetSettlementViewport(page);
+  await sendBtn.waitFor({ state: 'visible', timeout: 5000 });
+  return sendBtn;
+}
+
 export async function runScenario(page) {
   // Layout needs ~1660px (sidebar + main + Emberlyn panel). Default 1600 clips
   // the panel's right edge, putting the close button off-screen so Playwright can't click it.
@@ -180,33 +214,16 @@ export async function runScenario(page) {
   logDiag(dAfterClose, 'after-close-step');
   if (DEBUG) console.log('[DIAG] Full snapshot after close step:', JSON.stringify(dAfterClose, null, 2));
 
-  await step(page, 'Re-navigating to Settlement...', async () => {
-    await clickWithCursor(page, 'nav-settlement');
-    await page.waitForTimeout(800);
-    await resetSettlementViewport(page);
-
+  await step(page, 'Preparing Settlement to send to Finance...', async () => {
     const dBeforeWait = await diagnose(page, 'before-wait-send-btn');
     logDiag(dBeforeWait, 'before-wait-send-btn');
-    if (DEBUG) console.log('[DIAG] About to waitFor send btn. Current state:', JSON.stringify(dBeforeWait, null, 2));
-
-    // Verify settlement loaded. Try multiple selectors — diagnostics show data-demo and text often absent.
-    const sendBtn =
-      page.locator('[data-demo="btn-send-settlement-to-finance"]').or(
-        page.getByRole('button', { name: /Send Reconciliation to Finance/i })
-      ).or(
-        page.locator('main button:has-text("Send")')
-      ).first();
-    await sendBtn.waitFor({ state: 'visible', timeout: 5000 });
+    if (DEBUG) console.log('[DIAG] About to ensure settlement is ready. Current state:', JSON.stringify(dBeforeWait, null, 2));
+    await ensureSettlementReady(page);
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
     await page.waitForTimeout(800);
-    const sendBtn =
-      page.locator('[data-demo="btn-send-settlement-to-finance"]').or(
-        page.getByRole('button', { name: /Send Reconciliation to Finance/i })
-      ).or(
-        page.locator('main button:has-text("Send")')
-      ).first();
+    const sendBtn = await ensureSettlementReady(page);
     await sendBtn.click();
     await page.waitForTimeout(2000);
   });

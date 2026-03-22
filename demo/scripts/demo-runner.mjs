@@ -17,19 +17,40 @@ import os from 'os';
 
 const _dir = _dirname;
 
-async function getBaseUrl() {
-  for (const port of [5173, 5174, 5175]) {
+async function getReachableBaseUrls() {
+  const urls = [];
+  for (const port of [4173, 5173, 5174, 5175]) {
     try {
-      const res = await fetch(`http://localhost:${port}`, { signal: AbortSignal.timeout(1000) });
-      if (res.ok || res.status < 500) return `http://localhost:${port}`;
+      const url = `http://127.0.0.1:${port}`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(1000) });
+      if (res.ok || res.status < 500) urls.push(url);
     } catch {
       // port not responding, try next
     }
   }
-  return 'http://localhost:5173';
+  return urls;
 }
 
-const BASE_URL = process.env.DEMO_BASE_URL || await getBaseUrl();
+async function getBaseUrl() {
+  const explicitBaseUrl = process.env.DEMO_BASE_URL?.trim();
+  if (explicitBaseUrl) return explicitBaseUrl;
+
+  const urls = await getReachableBaseUrls();
+  if (urls.length === 1) return urls[0];
+
+  if (urls.length > 1) {
+    throw new Error(
+      `Multiple demo servers are running: ${urls.join(', ')}. Stop the extras or set DEMO_BASE_URL explicitly.`
+    );
+  }
+
+  throw new Error(
+    'No demo server is reachable on 127.0.0.1:4173, 5173, 5174, or 5175. Start one with `npm run dev` or set DEMO_BASE_URL explicitly.'
+  );
+}
+
+const BASE_URL = await getBaseUrl();
+console.log(`[Demo] Using BASE_URL=${BASE_URL}`);
 const STEP_PAUSE_MS = parseInt(process.env.DEMO_STEP_PAUSE_MS || '5000', 10);
 const SUMMARY_PAUSE_MS = parseInt(process.env.DEMO_SUMMARY_PAUSE_MS || '8000', 10);
 const CURSOR_MOVE_MS = parseInt(process.env.DEMO_CURSOR_MOVE_MS || '600', 10);
