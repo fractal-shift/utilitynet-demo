@@ -30,13 +30,12 @@ export async function runScenario(page) {
 
     await dismissApiKeyModal(page);
 
+    playNarration('enrollment', 'enrollment-start-btn');
     await showScenarioSummary(page, 'New Customer Enrollment', 'We\'ll enroll Heather Mitchell as a new residential customer: enter details, run credit check, select a Variable plan, and complete PAD setup. The partner marketer (NRG Direct) is notified automatically.');
 
     await step(page, 'Navigating to Customers...', async () => {
       await clickWithCursor(page, 'nav-customers');
     });
-
-    playNarration('enrollment', 'enrollment-start-btn');
     await step(page, 'Opening new enrollment modal...', async () => {
       await clickWithCursor(page, 'btn-new-enrollment');
     });
@@ -85,6 +84,7 @@ export async function runScenario(page) {
       await page.waitForTimeout(500);
     });
 
+    playNarration('enrollment', 'enrollment-credit-check');
     await step(page, 'Opening new enrollment (credit fail path)...', async () => {
       await clickWithCursor(page, 'btn-new-enrollment');
       await page.waitForTimeout(600);
@@ -102,11 +102,13 @@ export async function runScenario(page) {
       await page.click('[data-demo="enrollment-continue-1"]').catch(() => {});
     });
 
+    playNarration('enrollment', 'enrollment-banking-form');
     await step(page, 'Running credit check (expect declined)...', async () => {
       await page.click('[data-demo="enrollment-run-credit"]').catch(() => {});
       await page.waitForTimeout(2000);
     });
 
+    playNarration('enrollment', 'enrollment-approve-btn');
     await step(page, 'Selecting require deposit option...', async () => {
       const depositBtn = page.locator('[data-demo="btn-require-deposit"]');
       if (await depositBtn.isVisible().catch(() => false)) await depositBtn.click();
