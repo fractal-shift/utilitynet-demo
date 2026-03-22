@@ -77,6 +77,8 @@ export async function runScenario(page) {
       await page.keyboard.press('Escape');
     }
     await page.waitForTimeout(600);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(400);
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
