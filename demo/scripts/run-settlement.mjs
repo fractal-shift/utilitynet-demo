@@ -73,12 +73,16 @@ export async function runScenario(page) {
     ).first();
     if (await closeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
       await closeBtn.click();
-    } else {
-      await page.keyboard.press('Escape');
     }
+    // No Escape fallback — it navigates away from Settlement
     await page.waitForTimeout(600);
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
+  });
+
+  await step(page, 'Re-navigating to Settlement...', async () => {
+    await clickWithCursor(page, 'nav-settlement');
+    await page.waitForTimeout(800);
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
