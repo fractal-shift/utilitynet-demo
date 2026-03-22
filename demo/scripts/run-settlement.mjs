@@ -81,8 +81,16 @@ export async function runScenario(page) {
   });
 
   await step(page, 'Re-navigating to Settlement...', async () => {
-    await clickWithCursor(page, 'nav-settlement');
-    await page.waitForTimeout(800);
+    await page.evaluate(() => {
+      const nav = document.querySelector('[data-demo="nav-settlement"]');
+      if (nav) nav.click();
+    });
+    await page.waitForTimeout(1000);
+    // Verify settlement loaded
+    const loaded = await page.evaluate(() => 
+      !!document.querySelector('[data-demo="btn-send-settlement-to-finance"]')
+    );
+    if (!loaded) throw new Error('Settlement module did not load after nav click');
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
