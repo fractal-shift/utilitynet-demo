@@ -5,90 +5,111 @@ CURSOR RULES — UTILITYNET DEMO — READ BEFORE EVERY ACTION
 ANTI-HALLUCINATION RULES (non-negotiable):
 
 1. PROVE FILES EXIST BEFORE TOUCHING THEM
-   Before referencing any file as existing, run: ls [filepath]
-   Show the output. If ls fails, the file does not exist.
+   Run: ls [filepath] — show output. If ls fails, file doesn't exist.
 
 2. NEVER CLAIM A COMMAND PASSED WITHOUT SHOWING OUTPUT
-   Wrong: "validate.mjs ran successfully — all checks passed"
-   Right: [paste the actual terminal output]
-   If you cannot show output, you did not run the command.
+   Wrong: "all checks passed"
+   Right: [paste actual terminal output]
 
-3. NEVER STUB A CHECK SCRIPT
-   Every file in scripts/checks/ must test real behavior.
-   return { pass: true } is forbidden. No exceptions.
-   If you cannot write a real check yet, stop and say why.
-
-4. SKIP ≠ PASS
-   If validate.mjs shows all SKIP, nothing has been validated.
-   Do not proceed as if features are complete.
-
-5. ONE FEATURE AT A TIME
-   Build → run heal.mjs → show output → lock → next feature.
+3. ONE FEATURE AT A TIME
+   Build → commit → push → report hash → wait for Claude to verify.
    Never batch multiple features in one response.
 
-6. LOCKED = UNTOUCHABLE
-   Never modify a LOCKED feature for any reason.
-   New requirements get new feature IDs.
+4. LOCKED = UNTOUCHABLE
+   Never modify a LOCKED feature. New requirements = new feature ID.
+
+5. NEVER STUB A CHECK SCRIPT
+   return { pass: true } is forbidden. Real checks only.
+
+═══════════════════════════════════════════════════════════════
+ENVIRONMENT RULES (learned the hard way):
+
+- Only ONE Vite dev server at a time.
+  Before running anything, check: lsof -i :5173 -i :5174 -i :5175
+  Kill all but one. Multiple servers = false test results.
+
+- Always use explicit URL for demo scripts:
+  DEMO_BASE_URL=http://127.0.0.1:5173 npm run demo:[script]
+
+- Terminal always starts at: ethan@Ethans-MacBook-Air-Tank utilitynet-demo
+  All demo commands need: cd demo first.
+
+- Three terminals for dev:
+  Terminal 1: cd demo && npm run mock
+  Terminal 2: cd demo && npm run dev
+  Terminal 3: cd demo && [demo/heal commands]
 
 ═══════════════════════════════════════════════════════════════
 TECHNICAL RULES:
 
-- AppStore uses React Context + useReducer. NO Zustand. Ever.
+- AppStore = React Context + useReducer. NO Zustand. Ever.
 - Do not touch auto-heal.mjs.
-- Both servers must be running for Playwright checks:
-  Terminal 1: npm run dev:full
-  Terminal 2: validation commands
+- Do not use "Watchdog" branding in any UI — use "System Health".
+- All Playwright demo scripts use page.evaluate() for DOM clicks,
+  not clickWithCursor, for elements that may be out of viewport.
+- Always scroll to top after Emberlyn interactions before clicking
+  page header buttons.
+
+═══════════════════════════════════════════════════════════════
+DEBUGGING RULES:
+
+- Max 3 guesses on any bug. After 3 fails → inject diagnostic
+  console.log code and run it to get real data first.
+- If diagnostic mode doesn't resolve → escalate to Codex.
+- Codex is the tiebreaker for doom loops.
+- NEVER use Chrome browser tools — wrong machine.
+
+═══════════════════════════════════════════════════════════════
+COMMIT FORMAT (end every task with this exactly):
+
+  git add -A && git commit -m "[description]" && git push && echo "COMMIT HASH:" && git rev-parse HEAD
+
+Report the hash back so Claude can verify the actual repo state.
 
 ═══════════════════════════════════════════════════════════════
 SESSION START — DO THIS FIRST, EVERY TIME:
 
-Run these exact commands and show me the full output before
-doing anything else:
+Run these commands and show full output:
 
-  ls demo/FEATURE_REGISTRY.json
-  ls demo/scripts/validate.mjs
-  ls demo/scripts/heal.mjs
-  ls demo/mock-server.mjs
-  head -5 demo/src/modules/Finance.jsx
-  head -5 demo/src/modules/Admin.jsx
-  cat demo/package.json | grep -E '"mock"|"validate"|"express"'
+  git log --oneline -3
+  cat demo/FEATURE_REGISTRY.json | grep -E '"status"' | head -25
+  ls demo/src/components/CoachRail* 2>/dev/null || echo "CoachRail: NOT BUILT"
+  ls demo/public/audio 2>/dev/null || echo "Audio: NOT GENERATED"
 
-This tells me exactly what is and isn't built.
-Do not proceed until I confirm I have seen this output.
+This tells Claude the current build state.
+Do not start building until you've shown this output.
 
 ═══════════════════════════════════════════════════════════════
-CURRENT REPO STATE (as of last verified commit):
+CURRENT REPO STATE (verified commit c2ab275):
 
-NOTHING from NORTH_STAR.md has been built yet. Specifically:
-- Finance.jsx = Phase 2 placeholder only
-- Admin.jsx = 3-integration stub only  
-- No mock-server.mjs
-- No validate.mjs, heal.mjs, or checks/ folder
-- No FEATURE_REGISTRY.json
-- No express, cors, concurrently in package.json
-- No CoachRail, ScenarioPanel, TutorialModeToggle
-- No services/, hooks/, or tutorial-scenarios.js
+BUILT AND WORKING:
+- Finance.jsx — full GL/AR/AP/Recon module
+- mock-server.mjs — all 4 integrations + scenario switching
+- ScenarioPanel.jsx — visible at ?scenarios=1
+- Billing — rebill/reversal/correction
+- Settlement — send-to-finance hook, viewport fixes
+- Enrollment — failed credit/deposit/activation
+- Marketers — margin/prudential/statement
+- Analytics — drill-down/compliance/ad-hoc
+- Customers — CRM propagation block
+- Admin — security cards + System Health panel (feeds/jobs/anomaly)
+- All 8 Playwright run-*.mjs scripts passing
+- validate.mjs, heal.mjs, FEATURE_REGISTRY.json
+- services/integrations.js
 
-═══════════════════════════════════════════════════════════════
-FIRST TASK (after session start verification above):
-
-1. npm install express cors concurrently
-
-2. Create validation infrastructure from cursor-validation-system.md:
-   - demo/FEATURE_REGISTRY.json
-   - demo/scripts/validate.mjs
-   - demo/scripts/heal.mjs
-   - All 20 check scripts in demo/scripts/checks/
-   - Update demo/package.json scripts
-
-3. Run: node scripts/validate.mjs
-   Expected: all SKIP (app not running). Show me the full output.
-   Do not build any features until I confirm this is correct.
+NOT BUILT YET:
+- src/components/CoachRail.jsx (Coach Rail + Tutorial Mode)
+- src/data/tutorial-scenarios.js
+- src/hooks/useTutorialAudio.js
+- src/hooks/useTutorialHighlight.js
+- AppStore tutorial state (tutorialMode, startTutorial, etc.)
+- public/audio/ (ElevenLabs generated files)
+- scripts/generate-audio.mjs
 
 ═══════════════════════════════════════════════════════════════
-REFERENCE DOCUMENTS IN THIS REPO:
-- NORTH_STAR.md — what to build and exact specs
-- cursor-validation-system.md — validation infrastructure
+REFERENCE DOCUMENTS:
+- NORTH_STAR.md — full specs for everything including Coach Rail
+- cursor-validation-system.md — validation system specs
 
-Read both before writing any code.
+Read NORTH_STAR.md T2-001 section before building Coach Rail.
 ═══════════════════════════════════════════════════════════════
