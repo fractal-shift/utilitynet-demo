@@ -4,6 +4,8 @@
  * Uses setMockScenario('altagas-variance') before invoice ingest so Emberlyn
  * has real invoice data. Adds btn-send-settlement-to-finance step.
  * Resets to altagas-clean at end.
+ *
+ * Troubleshooting: run with DEMO_DEBUG=1 for step-by-step diagnostic logs.
  */
 
 import { chromium } from 'playwright';
@@ -21,9 +23,94 @@ import {
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
+  DEMO_VIEWPORT,
 } from './demo-runner.mjs';
 
+const DEBUG = process.env.DEMO_DEBUG === '1';
+
+async function resetSettlementViewport(page) {
+  await page.evaluate(() => {
+    const main = document.querySelector('main');
+    if (main) main.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  });
+  await page.waitForTimeout(250);
+}
+
+/** Returns diagnostic snapshot: DOM presence, visibility, viewport, key elements. */
+async function diagnose(page, label) {
+  const info = await page.evaluate(() => {
+    const sel = (q) => document.querySelector(q);
+    const all = (q) => document.querySelectorAll(q);
+    const rect = (el) => {
+      if (!el) return null;
+      const r = el.getBoundingClientRect();
+      return { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) };
+    };
+    const inViewport = (r) => r && r.top >= -2 && r.left >= -2 && r.right <= window.innerWidth + 2 && r.bottom <= window.innerHeight + 2;
+
+    const check = (selector, name) => {
+      const el = sel(selector);
+      const r = rect(el);
+      return {
+        inDom: !!el,
+        count: all(selector).length,
+        rect: r,
+        inViewport: r ? inViewport({ ...r, right: r.left + r.width, bottom: r.top + r.height }) : false,
+      };
+    };
+
+    const activeNav = Array.from(document.querySelectorAll('[data-demo^="nav-"]')).find((n) => n.getAttribute('data-active') === 'true');
+    const main = sel('main');
+    const mainH1 = main?.querySelector('h1');
+    const activeDemo = activeNav?.getAttribute('data-demo');
+    const activeModule = activeDemo?.replace(/^nav-/, '') || null;
+
+    const allDemoEls = Array.from(document.querySelectorAll('[data-demo]')).map((el) => ({
+      demo: el.getAttribute('data-demo'),
+      tag: el.tagName,
+      text: el.textContent?.slice(0, 50),
+    }));
+
+    return {
+      label: 'page-context',
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      url: window.location.href,
+      activeModule,
+      activeNavDemo: activeDemo,
+      mainContent: main?.innerText?.slice(0, 200) || null,
+      mainH1: mainH1?.textContent || null,
+      rootChildren: document.getElementById('root')?.children?.length ?? 0,
+      'emberlyn-close': check('[data-demo="emberlyn-close"]'),
+      'emberlyn-toggle': check('[data-demo="emberlyn-toggle"]'),
+      'thena-toggle': check('[data-demo="thena-toggle"]'),
+      'btn-send-settlement-to-finance': check('[data-demo="btn-send-settlement-to-finance"]'),
+      'nav-settlement': check('[data-demo="nav-settlement"]'),
+      'btn-draft-altagas': check('[data-demo="btn-draft-altagas"]'),
+      bodyScroll: { scrollTop: document.documentElement.scrollTop, scrollLeft: document.documentElement.scrollLeft },
+      allDataDemoElements: allDemoEls,
+    };
+  });
+  const out = { step: label, ...info };
+  if (DEBUG) console.log('[DIAG]', JSON.stringify(out, null, 2));
+  return out;
+}
+
+/** Log one-liner summary for quick scanning. */
+function logDiag(d, label) {
+  if (!DEBUG) return;
+  const e = d['emberlyn-close'];
+  const s = d['btn-send-settlement-to-finance'];
+  console.log(`[DIAG ${label}] viewport=${d.viewport?.width}x${d.viewport?.height} | emberlyn-close: inDom=${e?.inDom} inView=${e?.inViewport} | send-btn: inDom=${s?.inDom} inView=${s?.inViewport}`);
+}
+
 export async function runScenario(page) {
+  // Layout needs ~1660px (sidebar + main + Emberlyn panel). Default 1600 clips
+  // the panel's right edge, putting the close button off-screen so Playwright can't click it.
+  await page.setViewportSize({ width: 1800, height: DEMO_VIEWPORT.height });
+
   await step(page, 'Opening UTILITYnet demo...', async () => {
     await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
@@ -65,50 +152,62 @@ export async function runScenario(page) {
       await page.locator('[data-demo="btn-resolve-altagas"]').click();
     }
     await page.waitForTimeout(1000);
+    await resetSettlementViewport(page);
+    const dAccept = await diagnose(page, 'immediately-after-accept');
+    if (DEBUG) console.log('[DIAG] Immediately after Accept:', JSON.stringify({ activeModule: dAccept.activeModule, mainH1: dAccept.mainH1, sendBtnInDom: dAccept['btn-send-settlement-to-finance']?.inDom, emberlynCloseInDom: dAccept['emberlyn-close']?.inDom }, null, 2));
   });
 
   await step(page, 'Closing Emberlyn panel...', async () => {
-    await page.waitForSelector('[data-demo="emberlyn-close"]', 
-      { timeout: 3000 }).catch(() => {});
-    const closed = await page.evaluate(() => {
-      const btn = document.querySelector('[data-demo="emberlyn-close"]');
-      if (btn) { btn.click(); return true; }
-      return false;
-    });
-    console.log('Emberlyn close clicked:', closed);
+    const dBefore = await diagnose(page, 'before-close');
+    logDiag(dBefore, 'before-close');
+
+    const closeBtn = page.locator('[data-demo="emberlyn-close"]');
+    const closeVisible = await closeBtn.isVisible({ timeout: 2000 }).catch(() => false);
+    if (DEBUG) console.log('[DIAG] emberlyn-close isVisible(Playwright)=', closeVisible);
+    if (closeVisible) {
+      await clickWithCursor(page, 'emberlyn-close');
+      await page.waitForTimeout(500);
+      const dAfter = await diagnose(page, 'after-close-click');
+      logDiag(dAfter, 'after-close-click');
+    } else if (DEBUG) {
+      console.log('[DIAG] emberlyn-close NOT visible, skipping click');
+    }
     await page.waitForTimeout(800);
-    await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(400);
+    await resetSettlementViewport(page);
   });
 
+  const dAfterClose = await diagnose(page, 'after-close-step');
+  logDiag(dAfterClose, 'after-close-step');
+  if (DEBUG) console.log('[DIAG] Full snapshot after close step:', JSON.stringify(dAfterClose, null, 2));
+
   await step(page, 'Re-navigating to Settlement...', async () => {
-    await page.evaluate(() => {
-      const nav = document.querySelector('[data-demo="nav-settlement"]');
-      if (nav) nav.click();
-    });
-    await page.waitForTimeout(1000);
-    // Verify settlement loaded
-    const loaded = await page.evaluate(() => 
-      !!document.querySelector('[data-demo="btn-send-settlement-to-finance"]')
-    );
-    if (!loaded) throw new Error('Settlement module did not load after nav click');
+    await clickWithCursor(page, 'nav-settlement');
+    await page.waitForTimeout(800);
+    await resetSettlementViewport(page);
+
+    const dBeforeWait = await diagnose(page, 'before-wait-send-btn');
+    logDiag(dBeforeWait, 'before-wait-send-btn');
+    if (DEBUG) console.log('[DIAG] About to waitFor send btn. Current state:', JSON.stringify(dBeforeWait, null, 2));
+
+    // Verify settlement loaded. Try multiple selectors — diagnostics show data-demo and text often absent.
+    const sendBtn =
+      page.locator('[data-demo="btn-send-settlement-to-finance"]').or(
+        page.getByRole('button', { name: /Send Reconciliation to Finance/i })
+      ).or(
+        page.locator('main button:has-text("Send")')
+      ).first();
+    await sendBtn.waitFor({ state: 'visible', timeout: 5000 });
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
     await page.waitForTimeout(800);
-    const clicked = await page.evaluate(() => {
-      const btn = document.querySelector(
-        '[data-demo="btn-send-settlement-to-finance"]'
-      );
-      if (btn) {
-        btn.click();
-        return true;
-      }
-      return false;
-    });
-    if (!clicked) {
-      throw new Error('btn-send-settlement-to-finance not found in DOM');
-    }
+    const sendBtn =
+      page.locator('[data-demo="btn-send-settlement-to-finance"]').or(
+        page.getByRole('button', { name: /Send Reconciliation to Finance/i })
+      ).or(
+        page.locator('main button:has-text("Send")')
+      ).first();
+    await sendBtn.click();
     await page.waitForTimeout(2000);
   });
 
@@ -129,6 +228,37 @@ async function main() {
     await runScenario(page);
   } catch (err) {
     console.error('Demo failed:', err.message);
+    try {
+      const d = await page.evaluate(() => {
+        const sel = (q) => document.querySelector(q);
+        const all = (q) => document.querySelectorAll(q);
+        const rect = (el) => {
+          if (!el) return null;
+          const r = el.getBoundingClientRect();
+          return { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) };
+        };
+        const activeNav = Array.from(document.querySelectorAll('[data-demo^="nav-"]')).find((n) => n.getAttribute('data-active') === 'true');
+        const activeDemo = activeNav?.getAttribute('data-demo');
+        const main = sel('main');
+        const allDemoEls = Array.from(document.querySelectorAll('[data-demo]')).map((el) => ({
+          demo: el.getAttribute('data-demo'),
+          tag: el.tagName,
+          text: el.textContent?.slice(0, 50),
+        }));
+        return {
+          viewport: { width: window.innerWidth, height: window.innerHeight },
+          activeModule: activeDemo?.replace(/^nav-/, '') || null,
+          mainH1: main?.querySelector('h1')?.textContent || null,
+          allDataDemoElements: allDemoEls,
+          'emberlyn-close': { inDom: !!sel('[data-demo="emberlyn-close"]'), count: all('[data-demo="emberlyn-close"]').length, rect: rect(sel('[data-demo="emberlyn-close"]')) },
+          'btn-send-settlement-to-finance': { inDom: !!sel('[data-demo="btn-send-settlement-to-finance"]'), count: all('[data-demo="btn-send-settlement-to-finance"]').length, rect: rect(sel('[data-demo="btn-send-settlement-to-finance"]')) },
+          'nav-settlement': { inDom: !!sel('[data-demo="nav-settlement"]'), count: all('[data-demo="nav-settlement"]').length },
+        };
+      });
+      console.error('[FAILURE DIAG] Page state at failure:', JSON.stringify(d, null, 2));
+    } catch (e) {
+      console.error('[FAILURE DIAG] Could not capture state:', e.message);
+    }
     writeFailure('settlement', 0, 'settlement', '', err);
     await clearStatus(page);
     process.exit(1);
