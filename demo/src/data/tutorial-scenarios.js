@@ -5,6 +5,51 @@
 
 export const TUTORIAL_SCENARIOS = [
   {
+    id: 'dashboard',
+    title: 'Operations Dashboard',
+    module: 'Dashboard',
+    duration: '2 min',
+    description: 'Executive overview of operations',
+    triggerPhrases: ['dashboard', 'overview', 'kpi', 'executive'],
+    steps: [
+      {
+        id: 'dashboard-overview',
+        title: 'Dashboard Overview',
+        demoTarget: 'nav-dashboard',
+        narration:
+          "The operations dashboard gives leadership a single view of the business — revenue month to date, active customers, marketer count, and settlement status. Every number is live, pulled directly from billing and settlement. No report to run, no spreadsheet to refresh.",
+      },
+      {
+        id: 'dashboard-kpis',
+        title: 'KPI Cards',
+        demoTarget: 'kpi-revenue',
+        narration:
+          "$2.34 million revenue month to date, up 12.4% versus last month. 14,291 active customers. 52 active marketers with 4 onboarding. Settlement status at 98.2% reconciled. These four numbers tell the operations story at a glance.",
+      },
+      {
+        id: 'dashboard-revenue-trend',
+        title: 'Revenue Trend',
+        demoTarget: 'chart-revenue-trend',
+        narration:
+          "The revenue trend chart shows 12 months of history. March 2026 is the peak — $2.34 million, driven by the February polar vortex and NRG Direct's enrollment push. The system calculates this automatically from every posted billing run.",
+      },
+      {
+        id: 'dashboard-predictive',
+        title: 'Predictive Insights',
+        demoTarget: 'predictive-insights',
+        narration:
+          "The predictive insights panel flags two things proactively: 17 accounts likely to miss payment in the next 14 days — $41,200 exposure — and 3 marketers showing below-benchmark conversion. These aren't reports someone pulled. The system surfaces them automatically every morning.",
+      },
+      {
+        id: 'dashboard-tasks',
+        title: 'Billing Exceptions',
+        demoTarget: 'nav-billing',
+        narration:
+          "Clicking the late payment risk card navigates directly to the billing exceptions queue. The dashboard isn't just a view — it's a launchpad. Every insight links to the module where the work gets done.",
+      },
+    ],
+  },
+  {
     id: 'finance',
     title: 'Finance — General Ledger & Month-End Close',
     module: 'Finance',
