@@ -19,6 +19,7 @@ import {
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
+  playNarration,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -35,10 +36,12 @@ export async function runScenario(page) {
       await clickWithCursor(page, 'nav-customers');
     });
 
+    playNarration('enrollment', 'enrollment-start-btn');
     await step(page, 'Opening new enrollment modal...', async () => {
       await clickWithCursor(page, 'btn-new-enrollment');
     });
 
+    playNarration('enrollment', 'enrollment-customer-form');
     await step(page, 'Entering customer details: Heather Mitchell...', async () => {
       await page.fill('[data-demo="enrollment-firstName"]', 'Heather');
       await page.fill('[data-demo="enrollment-lastName"]', 'Mitchell');
@@ -48,6 +51,7 @@ export async function runScenario(page) {
       await page.click('[data-demo="enrollment-continue-1"]');
     });
 
+    playNarration('enrollment', 'enrollment-credit-check');
     await step(page, 'Running credit check...', async () => {
       await page.click('[data-demo="enrollment-run-credit"]');
       await page.waitForTimeout(2000);
@@ -57,14 +61,17 @@ export async function runScenario(page) {
       await page.click('[data-demo="enrollment-continue-2"]');
     });
 
+    playNarration('enrollment', 'enrollment-plan-select');
     await step(page, 'Selecting Variable plan. Continuing to banking...', async () => {
       await page.click('[data-demo="enrollment-continue-3"]');
     });
 
+    playNarration('enrollment', 'enrollment-banking-form');
     await step(page, 'PAD setup complete. Continuing to confirm...', async () => {
       await page.click('[data-demo="enrollment-continue-4"]');
     });
 
+    playNarration('enrollment', 'enrollment-approve-btn');
     await step(page, 'Enrolling customer...', async () => {
       await page.click('[data-demo="enrollment-submit"]');
       await page.waitForTimeout(3000);

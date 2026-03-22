@@ -8,6 +8,7 @@
  * - createDemoContext(): injects API key from apiKey.js so Emberlyn/Thena use real Claude
  */
 
+import { execSync } from 'child_process';
 import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -300,5 +301,23 @@ export async function dismissApiKeyModal(page) {
   if (await skip.isVisible().catch(() => false)) {
     await skip.click();
     await page.waitForTimeout(500);
+  }
+}
+
+const AUDIO_BASE = join(_dirname, '../public/audio');
+
+/**
+ * Play a narration audio file via macOS afplay and block until done.
+ * Silently skips if the file is missing or afplay fails.
+ * @param {string} scenarioId - Subfolder under public/audio (e.g. 'enrollment')
+ * @param {string} stepId     - Filename without extension (e.g. 'enrollment-start-btn')
+ */
+export function playNarration(scenarioId, stepId) {
+  const audioFile = join(AUDIO_BASE, scenarioId, `${stepId}.mp3`);
+  try {
+    // afplay is macOS built-in — plays audio and blocks until done
+    execSync(`afplay "${audioFile}"`, { stdio: 'ignore' });
+  } catch {
+    console.warn(`[Narration] Could not play ${scenarioId}/${stepId}.mp3`);
   }
 }
