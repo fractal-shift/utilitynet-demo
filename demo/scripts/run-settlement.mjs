@@ -82,8 +82,20 @@ export async function runScenario(page) {
   });
 
   await step(page, 'Sending settlement to Finance...', async () => {
-    await page.locator('[data-demo="btn-send-settlement-to-finance"]').scrollIntoViewIfNeeded();
-    await page.locator('[data-demo="btn-send-settlement-to-finance"]').click();
+    await page.waitForTimeout(800);
+    const clicked = await page.evaluate(() => {
+      const btn = document.querySelector(
+        '[data-demo="btn-send-settlement-to-finance"]'
+      );
+      if (btn) {
+        btn.click();
+        return true;
+      }
+      return false;
+    });
+    if (!clicked) {
+      throw new Error('btn-send-settlement-to-finance not found in DOM');
+    }
     await page.waitForTimeout(2000);
   });
 
