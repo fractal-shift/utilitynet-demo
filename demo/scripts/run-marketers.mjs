@@ -19,6 +19,7 @@ import {
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
+  playNarration,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -36,10 +37,23 @@ export async function runScenario(page) {
     await page.waitForTimeout(500);
   });
 
+  playNarration('marketers', 'marketer-dashboard');
   await step(page, 'Navigating to Marketers...', async () => {
     await clickWithCursor(page, 'nav-marketers');
   });
 
+  playNarration('marketers', 'marketer-customers-tab');
+  await step(page, 'Reviewing marketer customer book...', async () => {
+    await page.evaluate(() => {
+      const table = document.querySelector('[data-demo="marketer-journal-entries-table"]');
+      if (table) table.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    await page.waitForTimeout(800);
+  });
+
+  await showStatus(page, 'Marketer directory loaded — 6 active partners · NRG Direct leads at $841K revenue MTD · 284 new enrollments this month.');
+
+  playNarration('marketers', 'marketer-margin-input');
   await step(page, 'Updating marketer margin...', async () => {
     const marginInput = page.locator('[data-demo="marketer-margin-input"]');
     await marginInput.fill('0.92');
@@ -69,11 +83,20 @@ export async function runScenario(page) {
     }
   });
 
+  playNarration('marketers', 'marketer-revenue-report');
+  await step(page, 'Reviewing partner revenue report...', async () => {
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    await page.waitForTimeout(800);
+  });
+
+  await showStatus(page, 'Partner revenue MTD: $2.34M — ↑ 11.2% MoM. Commission run JE-2026-0088 · Account 2100 · $1,208,400 ready to post.');
+
   await step(page, 'Posting commissions to GL...', async () => {
     await clickWithCursor(page, 'btn-post-commissions-to-gl');
     await page.waitForTimeout(2000);
   });
 
+  playNarration('marketers', 'marketer-plan-create');
   await step(page, 'Opening Onboard Marketer modal...', async () => {
     await clickWithCursor(page, 'btn-onboard-marketer');
     await page.waitForTimeout(2000);
