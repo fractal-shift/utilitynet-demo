@@ -92,7 +92,7 @@ export default function Sidebar({ currentModule, onNavigate, isThena }) {
           className="text-[9px] font-medium tracking-wider uppercase opacity-60"
           style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
         >
-          Emberlyn ERP · v2.1.0
+          Emberlyn Energy · v2.1.0
         </div>
         <div
           className="mt-1 text-[9px] font-medium tracking-wider uppercase opacity-40"

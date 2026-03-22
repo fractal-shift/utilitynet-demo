@@ -23,7 +23,7 @@ export default function Navbar({ onToggleMode, theme }) {
           className="ml-2 text-[10px] font-medium tracking-wider uppercase opacity-50"
           style={{ color: '#fff', fontFamily: 'var(--font-mono)' }}
         >
-          Emberlyn ERP
+          Emberlyn Energy
         </span>
       </div>
       <div className="flex-1" />
