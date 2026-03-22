@@ -67,6 +67,18 @@ export async function runScenario(page) {
     await page.waitForTimeout(1000);
   });
 
+  await step(page, 'Closing Emberlyn panel...', async () => {
+    const closeBtn = page.locator(
+      '[data-demo="emberlyn-close"], button[aria-label="Close"]'
+    ).first();
+    if (await closeBtn.isVisible({ timeout: 1000 }).catch(() => false)) {
+      await closeBtn.click();
+    } else {
+      await page.keyboard.press('Escape');
+    }
+    await page.waitForTimeout(600);
+  });
+
   await step(page, 'Sending settlement to Finance...', async () => {
     await page.locator('[data-demo="btn-send-settlement-to-finance"]').scrollIntoViewIfNeeded();
     await page.locator('[data-demo="btn-send-settlement-to-finance"]').click();
