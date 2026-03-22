@@ -12,6 +12,7 @@ import Finance from '../modules/Finance';
 import Admin from '../modules/Admin';
 import EmerlynPanel from './EmerlynPanel';
 import ThenaPanel from './ThenaPanel';
+import CoachRail from './CoachRail';
 import EnrollmentModal from './EnrollmentModal';
 import BillingBatchModal from './BillingBatchModal';
 import Customer360Modal from './Customer360Modal';
@@ -161,6 +162,16 @@ Bank reconciliation: Balanced as of March 10`;
   return (
     <div className="flex min-h-screen flex-col" style={{ background: 'var(--bg)' }}>
       <Navbar onToggleMode={handleToggleMode} theme={theme} />
+      {state.tutorialMode && (
+        <span
+          data-demo="tutorial-toggle"
+          className="fixed top-3 left-1/2 z-[101] -translate-x-1/2 rounded border px-2 py-0.5 text-[8px] font-medium uppercase tracking-wider"
+          style={{ color: 'var(--gold)', borderColor: 'rgba(236,179,36,0.4)',
+                   animation: 'pulse 2s ease-in-out infinite', fontFamily: 'var(--font-mono)' }}
+        >
+          Tutorial Mode
+        </span>
+      )}
       <div className="mt-14 flex flex-1 overflow-hidden">
         <Sidebar
           currentModule={currentModule}
@@ -197,6 +208,8 @@ Bank reconciliation: Balanced as of March 10`;
             onToggle={() => setThenaOpen((o) => !o)}
             apiKey={apiKey}
           />
+        ) : state.tutorialMode ? (
+          <CoachRail />
         ) : (
           <EmerlynPanel
             isOpen={emberlynOpen}

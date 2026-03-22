@@ -4,6 +4,8 @@ import { streamClaude } from '../ai/claudeClient';
 import { EMBERLYN_SYSTEM_PROMPT } from '../ai/prompts';
 import { parseCreateBillingBatchIntent } from '../ai/intentActions';
 import { CLAUDE_API_KEY } from '../apiKey';
+import { useAppStore } from '../store/AppStore';
+import { TUTORIAL_SCENARIOS, findScenarioByPhrase } from '../data/tutorial-scenarios';
 
 const SUGGESTIONS = {
   'customer-C10482': [
@@ -63,8 +65,17 @@ function typewriterStream(html, onUpdate, onDone) {
 
 const getApiKey = () => CLAUDE_API_KEY?.trim() || import.meta.env.VITE_CLAUDE_API_KEY?.trim() || sessionStorage.getItem('claude-api-key');
 
+const TUTORIAL_SYSTEM_PROMPT = EMBERLYN_SYSTEM_PROMPT + `
+
+TUTORIAL DETECTION:
+If the user asks to walk through a scenario, tutorial, or feature, respond naturally then end your response with a new line containing ONLY: TUTORIAL_START:[scenario_id]
+Valid IDs: enrollment, marketers, billing, settlement, finance, analytics
+Pick the closest match. If no match, respond normally without the marker.
+Example: user says "walk me through finance" → end with: TUTORIAL_START:finance`;
+
 export default function EmerlynPanel({ isOpen, onClose, onToggle, context, suggestionContext = 'default', apiKey, onConfirmAction, onExecuteAction }) {
   const effectiveApiKey = apiKey?.trim() || getApiKey();
+  const { actions } = useAppStore();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -146,7 +157,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
         setMessages((m) => [...m, { role: 'assistant', content: '', streaming: true }]);
         let fullText = '';
         await streamClaude({
-          systemPrompt: EMBERLYN_SYSTEM_PROMPT,
+          systemPrompt: TUTORIAL_SYSTEM_PROMPT,
           messages: historyRef.current.slice(-8),
           apiKey: effectiveApiKey,
           onChunk: (chunk) => {
@@ -159,6 +170,15 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
             scrollToBottom();
           },
           onDone: (final) => {
+            if (final.includes('TUTORIAL_START:')) {
+              const scenarioId = final.split('TUTORIAL_START:')[1].trim().split('\n')[0].trim();
+              const scenario = TUTORIAL_SCENARIOS.find((s) => s.id === scenarioId);
+              if (scenario) {
+                actions.startTutorial(scenario);
+                setMessages((prev) => prev.slice(0, -1));
+                return;
+              }
+            }
             setMessages((prev) => {
               const next = [...prev];
               next[next.length - 1] = { ...next[next.length - 1], streaming: false };
