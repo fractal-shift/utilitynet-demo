@@ -125,7 +125,7 @@ Open AP approvals: 2 items totalling $1,192,680
 AR overdue (60+ days): $139,670 across 2 accounts
 Month-end status: On track — 2 of 5 checklist items complete
 Bank reconciliation: Balanced as of March 10`;
-    setEmberlynContext(mod === 'finance' ? financeCtx : `${labels[mod] || mod} · UTILITYnet ERP · March 2026`);
+    setEmberlynContext(mod === 'finance' ? financeCtx : `${labels[mod] || mod} · Emberlyn ERP · March 2026`);
 
     if (mod === 'analytics') {
       document.documentElement.setAttribute('data-theme', 'thena');
@@ -241,7 +241,7 @@ Bank reconciliation: Balanced as of March 10`;
       )}
       <footer className="flex-shrink-0 border-t px-6 py-3 text-center" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
         <div className="text-[9px] font-medium tracking-wider uppercase opacity-60" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>
-          FRACTALSHIFT × GNAR · V2.1.0 · POWERED BY EMBERLYN AI
+          EMBERLYN ERP · POWERED BY FRACTALSHIFT
         </div>
       </footer>
     </div>

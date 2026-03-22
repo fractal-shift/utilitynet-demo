@@ -302,7 +302,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
           className="flex-shrink-0 border-b px-3.5 py-2 text-[10px] font-medium"
           style={{ background: 'var(--s2)', borderColor: 'var(--border)', color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
         >
-          CONTEXT: {context || 'Dashboard · UTILITYnet ERP · March 2026'}
+          CONTEXT: {context || 'Dashboard · Emberlyn ERP · March 2026'}
         </div>
         <div className="flex-1 overflow-y-auto p-3.5" style={{ display: 'flex', flexDirection: 'column', gap: 10 }} data-demo="emberlyn-messages">
           {messages.map((m, i) => (
