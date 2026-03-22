@@ -97,3 +97,17 @@ body {
 [data-theme="light"] .card-hover:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
+
+.tutorial-highlight {
+  outline: 2px solid var(--gold) !important;
+  outline-offset: 3px !important;
+  border-radius: 8px;
+  animation: tutorialHighlightPulse 1.5s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes tutorialHighlightPulse {
+  0%, 100% { outline-color: var(--gold); }
+  50% { outline-color: var(--teal); }
+}
