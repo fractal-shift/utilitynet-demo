@@ -38,6 +38,8 @@ export function useTutorialAudio() {
 
     audio.play().catch(err => {
       console.warn('[TutorialAudio] Autoplay blocked:', err.message);
+      setAudioPlaying(false);
+      setTimeout(() => advanceStep(), 4000);
     });
 
     return () => { audio.pause(); };
