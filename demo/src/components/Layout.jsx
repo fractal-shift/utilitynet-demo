@@ -161,7 +161,7 @@ export default function Layout({ apiKey }) {
       billing: `Current module: Billing Engine\nActive batch: B-2026-0311 (March 2026), 2,847 invoices, $1.84M total, 3 exceptions flagged\nExceptions: EXC-0311-A missing meter read $4,200 · EXC-0311-B rate mismatch $38.40 · EXC-0311-C NSF $124`,
       settlement: `Current module: Settlement\n52 marketers. 49 reconciled. 3 exceptions: AltaGas Retail $1,640 variance (INV-2026-0312), Calgary Energy in review.`,
       marketers: `Current module: Marketers\nTop: NRG Direct $841K (4,821 customers), PrairieEnergy $612K, AltaGas $482K (exception active)\nCommission run JE-2026-0088 ready to post — $1.2M to Account 2100`,
-      finance: `Current module: Finance\nGL: Energy Revenue $2.34M credited, AESO Settlement Payable $6.82M, AR $184K\nAP approvals: 2 items totalling $1,192,680 pending\nAR overdue (60+ days): $139,670 across 2 accounts\nMonth-end: On track — 2 of 5 checklist items complete\nBank reconciliation: Balanced as of March 10\nLegacyLift: 3 orphaned GL codes flagged from Oracle migration`,
+      finance: `Current module: Finance\nGL: Energy Revenue $2.34M credited, AESO Settlement Payable $6.82M, AR $184K\nAP approvals: 2 items totalling $1,192,680 pending\nAR overdue (60+ days): $139,670 across 2 accounts\nMonth-end: On track — 2 of 5 checklist items complete\nBank reconciliation: Balanced as of March 10\nGL Remediation: 3 orphaned GL codes flagged from Oracle migration`,
       analytics: `Current module: Analytics\nRevenue trend: March 2026 peak at $2.34M. Churn risk: 42 accounts, $84K LTV at risk. Late payment: 17 accounts, $41,200, 82% confidence.`,
       admin: `Current module: Admin\nSystem health nominal. Last deployment: March 11. All integrations active.`,
     };

@@ -70,10 +70,10 @@ export const TUTORIAL_SCENARIOS = [
         narration: 'The General Ledger shows six core accounts — Energy Revenue credited $2.34M, AESO Settlement Payable at $6.82M, AR at $184K. Every transaction posts automatically. A manual journal entry is being posted now — the full audit trail captures who posted it, when, and why.',
       },
       {
-        id: 'finance-legacylift-scan',
-        title: 'Legacy Lift Scan',
-        demoTarget: 'finance-legacylift-scan',
-        narration: 'The GL Migration tab shows what the migration tool found in the legacy Oracle system — orphaned codes, misclassified accounts, and codes with no mapping. Three are flagged. The system proposes clean replacements automatically. No consultant, no spreadsheet.',
+        id: 'finance-gl-remediation',
+        title: 'GL Remediation Scan',
+        demoTarget: 'finance-gl-remediation',
+        narration: 'The GL Remediation scanner shows what was found in the legacy Oracle system — orphaned codes, misclassified accounts, and codes with no mapping. Three are flagged. The system proposes clean replacements automatically. No consultant, no spreadsheet.',
       },
       {
         id: 'finance-remediation-plan',

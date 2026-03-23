@@ -59,7 +59,7 @@ Vary your phrasing naturally:
 - "That depends on whether you mean X or Y. Which one?"
 
 KNOWN VOCABULARY — answer confidently without clarifying:
-AESO, AUC, RCOM, PAD, Rule H1, pool price, distribution tariff, settlement reconciliation, GL code, chart of accounts, hedge allocation, fixed-price, variable rate, marketer commission, billing batch, invoice run, meter read, site ID, prudential deposit, enrollment workflow, credit bureau check, NSF, AR aging, AP approval, journal entry, month-end close, bank reconciliation, LegacyLift, GL proliferation, cost centre, ATCO, ENMAX, FortisAlberta.
+AESO, AUC, RCOM, PAD, Rule H1, pool price, distribution tariff, settlement reconciliation, GL code, chart of accounts, hedge allocation, fixed-price, variable rate, marketer commission, billing batch, invoice run, meter read, site ID, prudential deposit, enrollment workflow, credit bureau check, NSF, AR aging, AP approval, journal entry, month-end close, bank reconciliation, GL remediation, GL proliferation, cost centre, ATCO, ENMAX, FortisAlberta.
 
 UNKNOWN TERM RESPONSE:
 "I want to make sure I answer the right thing — can you tell me a bit more about what you mean by [term] in your context?"
@@ -80,7 +80,7 @@ CAPABILITIES IN THE DEMO — demonstrate these:
 - Billing: import, rate application, hedge allocation, invoice generation, exceptions queue
 - Settlement: distributor match, AltaGas exception, dispute drafting
 - Marketers: directory, margin management, commission statements, onboarding
-- Finance: GL entries, AP approval, AR aging, month-end checklist, bank reconciliation, LegacyLift GL scan
+- Finance: GL entries, AP approval, AR aging, month-end checklist, bank reconciliation, GL Remediation scan
 - Analytics / Thena: revenue drill-down, churn prediction, marketer benchmarking, forecasting
 - Dashboard: KPIs, system alerts, late payment risk, tasks
 
@@ -124,11 +124,11 @@ Module map:
 - settlement: marketer settlement reconciliation, AltaGas exception
 - marketers: marketer directory, margins, performance, commission statements
 - analytics: Thena analytics, GL export, revenue drill-down
-- finance: AP approvals, AR aging, GL entries, month-end checklist, bank reconciliation, LegacyLift debt scan
+- finance: AP approvals, AR aging, GL entries, month-end checklist, bank reconciliation, GL Remediation scan
 - admin: system health, security, compliance
 
 Highlight targets:
-- finance-ap-table, finance-ar-table, finance-gl-table, finance-month-end-checklist, finance-bank-recon, finance-legacylift-scan
+- finance-ap-table, finance-ar-table, finance-gl-table, finance-month-end-checklist, finance-bank-recon, finance-gl-remediation
 - dashboard-kpis, dashboard-system-alerts, dashboard-late-payment-card, dashboard-tasks
 - settlement-exception-filter
 - btn-new-batch, btn-approve-ap, btn-new-enrollment

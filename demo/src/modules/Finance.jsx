@@ -55,7 +55,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
     { id: 'ar', label: 'Accounts Receivable' },
     { id: 'ap', label: 'Accounts Payable' },
     { id: 'recon', label: 'Reconciliation' },
-    { id: 'legacylift', label: 'GL Migration' },
+    { id: 'gl-remediation', label: 'GL Remediation' },
   ];
 
   const handleApproveAp = (idx) => {
@@ -142,7 +142,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
         {tabs.map((t) => (
           <button
             key={t.id}
-            data-demo={t.id === 'gl' ? 'finance-tab-gl' : t.id === 'ar' ? 'finance-tab-ar' : t.id === 'ap' ? 'finance-tab-ap' : t.id === 'recon' ? 'finance-tab-recon' : 'finance-tab-legacylift'}
+            data-demo={t.id === 'gl' ? 'finance-tab-gl' : t.id === 'ar' ? 'finance-tab-ar' : t.id === 'ap' ? 'finance-tab-ap' : t.id === 'recon' ? 'finance-tab-recon' : 'finance-tab-gl-remediation'}
             type="button"
             onClick={() => setActiveTab(t.id)}
             className="border-b-2 px-4 py-2.5 text-[13px] font-medium transition"
@@ -297,9 +297,9 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
         </div>
       )}
 
-      {activeTab === 'legacylift' && (
+      {activeTab === 'gl-remediation' && (
         <div className="space-y-6">
-          <div data-demo="finance-legacylift-scan" className="rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+          <div data-demo="finance-gl-remediation" className="rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
             <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'var(--border)' }}>
               <div>
                 <h3 className="text-[14px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Legacy System Migration Scan</h3>
