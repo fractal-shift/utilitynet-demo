@@ -29,16 +29,16 @@ export default function Navbar({ onToggleMode, theme }) {
           fontFamily: 'var(--font-ui)',
         }}
       >
-        <svg width="12" height="14" viewBox="0 0 24 28" fill="none">
+        <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
           <path
-            d="M12 2C12 2 4 10 4 17a8 8 0 0 0 16 0C20 10 12 2 12 2Z"
+            d="M5 0C5 0 8 4 8 7.5C8 9.4 6.7 11 5 11C3.3 11 2 9.4 2 7.5C2 4 5 0 5 0Z"
             fill="white"
-            opacity="0.9"
+            opacity="0.95"
           />
           <path
-            d="M12 10C12 10 8 15 8 18a4 4 0 0 0 8 0C16 15 12 10 12 10Z"
+            d="M5 5C5 5 6.5 7 6.5 8.5C6.5 9.3 5.8 10 5 10C4.2 10 3.5 9.3 3.5 8.5C3.5 7 5 5 5 5Z"
             fill="white"
-            opacity="0.5"
+            opacity="0.4"
           />
         </svg>
         <span
