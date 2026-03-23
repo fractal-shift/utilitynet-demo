@@ -179,9 +179,10 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
           apiKey: effectiveApiKey,
           onChunk: (chunk) => {
             fullText += chunk;
+            const displayText = fullText.replace(/<nav\s[^>]*\/?>.*$/s, '').trimEnd();
             setMessages((prev) => {
               const next = [...prev];
-              next[next.length - 1] = { ...next[next.length - 1], content: fullText };
+              next[next.length - 1] = { ...next[next.length - 1], content: displayText };
               return next;
             });
             scrollToBottom();
