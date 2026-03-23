@@ -47,6 +47,32 @@ const SUGGESTIONS = {
   ],
 };
 
+const NAV_TAG_REGEX = /<nav\b[^>]*\/>/i;
+const STREAMING_NAV_REGEX = /<nav\b[\s\S]*$/i;
+
+function parseNavInstruction(text) {
+  const tag = text.match(NAV_TAG_REGEX)?.[0];
+  if (!tag) return null;
+  const moduleMatch = tag.match(/\bmodule="([^"]+)"/i);
+  if (!moduleMatch) return null;
+  const highlightMatch = tag.match(/\bhighlight="([^"]+)"/i);
+  return {
+    tag,
+    module: moduleMatch[1],
+    highlight: highlightMatch?.[1] || null,
+  };
+}
+
+function stripStreamingNavText(text) {
+  return text.replace(STREAMING_NAV_REGEX, '').trimEnd();
+}
+
+function stripCompleteNavTag(text) {
+  const navInstruction = parseNavInstruction(text);
+  if (!navInstruction) return text;
+  return text.replace(navInstruction.tag, '').trim();
+}
+
 function typewriterStream(html, onUpdate, onDone) {
   const words = html.split(/(?<=\s)/);
   let i = 0;
@@ -76,23 +102,6 @@ Example: user says "walk me through finance" → end with: TUTORIAL_START:financ
 export default function EmerlynPanel({ isOpen, onClose, onToggle, context, suggestionContext = 'default', apiKey, onConfirmAction, onExecuteAction, onNavigate }) {
   const effectiveApiKey = apiKey?.trim() || getApiKey();
 
-  const handleNavFromResponse = (text) => {
-    const match = text.match(/<nav\s+module="([^"]+)"(?:\s+highlight="([^"]+)")?\/>/);
-    if (!match) return text;
-    const [fullTag, mod, highlight] = match;
-    if (onNavigate) {
-      setTimeout(() => {
-        onNavigate(mod);
-        if (highlight) {
-          setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('utilitynet:highlight', { detail: { target: highlight } }));
-          }, 400);
-        }
-      }, 600);
-    }
-    return text.replace(fullTag, '').trim();
-  };
-
   const { actions } = useAppStore();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -106,6 +115,28 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
   const isNearBottomRef = useRef(true);
   const dragStateRef = useRef({ active: false, startX: 0, startWidth: 380 });
   const textareaRef = useRef(null);
+
+  const fireNavInstruction = (navInstruction) => {
+    if (!navInstruction || navFiredRef.current) return false;
+    navFiredRef.current = true;
+    if (onNavigate) {
+      setTimeout(() => {
+        onNavigate(navInstruction.module);
+        if (navInstruction.highlight) {
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('utilitynet:highlight', { detail: { target: navInstruction.highlight } }));
+          }, 400);
+        }
+      }, 600);
+    }
+    return true;
+  };
+
+  const handleNavFromResponse = (text) => {
+    const navInstruction = parseNavInstruction(text);
+    fireNavInstruction(navInstruction);
+    return stripCompleteNavTag(text);
+  };
 
   const suggestions = SUGGESTIONS[suggestionContext] || SUGGESTIONS.default;
   const isStreaming = messages.some((m) => m.streaming);
@@ -237,35 +268,19 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
           apiKey: effectiveApiKey,
           onChunk: (chunk) => {
             fullText += chunk;
-            const displayText = fullText.replace(/<nav\s[^>]*\/?>.*$/s, '').trimEnd();
+            const displayText = stripStreamingNavText(fullText);
             setMessages((prev) => {
               const next = [...prev];
               next[next.length - 1] = { ...next[next.length - 1], content: displayText };
               return next;
             });
-            // Fire nav as soon as complete tag appears in stream — don't wait for onDone
-            if (!navFiredRef.current) {
-              const navMatch = fullText.match(/<nav\s+module="([^"]+)"(?:\s+highlight="([^"]+)")?\/>/);
-              if (navMatch) {
-                navFiredRef.current = true;
-                const [, mod, highlight] = navMatch;
-                if (onNavigate) {
-                  setTimeout(() => {
-                    onNavigate(mod);
-                    if (highlight) {
-                      setTimeout(() => {
-                        window.dispatchEvent(new CustomEvent('utilitynet:highlight', { detail: { target: highlight } }));
-                      }, 400);
-                    }
-                  }, 600);
-                }
-              }
-            }
+            fireNavInstruction(parseNavInstruction(fullText));
             scrollToBottom();
           },
           onDone: (final) => {
-            if (final.includes('TUTORIAL_START:')) {
-              const scenarioId = final.split('TUTORIAL_START:')[1].trim().split('\n')[0].trim();
+            const rawFinal = fullText || final;
+            if (rawFinal.includes('TUTORIAL_START:')) {
+              const scenarioId = rawFinal.split('TUTORIAL_START:')[1].trim().split('\n')[0].trim();
               const scenario = TUTORIAL_SCENARIOS.find((s) => s.id === scenarioId);
               if (scenario) {
                 actions.startTutorial(scenario);
@@ -273,7 +288,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
                 return;
               }
             }
-            const cleaned = handleNavFromResponse(final);
+            const cleaned = handleNavFromResponse(rawFinal);
             setMessages((prev) => {
               const next = [...prev];
               next[next.length - 1] = { ...next[next.length - 1], streaming: false, content: cleaned };
