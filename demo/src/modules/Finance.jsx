@@ -24,19 +24,93 @@ const AP_ROWS = [
   { payee: 'RBC Bank', description: 'Credit Facility Fee', amount: '$4,200', due: 'Mar 30', status: 'Scheduled', action: 'View' },
 ];
 
-const LEGACY_SCAN_ROWS = [
-  { oldCode: 'MISC-EXP', oldLabel: 'Miscellaneous Expense', entries: 12, newCode: '5200', newLabel: 'Operating Expense', status: 'Flagged' },
-  { oldCode: 'AESO-ADJ', oldLabel: 'AESO Adjustment', entries: 4, newCode: '2200', newLabel: 'AESO Settlement Payable', status: 'Flagged' },
-  { oldCode: 'LEG-AP-01', oldLabel: 'Legacy AP Codes', entries: 7, newCode: null, newLabel: 'Archive — no GL mapping', status: 'Flagged' },
-  { oldCode: 'REV-4000', oldLabel: 'Energy Revenue', entries: 284, newCode: '4000', newLabel: 'Energy Revenue', status: 'Mapped' },
-  { oldCode: 'AR-1100', oldLabel: 'Accounts Receivable', entries: 97, newCode: '1100', newLabel: 'Accounts Receivable', status: 'Mapped' },
-  { oldCode: 'CASH-RBC', oldLabel: 'RBC Cash Account', entries: 156, newCode: '1000', newLabel: 'Operating Cash — RBC', status: 'Mapped' },
+const GL_ISSUES = [
+  {
+    id: 'GLI-001',
+    code: 'MISC-EXP',
+    label: 'Miscellaneous Expense',
+    category: 'Misclassified',
+    severity: 'High',
+    entries: 12,
+    lastActivity: 'Jan 2024',
+    balance: '$0.00',
+    impact: 'Prevents misstatement in Operating Expense reporting',
+    owner: 'Finance Ops',
+    recommendation: 'Merge',
+    recommendedTarget: '5200 — Operating Expense',
+    reasoning: 'Code predates cost-centre structure. All 12 entries map cleanly to Operating Expense with no ambiguity. Safe to merge immediately.',
+    transactions: [
+      { date: 'Jan 14 2024', amount: '$1,240', description: 'Office supplies — Q4 variance' },
+      { date: 'Nov 3 2023', amount: '$880', description: 'Unclassified vendor payment' },
+      { date: 'Sep 12 2023', amount: '$2,100', description: 'Miscellaneous operating cost' },
+    ],
+  },
+  {
+    id: 'GLI-002',
+    code: 'AESO-ADJ',
+    label: 'AESO Adjustment',
+    category: 'Duplicate',
+    severity: 'High',
+    entries: 4,
+    lastActivity: 'Mar 2025',
+    balance: '$1,640.00',
+    impact: 'Prevents duplicate settlement posting against Account 2200',
+    owner: 'Settlement Team',
+    recommendation: 'Merge',
+    recommendedTarget: '2200 — AESO Settlement Payable',
+    reasoning: 'Duplicate of Account 2200 created during 2023 system migration. Balance of $1,640 matches active AltaGas variance — resolve settlement exception first, then merge.',
+    transactions: [
+      { date: 'Mar 5 2025', amount: '$1,640', description: 'AltaGas INV-2026-0312 variance' },
+      { date: 'Dec 1 2024', amount: '$420', description: 'AESO pool price adjustment' },
+      { date: 'Aug 14 2024', amount: '$890', description: 'Settlement correction entry' },
+    ],
+  },
+  {
+    id: 'GLI-003',
+    code: 'LEG-AP-01',
+    label: 'Legacy AP Codes',
+    category: 'Orphaned',
+    severity: 'Medium',
+    entries: 7,
+    lastActivity: 'Aug 2022',
+    balance: '$0.00',
+    impact: 'Eliminates dormant code from AP close workflow',
+    owner: 'Finance Ops',
+    recommendation: 'Retire',
+    recommendedTarget: null,
+    reasoning: 'No transactions since August 2022. No active vendor mappings. Zero balance, no dependencies detected. Safe to archive immediately.',
+    transactions: [
+      { date: 'Aug 22 2022', amount: '$340', description: 'Final legacy vendor payment' },
+      { date: 'Jun 3 2022', amount: '$1,200', description: 'AP transition entry' },
+      { date: 'Jan 11 2022', amount: '$780', description: 'Legacy system closing entry' },
+    ],
+  },
+  {
+    id: 'GLI-004',
+    code: 'HEDGE-OLD',
+    label: 'Hedge Allocation — Legacy',
+    category: 'Inactive with Balance',
+    severity: 'Critical',
+    entries: 3,
+    lastActivity: 'Dec 2023',
+    balance: '$42,000.00',
+    impact: 'Avoids misstatement risk on hedge reserve balances — Controller sign-off required',
+    owner: 'Controller',
+    recommendation: 'Investigate',
+    recommendedTarget: null,
+    reasoning: 'Marked inactive but carries $42,000 balance from Q4 2023 hedge positions. Cannot retire or merge until balance is reclassified or written off. Requires Controller approval and journal entry to resolve.',
+    transactions: [
+      { date: 'Dec 31 2023', amount: '$42,000', description: 'Q4 hedge position — year-end close' },
+      { date: 'Nov 15 2023', amount: '$18,400', description: 'Hedge allocation — industrial book' },
+      { date: 'Sep 2 2023', amount: '$23,600', description: 'Hedge contract settlement' },
+    ],
+  },
 ];
 
-const REMEDIATION_ITEMS = [
-  { id: 'REM-001', description: 'Recode MISC-EXP (12 entries) → 5200 Operating Expense', owner: 'Sarah M.', due: 'Mar 15', status: 'In Progress' },
-  { id: 'REM-002', description: 'Map AESO-ADJ entries (4 entries) → 2200 Settlement Payable', owner: 'Chris T.', due: 'Mar 18', status: 'Open' },
-  { id: 'REM-003', description: 'Archive legacy AP codes (7 accounts) — no active GL mapping', owner: 'Finance Team', due: 'Mar 22', status: 'Open' },
+const GL_GOVERNANCE_RULES = [
+  { rule: 'New code creation requires Finance Manager approval', status: 'Enforced' },
+  { rule: 'Cost centre justification required at creation', status: 'Enforced' },
+  { rule: 'Sunset date mandatory for all project codes', status: 'Enforced' },
 ];
 
 export default function Finance({ onOpenEmberlyn, showToast }) {
@@ -44,7 +118,26 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
   const [apStatus, setApStatus] = useState(
     AP_ROWS.reduce((acc, r, i) => ({ ...acc, [i]: r.status }), {})
   );
-  const [cleanupConfirmed, setCleanupConfirmed] = useState(false);
+  const [selectedIssues, setSelectedIssues] = useState(new Set());
+  const [expandedIssue, setExpandedIssue] = useState(null);
+  const [executionStatus, setExecutionStatus] = useState(
+    GL_ISSUES.reduce((acc, r) => ({ ...acc, [r.id]: 'Pending' }), {})
+  );
+  const [severityFilter, setSeverityFilter] = useState(null);
+
+  const healthScore = (() => {
+    let score = 58;
+    GL_ISSUES.forEach((issue) => {
+      const status = executionStatus[issue.id];
+      if (status !== 'Applied') return;
+      if (issue.recommendation === 'Investigate') {
+        score += issue.severity === 'Critical' ? 6 : issue.severity === 'High' ? 4 : 2;
+      } else {
+        score += issue.severity === 'Critical' ? 12 : issue.severity === 'High' ? 8 : 4;
+      }
+    });
+    return Math.min(score, 100);
+  })();
 
   const fireToast = (msg) => {
     if (typeof showToast === 'function') showToast(msg);
@@ -297,108 +390,397 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
         </div>
       )}
 
-      {activeTab === 'gl-remediation' && (
-        <div className="space-y-6">
-          <div data-demo="finance-gl-remediation" className="rounded-xl border" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
-            <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'var(--border)' }}>
+      {activeTab === 'gl-remediation' && (() => {
+        const appliedCount = Object.values(executionStatus).filter((s) => s === 'Applied').length;
+        const countBySeverity = (sev) => GL_ISSUES.filter((i) => i.severity === sev).length;
+        const filterChips = [
+          { id: null, label: 'All' },
+          { id: 'Critical', label: `🔴 Critical: ${countBySeverity('Critical')}` },
+          { id: 'High', label: `🟠 High: ${countBySeverity('High')}` },
+          { id: 'Medium', label: `🟡 Medium: ${countBySeverity('Medium')}` },
+          { id: 'Applied', label: `✓ Applied: ${appliedCount}` },
+        ];
+        const visibleIssues = GL_ISSUES.filter((issue) => {
+          if (!severityFilter) return true;
+          if (severityFilter === 'Applied') return executionStatus[issue.id] === 'Applied';
+          return issue.severity === severityFilter;
+        });
+        const selectedInvestigateCount = GL_ISSUES.filter(
+          (i) => selectedIssues.has(i.id) && i.recommendation === 'Investigate'
+        ).length;
+        const healthColor =
+          healthScore >= 85
+            ? 'var(--success)'
+            : healthScore >= 70
+            ? 'var(--teal)'
+            : 'var(--warning)';
+        const healthBg =
+          healthScore >= 85
+            ? 'rgba(39,174,96,0.12)'
+            : healthScore >= 70
+            ? 'rgba(26,188,171,0.12)'
+            : 'rgba(243,156,18,0.12)';
+
+        const getCategoryStyle = (cat) => {
+          if (cat === 'Orphaned') return { background: 'rgba(255,255,255,0.06)', color: 'var(--muted)' };
+          if (cat === 'Duplicate') return { background: 'rgba(243,156,18,0.12)', color: 'var(--warning)' };
+          if (cat === 'Misclassified') return { background: 'rgba(59,130,246,0.12)', color: '#3B82F6' };
+          if (cat === 'Inactive with Balance') return { background: 'rgba(231,76,60,0.12)', color: 'var(--error)' };
+          return {};
+        };
+        const getSeverityStyle = (sev) => {
+          if (sev === 'Critical') return { background: 'rgba(231,76,60,0.12)', color: 'var(--error)' };
+          if (sev === 'High') return { background: 'rgba(243,156,18,0.12)', color: 'var(--warning)' };
+          if (sev === 'Medium') return { background: 'rgba(212,175,55,0.12)', color: '#D4AF37' };
+          return {};
+        };
+
+        const applyIssue = (id) => {
+          const issue = GL_ISSUES.find((i) => i.id === id);
+          setExecutionStatus((s) => ({ ...s, [id]: 'Applied' }));
+          setExpandedIssue(null);
+          const label = issue.recommendation === 'Investigate' ? 'contained' : issue.recommendation.toLowerCase() + 'd';
+          fireToast(`Recommendation applied — ${issue.code} marked as ${label}`);
+        };
+        const deferIssue = (id) => {
+          setExecutionStatus((s) => ({ ...s, [id]: 'Deferred' }));
+          setExpandedIssue(null);
+        };
+        const applyBulk = () => {
+          const ids = Array.from(selectedIssues);
+          setExecutionStatus((s) => {
+            const next = { ...s };
+            ids.forEach((id) => { next[id] = 'Applied'; });
+            return next;
+          });
+          setSelectedIssues(new Set());
+          const allApplied = GL_ISSUES.every((i) => ids.includes(i.id) || executionStatus[i.id] === 'Applied');
+          if (allApplied || ids.length + appliedCount >= GL_ISSUES.length) {
+            fireToast(`${ids.length} remediation actions applied · Chart health updated · Target health achieved — 90%`);
+          } else {
+            fireToast(`${ids.length} remediation actions applied · Chart health updated`);
+          }
+        };
+        const deferBulk = () => {
+          const ids = Array.from(selectedIssues);
+          setExecutionStatus((s) => {
+            const next = { ...s };
+            ids.forEach((id) => { next[id] = 'Deferred'; });
+            return next;
+          });
+          setSelectedIssues(new Set());
+        };
+        const toggleSelect = (id) => {
+          setSelectedIssues((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+          });
+        };
+
+        const expandedIssueData = GL_ISSUES.find((i) => i.id === expandedIssue);
+
+        return (
+          <div className="space-y-4" style={{ fontFamily: 'var(--font-ui)' }}>
+            {/* Header row */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-[14px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Legacy System Migration Scan</h3>
-                <p className="mt-0.5 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>GL code mapping from legacy system — February 2026</p>
+                <span className="text-[14px] font-semibold" style={{ color: 'var(--light)' }}>GL Remediation Scan</span>
+                <span className="ml-3 text-[12px]" style={{ color: 'var(--muted)' }}>Last run: March 11, 2026</span>
               </div>
-              <div className="rounded-md px-3 py-1.5 text-[12px] font-medium" style={{ background: 'rgba(243, 156, 18, 0.12)', color: 'var(--warning)', fontFamily: 'var(--font-ui)' }}>
-                ⚠ 3 codes flagged
+              <div
+                data-demo="finance-gl-health-score"
+                className="rounded-md px-3 py-1.5 text-[13px] font-semibold"
+                style={{ background: healthBg, color: healthColor }}
+              >
+                Chart Health: {healthScore}%
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => fireToast('Scan complete — 4 issues detected · Last run updated')}
+                  className="rounded border px-3 py-1.5 text-[12px] font-medium opacity-80 hover:opacity-100"
+                  style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+                >
+                  Run New Scan
+                </button>
+                <button
+                  type="button"
+                  onClick={() => fireToast('Report export queued')}
+                  className="rounded border px-3 py-1.5 text-[12px] font-medium opacity-80 hover:opacity-100"
+                  style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+                >
+                  Export Report
+                </button>
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-[13px]" style={{ fontFamily: 'var(--font-ui)' }}>
+
+            {/* Category summary chips */}
+            <div className="flex flex-wrap gap-2">
+              {filterChips.map((chip) => (
+                <button
+                  key={String(chip.id)}
+                  type="button"
+                  onClick={() => setSeverityFilter(chip.id)}
+                  className="rounded-full border px-3 py-1 text-[12px] font-medium transition"
+                  style={{
+                    borderColor: severityFilter === chip.id ? 'var(--teal)' : 'var(--border)',
+                    color: severityFilter === chip.id ? 'var(--teal)' : 'var(--muted)',
+                    background: severityFilter === chip.id ? 'rgba(26,188,171,0.08)' : 'transparent',
+                  }}
+                >
+                  {chip.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Issues table */}
+            <div className="overflow-x-auto rounded-lg border" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
+              <table data-demo="finance-gl-issues-table" className="w-full text-left text-[13px]">
                 <thead>
                   <tr style={{ background: 'var(--s2)', color: 'var(--muted)' }}>
-                    <th className="px-4 py-2.5 font-medium">Legacy Code</th>
-                    <th className="px-4 py-2.5 font-medium">Legacy Label</th>
-                    <th className="px-4 py-2.5 font-medium">Entries</th>
-                    <th className="px-4 py-2.5 font-medium">New GL Code</th>
-                    <th className="px-4 py-2.5 font-medium">New Label</th>
-                    <th className="px-4 py-2.5 font-medium">Status</th>
+                    <th className="px-3 py-2.5 font-medium w-8"></th>
+                    <th className="px-3 py-2.5 font-medium">Code</th>
+                    <th className="px-3 py-2.5 font-medium">Label</th>
+                    <th className="px-3 py-2.5 font-medium">Category</th>
+                    <th className="px-3 py-2.5 font-medium">Severity</th>
+                    <th className="px-3 py-2.5 font-medium">Entries</th>
+                    <th className="px-3 py-2.5 font-medium">Balance</th>
+                    <th className="px-3 py-2.5 font-medium">Recommendation</th>
+                    <th className="px-3 py-2.5 font-medium">Owner</th>
+                    <th className="px-3 py-2.5 font-medium">Status</th>
+                    <th className="px-3 py-2.5 font-medium">Action</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {LEGACY_SCAN_ROWS.map((r, i) => (
-                    <tr key={i} className="border-t" style={{ borderColor: 'var(--border)' }}>
-                      <td className="px-4 py-2.5 font-mono text-[12px]" style={{ color: 'var(--light)' }}>{r.oldCode}</td>
-                      <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.oldLabel}</td>
-                      <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.entries}</td>
-                      <td className="px-4 py-2.5 font-mono text-[12px]" style={{ color: r.newCode ? 'var(--teal)' : 'var(--muted)' }}>{r.newCode ?? '—'}</td>
-                      <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.newLabel}</td>
-                      <td className="px-4 py-2.5">
-                        <span
-                          className="rounded px-2 py-0.5 text-[11px] font-medium"
-                          style={{
-                            background: r.status === 'Mapped' ? 'rgba(39, 174, 96, 0.12)' : 'rgba(243, 156, 18, 0.12)',
-                            color: r.status === 'Mapped' ? 'var(--success)' : 'var(--warning)',
-                          }}
-                        >
-                          {r.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {visibleIssues.map((issue) => {
+                    const status = executionStatus[issue.id];
+                    const isExpanded = expandedIssue === issue.id;
+                    return (
+                      <tr
+                        key={issue.id}
+                        className="border-t cursor-pointer transition-colors hover:bg-white/[0.02]"
+                        style={{
+                          borderColor: 'var(--border)',
+                          borderLeft: isExpanded ? '2px solid var(--teal)' : '2px solid transparent',
+                        }}
+                        onClick={() => setExpandedIssue(isExpanded ? null : issue.id)}
+                      >
+                        <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            checked={selectedIssues.has(issue.id)}
+                            onChange={() => toggleSelect(issue.id)}
+                            className="cursor-pointer"
+                          />
+                        </td>
+                        <td className="px-3 py-2.5 font-mono text-[12px]" style={{ color: 'var(--teal)' }}>{issue.code}</td>
+                        <td className="px-3 py-2.5" style={{ color: 'var(--light)' }}>{issue.label}</td>
+                        <td className="px-3 py-2.5">
+                          <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={getCategoryStyle(issue.category)}>
+                            {issue.category}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2.5">
+                          <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={getSeverityStyle(issue.severity)}>
+                            {issue.severity}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2.5" style={{ color: 'var(--text)' }}>{issue.entries}</td>
+                        <td className="px-3 py-2.5" style={{ color: issue.balance !== '$0.00' ? 'var(--warning)' : 'var(--muted)' }}>{issue.balance}</td>
+                        <td className="px-3 py-2.5" style={{ color: 'var(--text)' }}>{issue.recommendation}</td>
+                        <td className="px-3 py-2.5" style={{ color: 'var(--muted)' }}>{issue.owner}</td>
+                        <td className="px-3 py-2.5">
+                          {status === 'Applied' && <span style={{ color: 'var(--success)' }}>Applied</span>}
+                          {status === 'Deferred' && <span style={{ color: 'var(--muted)', fontStyle: 'italic' }}>Deferred</span>}
+                          {status === 'Pending' && <span style={{ color: 'var(--muted)' }}>Pending</span>}
+                        </td>
+                        <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
+                          {status === 'Applied' ? (
+                            <span className="text-[12px]" style={{ color: 'var(--success)' }}>✓ Applied</span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => setExpandedIssue(isExpanded ? null : issue.id)}
+                              className="rounded border px-2 py-0.5 text-[12px] font-medium opacity-80 hover:opacity-100"
+                              style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+                            >
+                              Review →
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
-          </div>
 
-          <div data-demo="finance-remediation-plan" className="rounded-xl border p-5" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
-            <h3 className="mb-1 text-[14px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Remediation Plan</h3>
-            <p className="mb-4 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>3 items require resolution before period close</p>
-            <div className="space-y-3">
-              {REMEDIATION_ITEMS.map((item) => (
-                <div key={item.id} className="flex items-start justify-between rounded-lg border px-4 py-3" style={{ borderColor: 'var(--border)', background: 'var(--s2)' }}>
-                  <div className="flex-1">
-                    <div className="text-[13px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{item.description}</div>
-                    <div className="mt-1 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>
-                      Owner: {item.owner} · Due: {item.due}
+            {/* Bulk action bar */}
+            {selectedIssues.size > 0 && (
+              <div
+                data-demo="finance-gl-bulk-actions"
+                className="rounded-lg border px-4 py-3"
+                style={{ borderColor: 'var(--teal)', background: 'rgba(26,188,171,0.06)' }}
+              >
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-[13px]" style={{ color: 'var(--text)' }}>
+                    {selectedIssues.size} item{selectedIssues.size !== 1 ? 's' : ''} selected
+                  </span>
+                  <button
+                    type="button"
+                    onClick={applyBulk}
+                    className="rounded-lg px-3 py-1.5 text-[12px] font-medium"
+                    style={{ background: 'var(--teal)', color: '#fff' }}
+                  >
+                    Apply All Recommended Actions
+                  </button>
+                  <button
+                    type="button"
+                    onClick={deferBulk}
+                    className="rounded border px-3 py-1.5 text-[12px] font-medium opacity-80 hover:opacity-100"
+                    style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+                  >
+                    Defer Selected
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIssues(new Set())}
+                    className="text-[12px] font-medium opacity-70 hover:opacity-100"
+                    style={{ color: 'var(--muted)' }}
+                  >
+                    Clear Selection
+                  </button>
+                </div>
+                {selectedInvestigateCount > 0 && (
+                  <p className="mt-2 text-[12px]" style={{ color: 'var(--warning)' }}>
+                    Note: {selectedInvestigateCount} item{selectedInvestigateCount !== 1 ? 's' : ''} flagged for investigation will be marked as contained — financial review still required.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Detail panel */}
+            {expandedIssueData && (
+              <div
+                data-demo="finance-gl-detail-panel"
+                className="rounded-xl border"
+                style={{ borderColor: 'var(--border)', background: 'var(--surface)', borderTop: '2px solid var(--teal)' }}
+              >
+                <div className="flex items-center justify-between border-b px-5 py-4" style={{ borderColor: 'var(--border)' }}>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <span className="font-mono text-[14px] font-semibold" style={{ color: 'var(--teal)' }}>{expandedIssueData.code}</span>
+                    <span className="text-[14px] font-semibold" style={{ color: 'var(--light)' }}>{expandedIssueData.label}</span>
+                    <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={getCategoryStyle(expandedIssueData.category)}>{expandedIssueData.category}</span>
+                    <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={getSeverityStyle(expandedIssueData.severity)}>{expandedIssueData.severity}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedIssue(null)}
+                    className="text-[18px] leading-none opacity-50 hover:opacity-100"
+                    style={{ color: 'var(--muted)' }}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-6 p-5 lg:grid-cols-2">
+                  {/* Left: AI Recommendation */}
+                  <div>
+                    <div className="mb-3 text-[11px] font-medium tracking-wider uppercase font-mono" style={{ color: 'var(--gold)' }}>
+                      AI Recommendation
+                    </div>
+                    <div className="text-[16px] font-semibold" style={{ color: 'var(--light)' }}>
+                      {expandedIssueData.recommendation === 'Investigate' ? 'Investigate' : expandedIssueData.recommendation}
+                    </div>
+                    {expandedIssueData.recommendedTarget && (
+                      <div className="mt-1 text-[13px]" style={{ color: 'var(--teal)' }}>
+                        → {expandedIssueData.recommendedTarget}
+                      </div>
+                    )}
+                    <p className="mt-2 text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>
+                      {expandedIssueData.reasoning}
+                    </p>
+                    <p className="mt-3 text-[12px] italic" style={{ color: 'var(--muted)' }}>
+                      🛡 {expandedIssueData.impact}
+                    </p>
+                    <p className="mt-2 text-[12px]" style={{ color: 'var(--muted)' }}>
+                      Owner: {expandedIssueData.owner}
+                    </p>
+                  </div>
+                  {/* Right: Recent Transactions */}
+                  <div>
+                    <div className="mb-3 text-[11px] font-medium tracking-wider uppercase font-mono" style={{ color: 'var(--gold)' }}>
+                      Recent Transactions
+                    </div>
+                    <div className="space-y-3">
+                      {expandedIssueData.transactions.map((tx, i) => (
+                        <div key={i} className="flex items-start gap-3 text-[13px]">
+                          <span className="font-mono text-[12px] shrink-0 pt-0.5" style={{ color: 'var(--muted)' }}>{tx.date}</span>
+                          <span className="font-semibold shrink-0" style={{ color: 'var(--light)' }}>{tx.amount}</span>
+                          <span style={{ color: 'var(--text)' }}>{tx.description}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 border-t pt-3" style={{ borderColor: 'var(--border)' }}>
+                      <span className="text-[13px]" style={{ color: 'var(--muted)' }}>Current Balance: </span>
+                      <span
+                        className="text-[13px] font-semibold"
+                        style={{ color: expandedIssueData.balance !== '$0.00' ? 'var(--error)' : 'var(--muted)' }}
+                      >
+                        {expandedIssueData.balance}
+                      </span>
                     </div>
                   </div>
-                  <span
-                    className="ml-4 shrink-0 rounded px-2 py-0.5 text-[11px] font-medium"
-                    style={{
-                      background: item.status === 'In Progress' ? 'rgba(26, 188, 171, 0.12)' : 'rgba(255, 255, 255, 0.06)',
-                      color: item.status === 'In Progress' ? 'var(--teal)' : 'var(--muted)',
-                    }}
-                  >
-                    {item.status}
-                  </span>
                 </div>
-              ))}
+                {/* Decision buttons */}
+                <div className="flex gap-3 border-t px-5 py-4" style={{ borderColor: 'var(--border)' }}>
+                  <button
+                    type="button"
+                    onClick={() => applyIssue(expandedIssueData.id)}
+                    className="rounded-lg px-4 py-2 text-[13px] font-medium transition"
+                    style={{ background: 'var(--teal)', color: '#fff' }}
+                  >
+                    {expandedIssueData.recommendation === 'Investigate' ? 'Mark as Contained' : 'Apply Recommendation'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deferIssue(expandedIssueData.id)}
+                    className="rounded border px-4 py-2 text-[13px] font-medium opacity-80 hover:opacity-100"
+                    style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
+                  >
+                    Defer
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Governance panel */}
+            <div
+              data-demo="finance-gl-governance"
+              className="rounded-xl border p-5"
+              style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}
+            >
+              <div className="mb-1 text-[14px] font-semibold" style={{ color: 'var(--light)' }}>Code Creation Governance</div>
+              <div className="mb-4 text-[12px]" style={{ color: 'var(--success)' }}>Active — enforced since March 11, 2026</div>
+              <div className="space-y-2">
+                {GL_GOVERNANCE_RULES.map((gr, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <span className="text-[13px]" style={{ color: 'var(--text)' }}>
+                      🔒 {gr.rule}
+                    </span>
+                    <span
+                      className="ml-4 shrink-0 rounded px-2 py-0.5 text-[11px] font-medium"
+                      style={{ background: 'rgba(39,174,96,0.12)', color: 'var(--success)' }}
+                    >
+                      {gr.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-
-          <div data-demo="finance-confirm-cleanup" className="rounded-xl border p-5" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
-            <h3 className="mb-1 text-[14px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Confirm Cleanup &amp; Lock Period</h3>
-            <p className="mb-4 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>
-              Once all remediation items are resolved, confirm cleanup to lock the February 2026 period and generate audit-ready reports.
-            </p>
-            {cleanupConfirmed ? (
-              <div className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-[13px] font-medium" style={{ background: 'rgba(39, 174, 96, 0.12)', color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>
-                ✓ Period Locked — Feb 2026 · Confirmed Mar 11, 2026
-              </div>
-            ) : (
-              <button
-                type="button"
-                data-demo="btn-confirm-cleanup"
-                onClick={() => {
-                  setCleanupConfirmed(true);
-                  fireToast('Legacy GL cleanup confirmed — February 2026 period locked · 3 remediations applied');
-                }}
-                className="rounded-lg px-4 py-2.5 text-[13px] font-medium transition"
-                style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}
-              >
-                Confirm Cleanup &amp; Lock Period
-              </button>
-            )}
-          </div>
-        </div>
-      )}
+        );
+      })()}
 
       {activeTab === 'recon' && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

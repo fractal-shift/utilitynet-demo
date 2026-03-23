@@ -650,6 +650,33 @@ FEASIBILITY TIERS:
 
 ---
 
+### F-007: GL Remediation Module — Full Interactive Build
+**Status: COMPLETE — this commit**
+**Files:** Finance.jsx
+
+Full rebuild of GL Remediation tab from static display to interactive diagnostic and governance system. This is the primary Finance wedge feature.
+
+DATA MODEL:
+4 issues across 4 categories (Orphaned, Duplicate, Misclassified, Inactive with Balance). Each issue has: id, code, label, category, severity, entries, lastActivity, balance, impact, owner, recommendation, recommendedTarget, reasoning, transactions[].
+
+INTERACTION CONTRACT:
+- recommendedAction (Merge/Retire/Reclassify/Investigate) is separate from executionStatus (Pending/Applied/Deferred)
+- Applying any action sets executionStatus → Applied regardless of recommendation type
+- Investigate rows apply as "contained" — partial health score credit (Critical +6, High +4, Medium +2)
+- Non-investigate rows get full credit (Critical +12, High +8, Medium +4)
+- Bulk apply allowed for all types — Investigate rows show inline note about financial review still required
+- Deferred rows do not affect health score
+
+HEALTH SCORE: Base 58%. Computed dynamically from resolved issues. Target 90%+ (all 4 applied). Color: amber below 70, teal 70–84, green 85+.
+
+HEDGE-OLD (GLI-004) is intentionally stubborn — $42K balance, requires Controller sign-off, recommendation is Investigate. Applying marks as "contained" not "resolved." This is the credibility anchor.
+
+GOVERNANCE PANEL: Three enforced rules displayed with lock icon and "Enforced" badge. Wording implies system enforcement, not policy documentation.
+
+demo targets added: finance-gl-health-score, finance-gl-issues-table, finance-gl-detail-panel, finance-gl-bulk-actions, finance-gl-governance
+
+---
+
 ## T3 Features — Demo Polish
 
 ---
