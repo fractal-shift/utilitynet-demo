@@ -12,6 +12,7 @@ import Finance from '../modules/Finance';
 import Admin from '../modules/Admin';
 import EmerlynPanel from './EmerlynPanel';
 import ThenaPanel from './ThenaPanel';
+import AldenPanel from './AldenPanel';
 import CoachRail from './CoachRail';
 import EnrollmentModal from './EnrollmentModal';
 import BillingBatchModal from './BillingBatchModal';
@@ -88,6 +89,7 @@ export default function Layout({ apiKey }) {
   const [theme, setTheme] = useState(() => localStorage.getItem('utilitynet-theme') || 'light');
   const [emberlynOpen, setEmberlynOpen] = useState(false);
   const [thenaOpen, setThenaOpen] = useState(false);
+  const [aldenOpen, setAldenOpen] = useState(false);
   const [emberlynContext, setEmberlynContext] = useState('');
   const [emberlynSuggestionContext, setEmberlynSuggestionContext] = useState('default');
   const [enrollmentModalOpen, setEnrollmentModalOpen] = useState(false);
@@ -203,7 +205,7 @@ export default function Layout({ apiKey }) {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: 'var(--bg)' }}>
-      <Navbar onToggleMode={handleToggleMode} theme={theme} />
+      <Navbar onToggleMode={handleToggleMode} theme={theme} onToggleAlden={() => setAldenOpen((o) => !o)} />
       {state.tutorialMode && (
         <span
           data-demo="tutorial-toggle"
@@ -231,6 +233,7 @@ export default function Layout({ apiKey }) {
           <ActiveModule
             onOpenEmberlyn={(ctx) => { setEmberlynOpen(true); setEmberlynSuggestionContext(ctx || 'default'); }}
             onOpenThena={(ctx) => { setThenaOpen(true); }}
+            onOpenAlden={() => setAldenOpen(true)}
             emberlynContext={emberlynContext}
             currentModule={currentModule}
             onOpenEnrollmentModal={() => setEnrollmentModalOpen(true)}
@@ -272,6 +275,12 @@ export default function Layout({ apiKey }) {
           />
         )}
       </div>
+      <AldenPanel
+        isOpen={aldenOpen}
+        onClose={() => setAldenOpen(false)}
+        onToggle={() => setAldenOpen((o) => !o)}
+        apiKey={apiKey}
+      />
       <EnrollmentModal isOpen={enrollmentModalOpen} onClose={() => setEnrollmentModalOpen(false)} showToast={showToast} />
       <BillingBatchModal isOpen={billingBatchModalOpen} onClose={() => setBillingBatchModalOpen(false)} />
       <Customer360Modal customer={customer360Customer} isOpen={!!customer360Customer} onClose={() => setCustomer360Customer(null)} onOpenEmberlyn={(ctx) => { setEmberlynOpen(true); setEmberlynSuggestionContext(ctx || 'default'); setCustomer360Customer(null); }} showToast={showToast} />

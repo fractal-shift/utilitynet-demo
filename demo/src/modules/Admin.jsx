@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { fetchWatchdogFeeds } from '../services/integrations';
 
-export default function Admin() {
+export default function Admin({ onOpenAlden }) {
   const [tab, setTab] = useState('integrations');
   const [watchdogFeeds, setWatchdogFeeds] = useState([]);
 
@@ -29,15 +29,30 @@ export default function Admin() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="inline-block font-bold text-[22px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Admin</h1>
-        <div className="mt-2 h-0.5 w-12 rounded-sm" style={{ background: 'var(--gold)' }} />
-        <p className="mt-3.5 text-[13px] font-medium" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Integrations · Permissions · Audit Log</p>
+      <div className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="inline-block font-bold text-[22px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Admin</h1>
+          <div className="mt-2 h-0.5 w-12 rounded-sm" style={{ background: 'var(--gold)' }} />
+          <p className="mt-3.5 text-[13px] font-medium" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Integrations · Permissions · Audit Log</p>
+        </div>
+        <button
+          type="button"
+          onClick={onOpenAlden}
+          className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-medium transition"
+          style={{
+            background: 'var(--gold-dim, rgba(212,160,23,0.10))',
+            borderColor: 'rgba(212,160,23,0.3)',
+            color: 'var(--gold)',
+            fontFamily: 'var(--font-ui)',
+          }}
+        >
+          ✦ Ask Alden
+        </button>
       </div>
       <div className="mb-4 flex gap-2">
-        <button type="button" onClick={() => setTab('integrations')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'integrations' ? '' : 'opacity-70'}`} style={{ background: tab === 'integrations' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'integrations' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Integrations</button>
-        <button type="button" onClick={() => setTab('system-health')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'system-health' ? '' : 'opacity-70'}`} style={{ background: tab === 'system-health' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'system-health' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>System Health</button>
-        <button type="button" onClick={() => setTab('security')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'security' ? '' : 'opacity-70'}`} style={{ background: tab === 'security' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'security' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Security</button>
+        <button type="button" data-demo="admin-tab-integrations" onClick={() => setTab('integrations')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'integrations' ? '' : 'opacity-70'}`} style={{ background: tab === 'integrations' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'integrations' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Integrations</button>
+        <button type="button" data-demo="admin-tab-ops-console" onClick={() => setTab('ops-console')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'ops-console' ? '' : 'opacity-70'}`} style={{ background: tab === 'ops-console' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'ops-console' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Operations Console</button>
+        <button type="button" data-demo="admin-tab-security" onClick={() => setTab('security')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'security' ? '' : 'opacity-70'}`} style={{ background: tab === 'security' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'security' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Security</button>
       </div>
       {tab === 'integrations' && (
         <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
@@ -55,10 +70,10 @@ export default function Admin() {
           </div>
         </div>
       )}
-      {tab === 'system-health' && (
+      {tab === 'ops-console' && (
         <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
-          <div className="mb-4 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Feed Health (updates with ScenarioPanel)</div>
-          <div data-demo="watchdog-feed-health" className="flex flex-col gap-2">
+          <div className="mb-4 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Feed Health</div>
+          <div data-demo="ops-console-feed-health" className="flex flex-col gap-2">
             {watchdogFeeds.length > 0 ? watchdogFeeds.map((f) => (
               <div key={f.name} className="flex items-center justify-between rounded-lg border p-3" style={{ background: f.status === 'DOWN' ? 'rgba(229,62,62,0.08)' : 'var(--s2)', borderColor: f.status === 'DOWN' ? 'rgba(229,62,62,0.3)' : 'var(--border)' }}>
                 <span className="text-[13px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{f.name}</span>
@@ -72,7 +87,7 @@ export default function Admin() {
             )}
           </div>
 
-          <div data-demo="watchdog-job-queue" className="mt-5">
+          <div data-demo="ops-console-job-queue" className="mt-5">
             <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Job Queue</div>
             <table className="w-full border-collapse">
               <thead>
@@ -100,7 +115,7 @@ export default function Admin() {
             </table>
           </div>
 
-          <div data-demo="watchdog-anomaly-feed" className="mt-5">
+          <div data-demo="ops-console-alerts" className="mt-5">
             <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Recent Alerts</div>
             <div className="flex flex-col gap-2">
               {[

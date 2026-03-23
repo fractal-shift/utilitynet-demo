@@ -677,6 +677,26 @@ demo targets added: finance-gl-health-score, finance-gl-issues-table, finance-gl
 
 ---
 
+### F-008: Alden — System & Migration AI Companion
+**Status: COMPLETE — this commit**
+**Files:** AldenPanel.jsx, prompts.js, Layout.jsx, Navbar.jsx
+
+New AI companion for architecture and migration questions. Same panel pattern as Thena. Gold accent identity. Accessible via "⬡ Alden" button in navbar.
+
+Persona: senior solutions architect, 20+ ERP migrations. Answers "how do you migrate our Oracle data?", "where does our data live?", "what's the parallel run approach?" with the same depth and confidence as Emberlyn handles operations.
+
+Does NOT navigate the app or emit nav tags. When something is demonstrable, directs to Emberlyn verbally.
+
+System prompt covers: UTILITYnet legacy state, 3-phase migration architecture, data migration approach (parallel run, zero data loss), integration architecture (AESO, RBC, distributors, marketers), technical stack (AWS ca-central-1, PIPEDA), AI-native architecture explanation.
+
+### F-009: Operations Console — Rename and data-demo cleanup
+**Status: COMPLETE — this commit**
+**Files:** Admin.jsx, prompts.js
+
+"Watchdog" removed from all UI copy and data-demo attributes. "System Health" tab renamed to "Operations Console." data-demo attributes updated: watchdog-* → ops-console-*. Tab buttons now have data-demo targets for Emberlyn/Alden highlighting. "Ask Alden" button added to Admin header.
+
+---
+
 ## T3 Features — Demo Polish
 
 ---

@@ -16,7 +16,7 @@ export default function Analytics({ onOpenThena, showToast }) {
   const chartInstance = useRef(null);
   const [tab, setTab] = useState('overview');
   const [drillOpen, setDrillOpen] = useState(false);
-  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [drillAccount, setDrillAccount] = useState(null);
 
   const drillAccounts = [
     { name: 'NRG Direct', value: 841 },
@@ -81,33 +81,69 @@ export default function Analytics({ onOpenThena, showToast }) {
           <span className="rounded px-2 py-0.5 text-[8px]" style={{ background: '#1c1d19', color: '#C8C4BF', border: '1px solid rgba(242,240,236,0.13)', fontFamily: 'DM Mono, monospace' }}>What happened</span>
         </div>
         <div className="mb-4 grid grid-cols-4 gap-3">
-          <div data-demo="analytics-drill-revenue" role="button" tabIndex={0} onClick={() => setDrillOpen(!drillOpen)} onKeyDown={(e) => e.key === 'Enter' && setDrillOpen(!drillOpen)} className="rounded-xl border p-5 cursor-pointer hover:opacity-90 transition" style={{ background: 'rgba(212,64,40,0.10)', borderColor: 'rgba(212,64,40,0.28)' }}>
+          <div data-demo="analytics-drill-revenue" role="button" tabIndex={0} onClick={() => { setDrillOpen((o) => !o); setDrillAccount(null); }} onKeyDown={(e) => e.key === 'Enter' && setDrillOpen((o) => !o)} className="rounded-xl border p-5 cursor-pointer hover:opacity-90 transition" style={{ background: 'rgba(212,64,40,0.10)', borderColor: 'rgba(212,64,40,0.28)' }}>
             <div className="mb-2 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Total Revenue — Q1</div>
             <div className="text-[26px] font-bold tracking-tight" style={{ color: '#F2F0EC', fontFamily: 'Syne, sans-serif' }}>$6.82M</div>
             <div className="mt-1 text-[11px] font-semibold" style={{ color: '#27AE60', fontFamily: 'Syne, sans-serif' }}>↑ 8.1% vs Q4 2025</div>
             {drillOpen && (
               <div className="mt-3 pt-3 border-t space-y-1" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
                 <div className="text-[10px] mb-2 uppercase opacity-70" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Top 5 contributing accounts</div>
-                {drillAccounts.map((a) => (
-                  <button
-                    key={a.name}
-                    type="button"
-                    data-demo="analytics-drill-account"
-                    onClick={() => setSelectedAccount(a.name)}
-                    className="cursor-pointer hover:opacity-80 py-1.5 px-2 rounded text-[11px] w-full text-left border-none"
-                    style={{ color: '#C8C4BF', background: selectedAccount === a.name ? 'rgba(212,64,40,0.15)' : 'transparent', fontFamily: 'inherit' }}
-                  >
-                    {a.name} — ${a.value}K
-                  </button>
-                ))}
-                {selectedAccount && (
-                  <div data-demo="analytics-drill-invoice-list" className="mt-3 pt-2 border-t space-y-1.5" style={{ borderColor: 'rgba(212,64,40,0.2)' }}>
-                    <div className="text-[10px] mb-1" style={{ color: '#C8C4BF' }}>Sample invoices</div>
-                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0124 $42,100</div>
-                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0118 $38,200</div>
-                    <div className="text-[11px]" style={{ color: '#C8C4BF' }}>INV-2026-0109 $29,400</div>
-                  </div>
-                )}
+                {drillAccounts.map((a) => {
+                  const invoiceData = {
+                    'NRG Direct': [
+                      { num: 'INV-2026-0124', date: 'Mar 8', amount: '$42,100', status: 'Paid' },
+                      { num: 'INV-2026-0118', date: 'Mar 1', amount: '$38,200', status: 'Paid' },
+                      { num: 'INV-2026-0109', date: 'Feb 22', amount: '$29,400', status: 'Paid' },
+                    ],
+                    'PrairieEnergy': [
+                      { num: 'INV-2026-0131', date: 'Mar 9', amount: '$31,400', status: 'Paid' },
+                      { num: 'INV-2026-0122', date: 'Mar 2', amount: '$28,800', status: 'Paid' },
+                      { num: 'INV-2026-0114', date: 'Feb 24', amount: '$22,100', status: 'Overdue' },
+                    ],
+                    'AltaGas Retail': [
+                      { num: 'INV-2026-0138', date: 'Mar 10', amount: '$24,200', status: 'Disputed' },
+                      { num: 'INV-2026-0129', date: 'Mar 3', amount: '$21,600', status: 'Paid' },
+                      { num: 'INV-2026-0120', date: 'Feb 25', amount: '$18,900', status: 'Paid' },
+                    ],
+                    'GreenPath': [
+                      { num: 'INV-2026-0141', date: 'Mar 10', amount: '$19,800', status: 'Paid' },
+                      { num: 'INV-2026-0133', date: 'Mar 4', amount: '$17,200', status: 'Paid' },
+                      { num: 'INV-2026-0125', date: 'Feb 26', amount: '$14,600', status: 'Paid' },
+                    ],
+                    'Calgary Energy': [
+                      { num: 'INV-2026-0144', date: 'Mar 11', amount: '$11,400', status: 'Paid' },
+                      { num: 'INV-2026-0136', date: 'Mar 5', amount: '$9,800', status: 'Paid' },
+                      { num: 'INV-2026-0128', date: 'Feb 27', amount: '$8,200', status: 'Paid' },
+                    ],
+                  };
+                  const isSelected = drillAccount === a.name;
+                  return (
+                    <div key={a.name}>
+                      <button
+                        type="button"
+                        data-demo="analytics-drill-account"
+                        onClick={(e) => { e.stopPropagation(); setDrillAccount(isSelected ? null : a.name); }}
+                        className="cursor-pointer hover:opacity-80 py-1.5 px-2 rounded text-[11px] w-full text-left border-none"
+                        style={{ color: '#C8C4BF', background: isSelected ? 'rgba(212,64,40,0.15)' : 'transparent', fontFamily: 'inherit' }}
+                      >
+                        {a.name} — ${a.value}K
+                      </button>
+                      {isSelected && (
+                        <div data-demo="analytics-drill-invoice-list" className="mx-2 mb-1 mt-1 rounded border overflow-hidden" style={{ borderColor: 'rgba(212,64,40,0.2)', background: 'rgba(212,64,40,0.06)' }}>
+                          <div className="px-2 pt-2 pb-1 text-[9px] uppercase opacity-70" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>Recent invoices</div>
+                          {(invoiceData[a.name] || []).map((inv) => (
+                            <div key={inv.num} className="flex items-center justify-between px-2 py-1.5 border-t" style={{ borderColor: 'rgba(212,64,40,0.15)' }}>
+                              <span className="text-[10px]" style={{ color: '#C8C4BF', fontFamily: 'DM Mono, monospace' }}>{inv.num}</span>
+                              <span className="text-[10px]" style={{ color: 'rgba(200,196,191,0.6)', fontFamily: 'DM Mono, monospace' }}>{inv.date}</span>
+                              <span className="text-[10px] font-medium" style={{ color: '#F2F0EC', fontFamily: 'DM Mono, monospace' }}>{inv.amount}</span>
+                              <span className="text-[9px] font-medium" style={{ color: inv.status === 'Paid' ? '#27AE60' : inv.status === 'Disputed' ? '#F39C12' : '#E74C3C', fontFamily: 'DM Mono, monospace' }}>{inv.status}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
