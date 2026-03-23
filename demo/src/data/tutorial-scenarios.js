@@ -100,37 +100,37 @@ export const TUTORIAL_SCENARIOS = [
       {
         id: 'enrollment-start-btn',
         title: 'Start Enrollment',
-        demoTarget: 'enrollment-start-btn',
+        demoTarget: 'btn-new-enrollment',
         narration: 'The ERP handles the entire customer onboarding journey in one place — from application through activation. Heather Mitchell is being enrolled as a new residential customer. No spreadsheets, no handoffs between sales, credit, and operations.',
       },
       {
         id: 'enrollment-customer-form',
         title: 'Customer Information',
-        demoTarget: 'enrollment-customer-form',
+        demoTarget: 'enrollment-firstName',
         narration: 'Name, contact details, and service address are entered. Every field validates in real time and syncs to the CRM immediately. One master customer record shared across billing, settlement, and finance — no duplicate data entry anywhere.',
       },
       {
         id: 'enrollment-credit-check',
         title: 'Credit Check',
-        demoTarget: 'enrollment-credit-check',
+        demoTarget: 'enrollment-run-credit',
         narration: "The credit bureau check runs automatically — no manual lookup. Heather scores 724, low risk. The system approves her immediately and moves to plan selection. The whole check takes under two seconds.",
       },
       {
         id: 'enrollment-plan-select',
         title: 'Plan Selection',
-        demoTarget: 'enrollment-plan-select',
+        demoTarget: 'enrollment-continue-2',
         narration: "A variable rate plan is selected — tied to the current AESO pool price plus NRG Direct's margin. Plan options are filtered by credit score and distribution zone automatically. She only sees plans she qualifies for.",
       },
       {
         id: 'enrollment-banking-form',
         title: 'Banking & Payment',
-        demoTarget: 'enrollment-banking-form',
+        demoTarget: 'enrollment-continue-3',
         narration: 'Pre-authorized debit details are captured and validated against the RBC feed in real time. The PAD agreement is generated and stored automatically — no follow-up call needed to collect payment details.',
       },
       {
         id: 'enrollment-approve-btn',
         title: 'Approve & Activate',
-        demoTarget: 'enrollment-approve-btn',
+        demoTarget: 'enrollment-submit',
         narration: 'Enrollment confirmed. The system triggers meter read request, contract execution, and the first bill cycle automatically. NRG Direct receives an instant notification. What used to take three days is done in under two minutes.',
       },
       {

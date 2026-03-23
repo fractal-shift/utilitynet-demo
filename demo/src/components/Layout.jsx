@@ -66,6 +66,25 @@ export default function Layout({ apiKey }) {
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
+  useEffect(() => {
+    if (!state.tutorialMode || !state.activeScenario) return;
+    const moduleMap = {
+      Dashboard: 'dashboard',
+      Customers: 'customers',
+      Billing: 'billing',
+      Settlement: 'settlement',
+      Marketers: 'marketers',
+      Analytics: 'analytics',
+      Finance: 'finance',
+      Admin: 'admin',
+    };
+    const mod = moduleMap[state.activeScenario.module];
+    if (mod) handleNavigate(mod);
+    if (state.activeScenario.id === 'enrollment') {
+      setTimeout(() => setEnrollmentModalOpen(true), 400);
+    }
+  }, [state.tutorialMode, state.activeScenario?.id]);
+
   const [theme, setTheme] = useState(() => localStorage.getItem('utilitynet-theme') || 'light');
   const [emberlynOpen, setEmberlynOpen] = useState(false);
   const [thenaOpen, setThenaOpen] = useState(false);
