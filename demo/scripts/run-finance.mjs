@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Demo: Finance Module — GL, AR, AP, Month-End Close
- * Walks through Finance tabs, approve flow, reconciliation, Emberlyn.
+ * Demo: Finance Module — GL, AR, AP, Reconciliation, GL Remediation
+ * Walks through Finance tabs with full GL Remediation interactive flow.
  */
 
 import { chromium } from 'playwright';
@@ -29,7 +29,7 @@ export async function runFinance(page) {
 
   await dismissApiKeyModal(page);
 
-  await showScenarioSummary(page, 'Finance Module — GL, AR, AP, Month-End Close', 'We\'ll walk through the chart of accounts, AR aging, AP approvals, and bank reconciliation. Finance leads because UTILITYnet\'s stated priority is Finance first.');
+  await showScenarioSummary(page, 'Finance Module — GL, AR, AP, GL Remediation', 'Finance leads because UTILITYnet\'s primary pain is GL technical debt from Oracle. We walk the full module, then demonstrate the GL Remediation diagnostic — the feature that proves we understand their problem.');
 
   playNarration('finance', 'finance-overview');
   await step(page, 'Navigating to Finance...', async () => {
@@ -45,7 +45,7 @@ export async function runFinance(page) {
     await page.waitForTimeout(400);
   });
 
-  await showStatus(page, 'Chart of accounts — 6 GL accounts. Energy Revenue $2.34M. AESO Settlement Payable $6.82M.');
+  await showStatus(page, 'Chart of accounts — 6 GL accounts. Energy Revenue $2.34M. AESO Settlement Payable $6.82M. Every transaction posts automatically.');
 
   await step(page, 'Clicking Post Journal Entry...', async () => {
     await clickWithCursor(page, 'btn-post-journal');
@@ -68,9 +68,9 @@ export async function runFinance(page) {
 
   await showStatus(page, 'AP queue — $1.19M awaiting approval. Marketer commissions and AltaGas settlement.');
 
-  await step(page, 'Clicking Approve on first AP item...', async () => {
+  await step(page, 'Approving first AP item...', async () => {
     await clickWithCursor(page, 'btn-approve-ap');
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(800);
   });
 
   await showStatus(page, 'Payment approved. Journal entry JE-2026-0088 created automatically. No manual GL entry.');
@@ -82,49 +82,75 @@ export async function runFinance(page) {
 
   await showStatus(page, 'Bank reconciliation: RBC $1.82M matches GL $1.82M. Zero variance. February close confirmed.');
 
-  playNarration('finance', 'finance-legacylift-scan');
-  await step(page, 'Viewing LegacyLift migration scan...', async () => {
-    await clickWithCursor(page, 'finance-tab-legacylift');
+  playNarration('finance', 'finance-gl-remediation');
+  await step(page, 'Opening GL Remediation tab...', async () => {
+    await clickWithCursor(page, 'finance-tab-gl-remediation');
     await page.waitForTimeout(600);
   });
 
-  await showStatus(page, 'Legacy scan complete — 3 GL codes flagged for remapping. 284 Revenue entries auto-mapped to account 4000.');
+  await showStatus(page, 'Chart health at 58%. Four issues flagged — 1 critical, 2 high, 1 medium. This is the Oracle technical debt made visible.');
 
-  playNarration('finance', 'finance-remediation-plan');
-  await step(page, 'Reviewing remediation plan...', async () => {
+  await step(page, 'Clicking critical issue — HEDGE-OLD...', async () => {
     await page.evaluate(() => {
-      const el = document.querySelector('[data-demo="finance-remediation-plan"]');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const rows = document.querySelectorAll('[data-demo="finance-gl-issues-table"] tbody tr');
+      for (const row of rows) {
+        if (row.textContent.includes('HEDGE-OLD')) {
+          row.click();
+          break;
+        }
+      }
+    });
+    await page.waitForTimeout(600);
+  });
+
+  await showStatus(page, 'Detail panel open. AI has already classified the issue, explained the reasoning, and proposed the next action. $42K balance — Controller sign-off required before retirement.');
+
+  await step(page, 'Closing detail panel, selecting remaining 3 issues...', async () => {
+    await page.evaluate(() => {
+      const closeBtn = document.querySelector('[data-demo="finance-gl-detail-panel"] button[aria-label="close"], [data-demo="finance-gl-detail-panel"] .close-btn');
+      if (closeBtn) closeBtn.click();
+    });
+    await page.waitForTimeout(400);
+    await page.evaluate(() => {
+      const checkboxes = document.querySelectorAll('[data-demo="finance-gl-issues-table"] input[type="checkbox"]');
+      checkboxes.forEach((cb, i) => {
+        const row = cb.closest('tr');
+        if (row && !row.textContent.includes('HEDGE-OLD')) cb.click();
+      });
+    });
+    await page.waitForTimeout(400);
+  });
+
+  await showStatus(page, '3 issues selected. Bulk apply will merge and retire the clean cases.');
+
+  await step(page, 'Applying bulk recommended actions...', async () => {
+    await clickWithCursor(page, 'finance-gl-bulk-actions');
+    await page.evaluate(() => {
+      const btns = document.querySelectorAll('[data-demo="finance-gl-bulk-actions"] button');
+      for (const btn of btns) {
+        if (btn.textContent.includes('Apply All')) { btn.click(); break; }
+      }
     });
     await page.waitForTimeout(800);
   });
 
-  await showStatus(page, '3 remediation items assigned. REM-001 in progress (Sarah M.) — due Mar 15. Period close on track.');
-
-  playNarration('finance', 'finance-confirm-cleanup');
-  await step(page, 'Confirming cleanup and locking February period...', async () => {
-    await page.evaluate(() => {
-      const btn = document.querySelector('[data-demo="btn-confirm-cleanup"]');
-      if (btn) btn.click();
-    });
-    await page.waitForTimeout(600);
-  });
-
-  await showStatus(page, 'February 2026 period locked. 3 remediations applied. Audit-ready reports generated.');
+  await showStatus(page, 'Three remediations applied. Chart health updated. HEDGE-OLD remains flagged for Controller review — the $42K balance requires a journal entry before it can be retired.');
 
   await step(page, 'Opening Emberlyn Assist...', async () => {
     await clickWithCursor(page, 'btn-emberlyn-finance');
     await page.waitForTimeout(800);
   });
 
-  await step(page, 'Clicking suggested prompt: Which AP items are blocking month-end close?', async () => {
-    await page.locator('text="Which AP items are blocking month-end close?"').first().click();
+  await step(page, 'Asking Emberlyn about the remaining GL issue...', async () => {
+    const input = page.locator('[data-demo="emberlyn-input"]').first();
+    await input.fill('The HEDGE-OLD balance is still open — what do we need to do to close it?');
+    await input.press('Enter');
     await page.waitForTimeout(500);
   });
 
   await scrollReadEmberlynResponse(page);
 
-  await showStatus(page, 'Emberlyn identifies the one remaining blocker in seconds. No spreadsheet, no email to accounting.');
+  await showStatus(page, 'Emberlyn identifies the journal entry needed, drafts the approach, offers to generate it. Finance close is unblocked.');
 
   await clearStatus(page);
 }
