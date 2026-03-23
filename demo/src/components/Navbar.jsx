@@ -31,14 +31,14 @@ export default function Navbar({ onToggleMode, theme }) {
       >
         <svg width="10" height="14" viewBox="0 0 10 14" fill="none">
           <path
-            d="M5 0C5 0 8 4 8 7.5C8 9.4 6.7 11 5 11C3.3 11 2 9.4 2 7.5C2 4 5 0 5 0Z"
+            d="M5 13C2.5 13 1 11.2 1 9C1 6.5 3 4 4 2.5C4.3 2 4.5 1.5 5 0.5C5 0.5 5.2 2 5.5 2.8C6 4 7 3.5 7.5 2.5C7.5 2.5 9 5 9 8C9 11 7.5 13 5 13Z"
             fill="white"
             opacity="0.95"
           />
           <path
-            d="M5 5C5 5 6.5 7 6.5 8.5C6.5 9.3 5.8 10 5 10C4.2 10 3.5 9.3 3.5 8.5C3.5 7 5 5 5 5Z"
+            d="M5 12C3.5 12 3 10.8 3 9.5C3 8 4 6.5 5 5.5C6 6.5 7 8 7 9.5C7 10.8 6.5 12 5 12Z"
             fill="white"
-            opacity="0.4"
+            opacity="0.35"
           />
         </svg>
         <span
