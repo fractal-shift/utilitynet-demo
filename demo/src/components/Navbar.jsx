@@ -19,12 +19,6 @@ export default function Navbar({ onToggleMode, theme }) {
         <span className="font-bold text-lg tracking-tight" style={{ color: '#fff', fontFamily: 'var(--font-ui)' }}>
           Emberlyn <span style={{ color: 'var(--gold)' }}>Energy</span>
         </span>
-        <span
-          className="ml-2 text-[10px] font-medium tracking-wider uppercase opacity-50"
-          style={{ color: '#fff', fontFamily: 'var(--font-mono)' }}
-        >
-          Emberlyn Energy
-        </span>
       </div>
       <div className="flex-1" />
       <div
@@ -36,7 +30,7 @@ export default function Navbar({ onToggleMode, theme }) {
           fontFamily: 'var(--font-mono)',
         }}
       >
-        ● Alberta Energy Retail
+        ● UTILITYnet
       </div>
       <div className="flex items-center gap-3">
         <button type="button" className="relative p-1.5 rounded-lg transition-colors hover:bg-white/10" aria-label="Notifications">
