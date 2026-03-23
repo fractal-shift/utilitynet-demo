@@ -1,5 +1,6 @@
 # UTILITYnet Demo — North Star Requirements
-**Version:** 1.0  
+**Version:** 2.0  
+**Last Updated:** March 23, 2026  
 **Repo:** fractalshift/utilitynet-demo  
 **Demo Date:** March 30, 2026 — Live 3-hour session  
 **This document is the single source of truth. Cursor builds to this. New scope is added here first, assigned a tier, then built. Nothing is modified mid-build without updating this doc.**
@@ -547,6 +548,86 @@ Pulsing indicator dot on System Health nav entry if any feed has `hasAlert: true
 **Validation:** `checks/crm-propagation.mjs`
 
 After existing `[Apply Credit]` / `[Resolve Case]` action fires, show inline propagation confirmation block (see T1-003, Hook 4). Emberlyn context-aware: suggested prompt `Show me what changed in Finance from this adjustment`. `data-demo="crm-billing-link"` on billing-related actions.
+
+---
+
+## Features Added Post v1.0
+
+### F-001: Emberlyn Guided Navigation
+**Status: COMPLETE — commit ba757c4**
+**Files:** EmerlynPanel.jsx, Layout.jsx, globals.css, prompts.js
+
+Emberlyn can navigate the application and highlight relevant UI sections in response to user questions. When a user asks "how do I...", "where do I...", or "show me...", Emberlyn appends a hidden `<nav module="X" highlight="Y"/>` tag to her response. EmerlynPanel strips the tag from displayed text and fires the navigation after a 600ms delay (so the user reads the answer first), followed by a highlight pulse 400ms later.
+
+Highlight animation: teal outline + 3-pulse glow (emberlynPulse keyframe, 1s × 3, class: `emberlyn-highlight`).
+Nav tag is hidden during streaming via regex strip on `displayText` while `fullText` accumulates raw for `onDone` processing.
+Module map and highlight targets documented in `EMBERLYN_SYSTEM_PROMPT`.
+
+---
+
+### F-002: Emberlyn Domain Expert Mode + UTILITYnet Context Grounding
+**Status: COMPLETE — commit edf9904**
+**Files:** prompts.js, Layout.jsx
+
+Emberlyn operates as a senior domain expert in Alberta retail energy, not a generic chatbot. Key behaviors:
+
+**CLARIFY-FIRST:** Asks one focused clarifying question before answering when a term is ambiguous, unknown, or could map to multiple platform features. Known vocabulary list defined in system prompt — terms outside this list trigger clarification.
+
+**DOMAIN KNOWLEDGE:** Full Alberta energy retail domain injected — AESO, AUC, RCOM, PAD/Rule H1, distribution tariffs, GL structure, billing cycle, settlement variance root causes, hedge accounting, marketer commission structures.
+
+**OPINION LAYER:** One sentence of POV or experience signal in most answers. Example: "Most teams treat GL mapping as a one-time migration problem. That's wrong."
+
+**PUSHBACK CAPABILITY:** Emberlyn challenges flawed assumptions. Example: if evaluator says they've been fixing exceptions at the invoice stage, Emberlyn pushes back — "That's solving the symptom. Exceptions originate upstream at data ingestion."
+
+**NOT-YET-BUILT PATTERN:** Never says "Phase 2" or "roadmap." Uses: "That's not surfaced in the UI yet — but the underlying data model already supports it. What we'd build is [mechanism], which takes a few weeks because we're not building net-new infrastructure — we're activating what's already there."
+
+**THENA HANDOFF:** Analytics/forecasting questions route to Thena with architectural explanation: "This is where Thena steps in — I handle operational workflows, Thena owns the financial and predictive layer. That separation is intentional."
+
+**CAPABILITY MAP (three tiers):**
+- In demo: enrollment, customer 360, billing, settlement, marketers, finance, analytics, dashboard
+- Activation layer (data model exists, UI not surfaced): RCOM/AUC reports, PAD timing enforcement, multi-tier commissions, advanced hedge tracking
+- Out of scope: direct AESO API submission, customer portal, real-time trading, payroll/HR
+
+**CONTEXT GROUNDING:** Every module navigation sets a rich `emberlynContext` string anchored by the UTILITYnet client descriptor plus live module-specific data (GL account numbers, exception IDs, dollar figures, marketer names).
+
+---
+
+### F-003: Tutorial System — Enrollment Fix + Stall Fix
+**Status: COMPLETE — commits ff47a51, e85f8a4, edf9904**
+**Files:** Layout.jsx, tutorial-scenarios.js, useTutorialAudio.js, EnrollmentModal.jsx, useTutorialHighlight.js
+
+Three bugs fixed:
+1. Tutorial now navigates to correct module on start via `useEffect` keyed on `[state.tutorialMode, state.activeScenario?.id]`. Enrollment scenario also opens `EnrollmentModal` automatically 400ms after navigation.
+2. All enrollment `demoTargets` corrected to match actual `data-demo` attributes in the codebase.
+3. Tutorial stall fixed: `play().catch` now calls `scheduleAdvance(4000)` so autoplay-blocked steps advance automatically. `advanceStepRef` pattern eliminates stale closure bug. `EnrollmentModal` internal step now syncs to `activeStepIndex` via `useEffect`.
+
+---
+
+### F-004: Brand + Terminology Rules
+**Status: COMPLETE — multiple commits**
+
+NEVER use in UTILITYnet demo UI or client-facing copy:
+- **"LegacyLift"** — FractalShift internal product name. Use "GL Remediation" in all UI copy.
+- **"Watchdog" / "Watchdog OS"** — FractalShift internal product name. Use market-standard monitoring terminology in UI.
+- **"Copilot"** (especially capitalized) — Microsoft product name. Use "AI companion" for Emberlyn/Thena references.
+
+All `data-demo` attributes and UI labels updated: `finance-legacylift-scan` → `finance-gl-remediation`, tab label "GL Migration" → "GL Remediation".
+
+---
+
+### F-005: Emberlyn Panel UX Redesign
+**Status: COMPLETE — this commit**
+**Files:** EmerlynPanel.jsx, globals.css
+
+Panel redesigned as a fixed right-side drawer floating over content. Three fixed zones:
+
+**Zone 1 — Header (52px):** "Emberlyn" wordmark in Quicksand semibold 13px + pulsing teal dot (animates when streaming, static idle). X close button. Top edge: 2px solid `var(--brand-teal)`. Slightly darker background than panel body.
+
+**Zone 2 — Conversation (fills remaining height):** Messages render bottom-up. User messages right-aligned teal bubble. Assistant messages left-aligned `var(--surface)`. Streaming text shows blinking 2px × 14px teal cursor block. Empty state shows centered wordmark + "Ask me anything about your operations". Smart auto-scroll: only force-scrolls when user is within 100px of bottom; does not interrupt manual scroll-up to read history.
+
+**Zone 3 — Input area (fixed bottom, ~120px):** Context-aware suggestion chips above input. Textarea expands to 3 lines max. Enter to send, Shift+Enter for new line. Send button teal when input has text, muted when empty.
+
+**Resize:** Drag handle on left edge (8px), clamps panel width between 380px (default) and 580px.
 
 ---
 
