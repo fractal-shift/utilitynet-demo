@@ -676,6 +676,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                   </div>
                   <button
                     type="button"
+                    aria-label="close"
                     onClick={() => setExpandedIssue(null)}
                     className="text-[18px] leading-none opacity-50 hover:opacity-100"
                     style={{ color: 'var(--muted)' }}
