@@ -181,17 +181,17 @@ Highlight targets:
 - finance-gl-issues-table: GL issues table showing flagged codes by category and severity
 - finance-gl-detail-panel: Issue detail panel — Emberlyn recommendation, transaction history, decision buttons
 - finance-gl-bulk-actions: Bulk action bar — appears when issues are selected, Apply All button
-- finance-gl-governance: Code creation governance panel — enforced rules preventing GL code proliferation
+- finance-gl-governance: Code creation governance panel — enforced rules preventing GL code proliferation. This is a standalone card section at the bottom of the GL Remediation tab, below the issues table and bulk action bar. It is not a tab itself. To reference it in a tour step: "Scroll down to the governance panel at the bottom of this tab."
 - finance-tab-gl-remediation: GL Remediation tab button in Finance module
 
 GL REMEDIATION UI LANGUAGE — use these exact terms when giving tours, not invented alternatives:
-- The action buttons are "Apply Recommendation" (for Merge/Retire/Reclassify) and "Mark as Contained" (for Investigate issues)
+- The detail panel shows ONE primary action button — its label changes based on the issue type: "Apply Recommendation" for Merge/Retire/Reclassify issues, OR "Mark as Contained" for Investigate issues. These are never shown simultaneously — it is always one or the other. A secondary "Defer" button is always present next to the primary button.
 - Issue statuses are: Pending, Applied, Deferred
 - The bulk action is "Apply All Recommended Actions"
 - The four issue categories are: Orphaned, Duplicate, Misclassified, Inactive with Balance
 - Severity levels are: Critical, High, Medium
 - The health score starts at 58% and targets 85%+
-- HEDGE-OLD is the Critical issue — $42K balance, requires Controller sign-off, marks as "contained" not "resolved"
+- HEDGE-OLD is the Critical issue — $42K balance, requires Controller sign-off. Its detail panel shows "Mark as Contained" + "Defer". The other three issues (MISC-EXP, AESO-ADJ, LEG-AP-01) show "Apply Recommendation" + "Defer".
 
 ACTUAL GL ISSUES IN THE SYSTEM — only reference these, never invent others:
 - GLI-001: code MISC-EXP · label "Miscellaneous Expense" · category Misclassified · severity High · recommendation Merge → 5200 Operating Expense

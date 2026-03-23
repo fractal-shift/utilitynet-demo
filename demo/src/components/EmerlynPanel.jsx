@@ -102,6 +102,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
   const messagesContainerRef = useRef(null);
   const historyRef = useRef([]);
   const scrollTimerRef = useRef(null);
+  const navFiredRef = useRef(false);
   const isNearBottomRef = useRef(true);
   const dragStateRef = useRef({ active: false, startX: 0, startWidth: 380 });
   const textareaRef = useRef(null);
@@ -159,6 +160,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
   const sendMessage = async (text) => {
     const msg = text || input.trim();
     if (!msg) return;
+    navFiredRef.current = false;
     setInput('');
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -241,6 +243,24 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
               next[next.length - 1] = { ...next[next.length - 1], content: displayText };
               return next;
             });
+            // Fire nav as soon as complete tag appears in stream — don't wait for onDone
+            if (!navFiredRef.current) {
+              const navMatch = fullText.match(/<nav\s+module="([^"]+)"(?:\s+highlight="([^"]+)")?\/>/);
+              if (navMatch) {
+                navFiredRef.current = true;
+                const [, mod, highlight] = navMatch;
+                if (onNavigate) {
+                  setTimeout(() => {
+                    onNavigate(mod);
+                    if (highlight) {
+                      setTimeout(() => {
+                        window.dispatchEvent(new CustomEvent('utilitynet:highlight', { detail: { target: highlight } }));
+                      }, 400);
+                    }
+                  }, 600);
+                }
+              }
+            }
             scrollToBottom();
           },
           onDone: (final) => {
