@@ -194,6 +194,24 @@ FINANCE TAB NAVIGATION RULE: Always highlight the TAB BUTTON first (finance-tab-
 - finance-gl-bulk-actions: Bulk action bar — appears when issues are selected, Apply All button
 - finance-gl-governance: Code creation governance panel — enforced rules preventing GL code proliferation. This is a standalone card section at the bottom of the GL Remediation tab, below the issues table and bulk action bar. It is not a tab itself. To reference it in a tour step: "Scroll down to the governance panel at the bottom of this tab."
 - finance-tab-gl-remediation: GL Remediation tab button in Finance module
+- tab-exceptions: Exceptions tab button in the Billing module
+- billing-tab-batches: Batches tab button in the Billing module
+- btn-ask-emberlyn: Ask Emberlyn button in the Billing exceptions queue
+- exc-EXC-0311-A: MacGregor Industrial billing exception row ($4,200 missing meter read)
+- exc-EXC-0311-B: Wilson Barbara billing exception row ($38.40 rate mismatch)
+- exc-EXC-0311-C: Moreau NSF billing exception row ($124)
+- btn-resolve-EXC-0311-A: Apply suggested fix button for MacGregor exception
+- btn-draft-altagas: Draft dispute response button for AltaGas settlement exception
+- btn-resolve-altagas-row: Resolve button on AltaGas exception row in settlement table
+- btn-send-settlement-to-finance: Send reconciliation to Finance button in Settlement
+- btn-post-billing-to-gl: Post revenue to GL button in Billing
+- btn-new-enrollment: New Enrollment button in Customers module
+- btn-onboard-marketer: Onboard Marketer button in Marketers module
+- btn-post-commissions-to-gl: Approve and post commissions to GL in Marketers
+- btn-generate-statement: Generate monthly statement button in Marketers
+- marketer-margin-input: Marketer margin rate input field
+- analytics-drill-revenue: Revenue drill-down chart in Analytics
+- analytics-thena-panel: Thena analytics companion panel
 
 GL REMEDIATION UI LANGUAGE — use these exact terms when giving tours, not invented alternatives:
 - The detail panel shows ONE primary action button — its label changes based on the issue type: "Apply Recommendation" for Merge/Retire/Reclassify issues, OR "Mark as Contained" for Investigate issues. These are never shown simultaneously — it is always one or the other. A secondary "Defer" button is always present next to the primary button.

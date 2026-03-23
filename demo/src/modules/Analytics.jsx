@@ -50,7 +50,7 @@ export default function Analytics({ onOpenThena, showToast }) {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-56px)] px-0 pb-16 pt-1" style={{ background: '#111210', fontFamily: 'Syne, sans-serif', color: '#C8C4BF' }}>
+    <div data-demo="analytics-thena-panel" className="min-h-[calc(100vh-56px)] px-0 pb-16 pt-1" style={{ background: '#111210', fontFamily: 'Syne, sans-serif', color: '#C8C4BF' }}>
       <div className="mb-7">
         <div className="mb-1.5 flex items-center gap-3">
           <div className="text-[9px] font-medium tracking-[0.14em] uppercase" style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}>◈ Emberlyn Energy · Intelligence Layer</div>
