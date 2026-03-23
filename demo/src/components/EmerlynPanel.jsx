@@ -388,17 +388,29 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontWeight: 600,
-                  fontSize: 13,
-                  color: 'var(--light)',
-                  letterSpacing: '0.01em',
-                }}
-              >
-                Emberlyn
-              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontWeight: 600,
+                    fontSize: 13,
+                    color: 'var(--light)',
+                    letterSpacing: '0.01em',
+                  }}
+                >
+                  Emberlyn
+                </span>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-ui)',
+                    fontSize: 11,
+                    color: 'var(--muted)',
+                    lineHeight: 1.2,
+                  }}
+                >
+                  Your Operations Companion
+                </span>
+              </div>
               <span
                 className={isStreaming ? 'emberlyn-dot emberlyn-dot--streaming' : 'emberlyn-dot'}
               />

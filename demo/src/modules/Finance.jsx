@@ -685,10 +685,10 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                   </button>
                 </div>
                 <div className="grid grid-cols-1 gap-6 p-5 lg:grid-cols-2">
-                  {/* Left: AI Recommendation */}
+                  {/* Left: Emberlyn Recommendation */}
                   <div>
                     <div className="mb-3 text-[11px] font-medium tracking-wider uppercase font-mono" style={{ color: 'var(--gold)' }}>
-                      AI Recommendation
+                      Emberlyn Recommendation
                     </div>
                     <div className="text-[16px] font-semibold" style={{ color: 'var(--light)' }}>
                       {expandedIssueData.recommendation === 'Investigate' ? 'Investigate' : expandedIssueData.recommendation}

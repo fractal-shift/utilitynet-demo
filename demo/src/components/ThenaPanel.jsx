@@ -226,16 +226,15 @@ export default function ThenaPanel({ isOpen, onClose, onToggle, apiKey }) {
         >
           <div>
             <div
-              className="mb-0.5 text-[8px] font-medium tracking-[0.12em] uppercase"
-              style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}
-            >
-              THENA
-            </div>
-            <div
               className="font-semibold text-sm"
               style={{ color: '#F2F0EC', fontFamily: 'Syne, sans-serif' }}
             >
-              Analytics Intelligence
+              Thena
+            </div>
+            <div
+              style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'Syne, sans-serif' }}
+            >
+              Your Analytics Companion
             </div>
           </div>
           <button type="button" onClick={onClose} className="p-1 text-lg text-[#C8C4BF] hover:text-[#F2F0EC]">
