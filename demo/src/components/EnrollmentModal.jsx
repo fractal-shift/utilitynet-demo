@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 import { setScenario } from '../services/integrations';
 
 const MARKETERS = ['NRG Direct', 'PrairieEnergy', 'GreenPath', 'AltaEnergy', 'Calgary Energy'];
 
 export default function EnrollmentModal({ isOpen, onClose, showToast }) {
-  const { actions } = useAppStore();
+  const { state, actions } = useAppStore();
   const [step, setStep] = useState(1);
   const [creditRunning, setCreditRunning] = useState(false);
   const [creditDone, setCreditDone] = useState(false);
@@ -31,6 +31,54 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
   });
 
   const update = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    if (!isOpen || !state.tutorialMode || state.activeScenario?.id !== 'enrollment') return;
+
+    switch (state.activeStepIndex) {
+      case 0:
+      case 1:
+      case 6:
+        setStep(1);
+        break;
+      case 2:
+        setStep(2);
+        setCreditRunning(false);
+        setCreditDone(false);
+        setCreditFailed(false);
+        setCreditThin(false);
+        setDepositOptionSelected(false);
+        setDepositReceived(false);
+        break;
+      case 3:
+        setStep(2);
+        setCreditRunning(false);
+        setCreditDone(true);
+        setCreditFailed(false);
+        setCreditThin(false);
+        setDepositOptionSelected(false);
+        setDepositReceived(false);
+        break;
+      case 4:
+        setStep(3);
+        setCreditRunning(false);
+        setCreditDone(true);
+        setCreditFailed(false);
+        setCreditThin(false);
+        break;
+      case 5:
+        setStep(5);
+        setCreditRunning(false);
+        setCreditDone(true);
+        setCreditFailed(false);
+        setCreditThin(false);
+        setDepositOptionSelected(false);
+        setDepositReceived(false);
+        break;
+      default:
+        break;
+    }
+  }, [isOpen, state.tutorialMode, state.activeScenario?.id, state.activeStepIndex]);
 
   const handleClose = () => {
     setStep(1);

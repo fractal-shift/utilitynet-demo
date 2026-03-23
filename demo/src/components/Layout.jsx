@@ -153,12 +153,21 @@ export default function Layout({ apiKey }) {
       finance: 'Finance',
       admin: 'Admin',
     };
-    const financeCtx = `Current module: Finance
-Open AP approvals: 2 items totalling $1,192,680
-AR overdue (60+ days): $139,670 across 2 accounts
-Month-end status: On track — 2 of 5 checklist items complete
-Bank reconciliation: Balanced as of March 10`;
-    setEmberlynContext(mod === 'finance' ? financeCtx : `${labels[mod] || mod} · Emberlyn Energy · March 2026`);
+    const UTILITYNET_ANCHOR = `CLIENT: UTILITYnet — Alberta retail energy provider replacing Oracle PL/SQL and Sage 50. Primary pain: GL code proliferation and financial system technical debt. Finance modernization is their first priority. 14,291 customers, 52 marketer partners. March 2026.`;
+
+    const moduleCtx = {
+      dashboard: `Current module: Dashboard\nKPIs live: Revenue MTD $2.34M, 14,291 active customers, 52 marketers, settlement 98.2% reconciled\nAlerts: 3 billing exceptions, 1 settlement exception (AltaGas $1,640), 17 late payment risks`,
+      customers: `Current module: Customers\n14,291 active accounts. Enrollment queue: 6 applications, 2 awaiting credit review. Open service cases: 23.`,
+      billing: `Current module: Billing Engine\nActive batch: B-2026-0311 (March 2026), 2,847 invoices, $1.84M total, 3 exceptions flagged\nExceptions: EXC-0311-A missing meter read $4,200 · EXC-0311-B rate mismatch $38.40 · EXC-0311-C NSF $124`,
+      settlement: `Current module: Settlement\n52 marketers. 49 reconciled. 3 exceptions: AltaGas Retail $1,640 variance (INV-2026-0312), Calgary Energy in review.`,
+      marketers: `Current module: Marketers\nTop: NRG Direct $841K (4,821 customers), PrairieEnergy $612K, AltaGas $482K (exception active)\nCommission run JE-2026-0088 ready to post — $1.2M to Account 2100`,
+      finance: `Current module: Finance\nGL: Energy Revenue $2.34M credited, AESO Settlement Payable $6.82M, AR $184K\nAP approvals: 2 items totalling $1,192,680 pending\nAR overdue (60+ days): $139,670 across 2 accounts\nMonth-end: On track — 2 of 5 checklist items complete\nBank reconciliation: Balanced as of March 10\nLegacyLift: 3 orphaned GL codes flagged from Oracle migration`,
+      analytics: `Current module: Analytics\nRevenue trend: March 2026 peak at $2.34M. Churn risk: 42 accounts, $84K LTV at risk. Late payment: 17 accounts, $41,200, 82% confidence.`,
+      admin: `Current module: Admin\nSystem health nominal. Last deployment: March 11. All integrations active.`,
+    };
+
+    const ctx = moduleCtx[mod] || `Current module: ${labels[mod] || mod}`;
+    setEmberlynContext(`${UTILITYNET_ANCHOR}\n\n${ctx}`);
 
     if (mod === 'analytics') {
       document.documentElement.setAttribute('data-theme', 'thena');
