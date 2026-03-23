@@ -78,20 +78,20 @@ export const TUTORIAL_SCENARIOS = [
       {
         id: 'finance-gl-remediation',
         title: 'GL Remediation Scan',
-        demoTarget: 'finance-gl-remediation',
-        narration: 'The GL Remediation scanner shows what was found in the legacy Oracle system. Chart health is at 58% — four issues across four categories. One critical: a $42,000 hedge balance marked inactive. The system has already classified every issue, explained the reasoning, and proposed the next action.',
+        demoTarget: 'finance-tab-gl-remediation',
+        narration: 'The GL Remediation tab shows what the scan found in the legacy Oracle system. Chart health is at 58% — four issues across four categories: orphaned, duplicate, misclassified, and inactive with balance. One critical issue: a $42,000 hedge balance marked inactive. The system has already classified every issue, explained the reasoning, and proposed the next action.',
       },
       {
-        id: 'finance-gl-detail-panel',
+        id: 'finance-gl-detail',
         title: 'Issue Detail & AI Recommendation',
-        demoTarget: 'finance-gl-detail-panel',
-        narration: 'Click any flagged code to open the diagnostic panel. Transaction history, root cause analysis, recommended action with reasoning, and financial impact — all generated automatically. The HEDGE-OLD issue carries a $42K balance that needs Controller sign-off before it can be retired. The system knows this.',
+        demoTarget: 'finance-gl-issues-table',
+        narration: 'Click any flagged row to open the diagnostic panel. You see transaction history, root cause analysis, and the AI recommendation — Merge, Retire, Reclassify, or Investigate. The HEDGE-OLD critical issue carries a $42K balance. Clicking Apply Recommendation on clean issues executes immediately. HEDGE-OLD gets Mark as Contained — it stays flagged until the Controller signs off.',
       },
       {
-        id: 'finance-gl-bulk-actions',
+        id: 'finance-gl-bulk',
         title: 'Bulk Remediation',
         demoTarget: 'finance-gl-bulk-actions',
-        narration: 'Select the three clean issues and apply all recommended actions in one step. Merge, retire, reclassify — executed together. Chart health updates immediately. The stubborn issue stays flagged until the financial dependency is resolved. No false progress.',
+        narration: 'Select the three clean issues and click Apply All Recommended Actions. Merge, retire, reclassify — executed together. Chart health updates immediately to reflect the resolved issues. HEDGE-OLD stays at its contained status — no false progress on a financially significant open balance.',
       },
       {
         id: 'finance-gl-governance',

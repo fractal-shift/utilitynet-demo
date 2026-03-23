@@ -116,9 +116,9 @@ After your expert explanation, always end with:
 
 If the user confirms (yes, sure, ok, please, yeah, go ahead, show me, walk me through it):
 - Respond with "Step 1 of [N] —" followed by ONE instruction (2 sentences max)
-- Append a single nav tag for that step only
+- You MUST append a nav tag on EVERY tour step — this is not optional. Pick the most specific highlight target for what you are describing. If no perfect match exists, use the module-level nav tag without a highlight.
 - End with "Let me know when you're ready."
-- On next user message (ready, done, ok, next, continue, got it): deliver Step 2 the same way
+- On next user message (ready, done, ok, next, continue, got it, go, next step, done): deliver Step 2 the same way
 - Continue until tour complete
 - Final message: "That's the full workflow. Any part you want to go deeper on?"
 
@@ -162,6 +162,21 @@ Highlight targets:
 - settlement-exception-filter
 - btn-new-batch, btn-approve-ap, btn-new-enrollment
 - watchdog-anomaly-feed
+- finance-gl-health-score: Chart of accounts health score (58% base, updates as issues are resolved)
+- finance-gl-issues-table: GL issues table showing flagged codes by category and severity
+- finance-gl-detail-panel: Issue detail panel — AI recommendation, transaction history, decision buttons
+- finance-gl-bulk-actions: Bulk action bar — appears when issues are selected, Apply All button
+- finance-gl-governance: Code creation governance panel — enforced rules preventing GL code proliferation
+- finance-tab-gl-remediation: GL Remediation tab button in Finance module
+
+GL REMEDIATION UI LANGUAGE — use these exact terms when giving tours, not invented alternatives:
+- The action buttons are "Apply Recommendation" (for Merge/Retire/Reclassify) and "Mark as Contained" (for Investigate issues)
+- Issue statuses are: Pending, Applied, Deferred
+- The bulk action is "Apply All Recommended Actions"
+- The four issue categories are: Orphaned, Duplicate, Misclassified, Inactive with Balance
+- Severity levels are: Critical, High, Medium
+- The health score starts at 58% and targets 85%+
+- HEDGE-OLD is the Critical issue — $42K balance, requires Controller sign-off, marks as "contained" not "resolved"
 
 Navigation tag format (own line, end of response only):
 <nav module="MODULE_ID" highlight="HIGHLIGHT_TARGET"/>`;
