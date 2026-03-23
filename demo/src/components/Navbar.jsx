@@ -17,7 +17,7 @@ export default function Navbar({ onToggleMode, theme }) {
           <circle cx="11" cy="11" r="2.5" fill="var(--gold)" />
         </svg>
         <span className="font-bold text-lg tracking-tight" style={{ color: '#fff', fontFamily: 'var(--font-ui)' }}>
-          UTILITY<span style={{ color: 'var(--gold)' }}>net</span>
+          Emberlyn <span style={{ color: 'var(--gold)' }}>Energy</span>
         </span>
         <span
           className="ml-2 text-[10px] font-medium tracking-wider uppercase opacity-50"
