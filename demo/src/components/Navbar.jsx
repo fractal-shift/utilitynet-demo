@@ -22,15 +22,31 @@ export default function Navbar({ onToggleMode, theme }) {
       </div>
       <div className="flex-1" />
       <div
-        className="rounded-full border px-2.5 py-1 text-[9px] font-medium tracking-wider uppercase"
+        className="flex items-center gap-1.5 rounded-full border px-2.5 py-1"
         style={{
-          background: 'rgba(30, 136, 180, 0.25)',
-          borderColor: 'rgba(30, 136, 180, 0.4)',
-          color: '#4BAED4',
-          fontFamily: 'var(--font-mono)',
+          background: 'rgba(255,255,255,0.08)',
+          borderColor: 'rgba(255,255,255,0.2)',
+          fontFamily: 'var(--font-ui)',
         }}
       >
-        ● UTILITYnet
+        <svg width="12" height="14" viewBox="0 0 24 28" fill="none">
+          <path
+            d="M12 2C12 2 4 10 4 17a8 8 0 0 0 16 0C20 10 12 2 12 2Z"
+            fill="white"
+            opacity="0.9"
+          />
+          <path
+            d="M12 10C12 10 8 15 8 18a4 4 0 0 0 8 0C16 15 12 10 12 10Z"
+            fill="white"
+            opacity="0.5"
+          />
+        </svg>
+        <span
+          className="text-[10px] font-semibold tracking-wide"
+          style={{ color: 'rgba(255,255,255,0.9)' }}
+        >
+          Utilitynet
+        </span>
       </div>
       <div className="flex items-center gap-3">
         <button type="button" className="relative p-1.5 rounded-lg transition-colors hover:bg-white/10" aria-label="Notifications">
