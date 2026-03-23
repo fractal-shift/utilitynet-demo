@@ -73,8 +73,25 @@ Valid IDs: enrollment, marketers, billing, settlement, finance, analytics
 Pick the closest match. If no match, respond normally without the marker.
 Example: user says "walk me through finance" → end with: TUTORIAL_START:finance`;
 
-export default function EmerlynPanel({ isOpen, onClose, onToggle, context, suggestionContext = 'default', apiKey, onConfirmAction, onExecuteAction }) {
+export default function EmerlynPanel({ isOpen, onClose, onToggle, context, suggestionContext = 'default', apiKey, onConfirmAction, onExecuteAction, onNavigate }) {
   const effectiveApiKey = apiKey?.trim() || getApiKey();
+
+  const handleNavFromResponse = (text) => {
+    const match = text.match(/<nav\s+module="([^"]+)"(?:\s+highlight="([^"]+)")?\/>/);
+    if (!match) return text;
+    const [fullTag, mod, highlight] = match;
+    if (onNavigate) {
+      setTimeout(() => {
+        onNavigate(mod);
+        if (highlight) {
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('utilitynet:highlight', { detail: { target: highlight } }));
+          }, 400);
+        }
+      }, 600);
+    }
+    return text.replace(fullTag, '').trim();
+  };
   const { actions } = useAppStore();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -179,12 +196,13 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
                 return;
               }
             }
+            const cleaned = handleNavFromResponse(final);
             setMessages((prev) => {
               const next = [...prev];
-              next[next.length - 1] = { ...next[next.length - 1], streaming: false };
+              next[next.length - 1] = { ...next[next.length - 1], streaming: false, content: cleaned };
               return next;
             });
-            historyRef.current = [...historyRef.current, { role: 'assistant', content: final }];
+            historyRef.current = [...historyRef.current, { role: 'assistant', content: cleaned }];
           },
         });
       } catch (err) {

@@ -43,6 +43,20 @@ export default function Layout({ apiKey }) {
   });
 
   useEffect(() => {
+    const handler = (e) => {
+      const target = e.detail?.target;
+      if (!target) return;
+      const el = document.querySelector(`[data-demo="${target}"]`);
+      if (!el) return;
+      el.classList.add('emberlyn-highlight');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => el.classList.remove('emberlyn-highlight'), 4000);
+    };
+    window.addEventListener('utilitynet:highlight', handler);
+    return () => window.removeEventListener('utilitynet:highlight', handler);
+  }, []);
+
+  useEffect(() => {
     const handleKey = (e) => {
       if (e.ctrlKey && e.shiftKey && e.key === 'S') {
         e.preventDefault();
@@ -226,6 +240,7 @@ Bank reconciliation: Balanced as of March 10`;
               }
             }}
             onExecuteAction={handleExecuteAction}
+            onNavigate={(mod) => handleNavigate(mod)}
           />
         )}
       </div>
