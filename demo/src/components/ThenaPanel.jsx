@@ -45,7 +45,7 @@ function typewriterStream(html, onUpdate, onDone) {
   }, 18);
 }
 
-const getApiKey = () => CLAUDE_API_KEY?.trim() || import.meta.env.VITE_CLAUDE_API_KEY?.trim() || sessionStorage.getItem('claude-api-key');
+const getApiKey = () => CLAUDE_API_KEY?.trim() || import.meta.env.VITE_CLAUDE_API_KEY?.trim();
 
 export default function ThenaPanel({ isOpen, onClose, onToggle, apiKey }) {
   const effectiveApiKey = apiKey?.trim() || getApiKey();
@@ -130,7 +130,7 @@ export default function ThenaPanel({ isOpen, onClose, onToggle, apiKey }) {
           },
         });
       } catch (err) {
-        const msg = err?.message?.includes('401') ? 'Invalid API key. Check .env or enter key in modal.' : (err?.message || 'Connection issue. Please try again.');
+        const msg = err?.message?.includes('401') ? 'Invalid API key. Check VITE_CLAUDE_API_KEY in your .env file.' : (err?.message || 'Connection issue. Please try again.');
         setMessages((m) => [
           ...m,
           { role: 'assistant', content: msg, error: true },
@@ -139,7 +139,7 @@ export default function ThenaPanel({ isOpen, onClose, onToggle, apiKey }) {
     } else {
       setMessages((m) => [
         ...m,
-        { role: 'assistant', content: 'No API key. Use cached prompts or add your key.', error: true },
+        { role: 'assistant', content: 'AI features require a configured API key. Set VITE_CLAUDE_API_KEY in your .env file to enable live responses.', error: true },
       ]);
     }
     setLoading(false);
