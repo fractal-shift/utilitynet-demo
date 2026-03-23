@@ -5,6 +5,9 @@ import { useAppStore } from '../store/AppStore';
 
 Chart.register(...registerables);
 
+const ACTUAL_DATA = [1.62, 1.71, 1.68, 1.82, 1.89, 1.94, 2.01, 2.08, 2.12, 2.18, 2.21, 2.34];
+const CHART_LABELS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr*', 'May*', 'Jun*'];
+
 export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
   const { state, actions } = useAppStore();
   const { timelineItems, customers } = state;
@@ -18,31 +21,60 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
     chartInstance.current = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
-        datasets: [{
-          label: 'Revenue',
-          data: [1.62, 1.71, 1.68, 1.82, 1.89, 1.94, 2.01, 2.08, 2.12, 2.18, 2.21, 2.34],
-          borderColor: '#1678A0',
-          backgroundColor: 'rgba(22, 120, 160, 0.1)',
-          fill: true,
-          tension: 0.3,
-        }],
+        labels: CHART_LABELS,
+        datasets: [
+          {
+            label: 'Actual',
+            data: [...ACTUAL_DATA, null, null, null],
+            borderColor: '#4BAED4',
+            backgroundColor: 'rgba(75,174,212,0.12)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            spanGaps: false,
+          },
+          {
+            label: 'Forecast',
+            data: [null, null, null, null, null, null, null, null, null, null, null, null, 2.47, 2.58, 2.61],
+            borderColor: '#E8952A',
+            borderDash: [5, 4],
+            fill: false,
+            pointRadius: 3,
+            tension: 0.4,
+            spanGaps: false,
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          y: { beginAtZero: false, grid: { color: 'rgba(0,0,0,0.05)' } },
-          x: { grid: { display: false } },
+          y: { display: false },
+          x: {
+            border: { display: false },
+            grid: { display: false },
+            ticks: {
+              color: 'rgba(255,255,255,0.35)',
+              font: { size: 9 },
+            },
+          },
         },
       },
     });
     return () => chartInstance.current?.destroy();
   }, []);
 
+  const miniKpis = [
+    { label: 'Q2 Forecast', value: '$7.4M', sub: 'Emberlyn forecast ±4%' },
+    { label: 'Customers', value: kpiData.dashboard.customers, sub: kpiData.dashboard.customersDelta },
+    { label: 'Marketers', value: kpiData.dashboard.marketers, sub: kpiData.dashboard.marketersDelta },
+    { label: 'Settlement', value: kpiData.dashboard.settlement, sub: kpiData.dashboard.settlementDelta },
+  ];
+
   return (
     <div>
+      {/* Page header */}
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="inline-block font-bold text-[22px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>
@@ -53,67 +85,187 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
             Wednesday, March 11, 2026 · Q1 Billing Cycle Active
           </p>
         </div>
-        <button type="button" onClick={onExport} data-demo="btn-export-dashboard" className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⬇ Export</button>
-      </div>
-
-      <div className="mb-6 grid grid-cols-4 gap-4" data-demo="dashboard-kpis">
-        <div
-          className="rounded-xl border p-5"
-          style={{
-            background: 'var(--gold-dim)',
-            borderColor: 'var(--gold-bdr)',
-            boxShadow: 'var(--card-shadow)',
-          }}
+        <button
+          type="button"
+          onClick={onExport}
+          data-demo="btn-export-dashboard"
+          className="rounded-lg border px-4 py-2 text-[13px] font-medium"
+          style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}
         >
-          <div className="mb-1.5 text-[8px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Total Revenue — MTD</div>
-          <div className="text-2xl font-bold tracking-tight" style={{ color: 'var(--kpi-color)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.revenue}</div>
-          <div className="mt-1.5 text-[10px] font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.revenueDelta}</div>
-          <div className="mt-0.5 text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>CAD · March 2026</div>
+          ⬇ Export
+        </button>
+      </div>
+
+      {/* SECTION 1 — Dark KPI header + forecast chart */}
+      <div
+        className="mb-6 rounded-xl"
+        style={{ background: '#0d2235', borderRadius: 12, padding: '20px 24px' }}
+        data-demo="dashboard-revenue-chart"
+      >
+        {/* KPI row */}
+        <div className="flex items-start gap-8" data-demo="dashboard-kpis">
+          {/* Main revenue KPI */}
+          <div className="flex-shrink-0" style={{ minWidth: 180 }}>
+            <div
+              className="mb-1 tracking-wider uppercase"
+              style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}
+            >
+              Total Revenue — March 2026
+            </div>
+            <div
+              className="font-bold leading-none"
+              style={{ fontSize: 32, color: '#ffffff', fontFamily: 'var(--font-ui)' }}
+            >
+              {kpiData.dashboard.revenue}
+            </div>
+            <div
+              className="mt-1.5"
+              style={{ fontSize: 12, color: '#4BAED4', fontFamily: 'var(--font-ui)', fontWeight: 500 }}
+            >
+              {kpiData.dashboard.revenueDelta}
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="self-stretch w-px flex-shrink-0" style={{ background: 'rgba(255,255,255,0.1)' }} />
+
+          {/* 4 mini KPIs */}
+          <div className="flex flex-1 gap-6">
+            {miniKpis.map((kpi) => (
+              <div key={kpi.label} className="flex-1">
+                <div
+                  className="mb-0.5 tracking-wider uppercase"
+                  style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-mono)', fontWeight: 500 }}
+                >
+                  {kpi.label}
+                </div>
+                <div
+                  className="font-bold"
+                  style={{ fontSize: 18, color: '#ffffff', fontFamily: 'var(--font-ui)' }}
+                >
+                  {kpi.value}
+                </div>
+                <div
+                  style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-ui)' }}
+                >
+                  {kpi.sub}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
-          <div className="mb-1.5 text-[8px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Active Customers</div>
-          <div className="text-2xl font-bold tracking-tight" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.customers}</div>
-          <div className="mt-1.5 text-[10px] font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.customersDelta}</div>
+
+        {/* Chart legend */}
+        <div className="mt-5 mb-2 flex items-center gap-4" style={{ fontFamily: 'var(--font-ui)' }}>
+          <div className="flex items-center gap-1.5">
+            <div style={{ width: 20, height: 2, background: '#4BAED4', borderRadius: 1 }} />
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>Actual</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div style={{ width: 20, height: 2, background: '#E8952A', borderRadius: 1, borderTop: '2px dashed #E8952A' }} />
+            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.55)' }}>Forecast</span>
+          </div>
         </div>
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
-          <div className="mb-1.5 text-[8px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Active Marketers</div>
-          <div className="text-2xl font-bold tracking-tight" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.marketers}</div>
-          <div className="mt-1.5 text-[10px] font-semibold" style={{ color: 'var(--gold)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.marketersDelta}</div>
-        </div>
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
-          <div className="mb-1.5 text-[8px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Settlement Status</div>
-          <div className="text-xl font-bold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.settlement}</div>
-          <div className="mt-1.5 text-[10px] font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>{kpiData.dashboard.settlementDelta}</div>
+
+        {/* Revenue chart */}
+        <div style={{ height: 100 }}>
+          <canvas ref={revenueChartRef} />
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-5">
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }} data-demo="dashboard-revenue-chart">
-          <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Revenue Trend — Last 12 Months</div>
-          <div className="h-[180px]">
-            <canvas ref={revenueChartRef} />
+      {/* SECTION 2 — Emberlyn signal feed */}
+      <div
+        className="mb-6 rounded-xl border"
+        style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}
+        data-demo="dashboard-system-alerts"
+      >
+        <div className="px-5 pt-5 pb-3">
+          <div className="text-[13px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>
+            ✦ Emberlyn — what needs your attention today
           </div>
         </div>
-        <div className="flex flex-col gap-3">
-          <div className="text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>✦ Predictive Insights</div>
-          <div className="rounded-xl border p-4" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)' }} data-demo="dashboard-late-payment-card">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-[8px] font-medium tracking-wider uppercase" style={{ color: 'var(--gold)', fontFamily: 'var(--font-mono)' }}>⚠ Predictive · Late Payment</span>
-              <button type="button" data-demo="dashboard-late-payment-review" onClick={() => onNavigate?.('analytics')} className="cursor-pointer rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: 'var(--gold)', color: '#fff', fontFamily: 'var(--font-mono)', border: 'none' }}>Review</button>
+
+        {/* Signal row 1 — amber */}
+        <div
+          className="mx-5 mb-3 flex items-center gap-4 rounded-lg px-4 py-3"
+          style={{ background: 'var(--gold-dim)', borderLeft: '2px solid #E8952A' }}
+          data-demo="dashboard-late-payment-card"
+        >
+          <div className="flex-1 min-w-0">
+            <div className="mb-0.5" style={{ fontSize: 9, color: '#E8952A', fontFamily: 'var(--font-mono)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              ⚡ 14-day payment risk
             </div>
-            <div className="text-[13px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>17 accounts likely to miss payment in the next 14 days — projected exposure $41,200</div>
-            <div className="mt-1.5 text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Confidence 82% · Based on billing history + 3 data sources</div>
-          </div>
-          <div className="rounded-xl border p-4" style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)' }}>
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-[8px] font-medium tracking-wider uppercase" style={{ color: 'var(--teal)', fontFamily: 'var(--font-mono)' }}>↑ Prescriptive · Growth</span>
-              <span className="cursor-pointer rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-mono)' }} onClick={() => onOpenEmberlyn?.()}>Act</span>
+            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>
+              17 accounts likely to miss payment — $41,200 exposure
             </div>
-            <div className="text-[13px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>3 partner marketers show below-benchmark conversion but above-average lead quality</div>
+            <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-ui)', marginTop: 2 }}>
+              82% confidence · billing history + 3 data sources
+            </div>
           </div>
+          <button
+            type="button"
+            data-demo="dashboard-late-payment-review"
+            onClick={() => onOpenEmberlyn?.()}
+            style={{ flexShrink: 0, fontSize: 12, color: '#E8952A', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-ui)', fontWeight: 500, whiteSpace: 'nowrap' }}
+          >
+            Draft outreach →
+          </button>
+        </div>
+
+        {/* Signal row 2 — teal */}
+        <div
+          className="mx-5 mb-3 flex items-center gap-4 rounded-lg px-4 py-3"
+          style={{ background: 'var(--teal-dim)', borderLeft: '2px solid var(--teal)' }}
+        >
+          <div className="flex-1 min-w-0">
+            <div className="mb-0.5" style={{ fontSize: 9, color: 'var(--teal)', fontFamily: 'var(--font-mono)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              ↑ Growth opportunity
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>
+              3 marketers converting leads but below retention benchmark
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-ui)', marginTop: 2 }}>
+              GreenPath, Calgary Energy, AltaEnergy · $68K annualized uplift
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => onOpenEmberlyn?.()}
+            style={{ flexShrink: 0, fontSize: 12, color: 'var(--teal)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-ui)', fontWeight: 500, whiteSpace: 'nowrap' }}
+          >
+            Review →
+          </button>
+        </div>
+
+        {/* Signal row 3 — blue */}
+        <div
+          className="mx-5 mb-5 flex items-center gap-4 rounded-lg px-4 py-3"
+          style={{ background: 'rgba(75,174,212,0.08)', borderLeft: '2px solid #4BAED4' }}
+        >
+          <div className="flex-1 min-w-0">
+            <div className="mb-0.5" style={{ fontSize: 9, color: '#4BAED4', fontFamily: 'var(--font-mono)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              ◈ AESO forward signal
+            </div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>
+              Pool price up 6.2% — unhedged industrial exposure growing
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--muted)', fontFamily: 'var(--font-ui)', marginTop: 2 }}>
+              Recommend: increase hedge coverage 61% → 75% before April billing
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => onNavigate?.('analytics')}
+            style={{ flexShrink: 0, fontSize: 12, color: '#4BAED4', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-ui)', fontWeight: 500, whiteSpace: 'nowrap' }}
+          >
+            See analysis →
+          </button>
         </div>
       </div>
 
+      {/* SECTION 3 — Bottom rows (unchanged) */}
+
+      {/* Row 1: Recent Enrollments + Top Marketer Performance */}
       <div className="mb-6 grid grid-cols-2 gap-5">
         <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }} data-demo="dashboard-recent-enrollments">
           <div className="mb-4 flex items-center justify-between">
@@ -161,8 +313,9 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
         </div>
       </div>
 
+      {/* Row 2: System Alerts + Your Tasks Today */}
       <div className="grid grid-cols-2 gap-5">
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }} data-demo="dashboard-system-alerts">
+        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
           <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>System Alerts</div>
           <div className="rounded-lg border p-3 mb-3" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)', color: 'var(--gold)', fontFamily: 'var(--font-ui)' }}>⚠ 3 billing exceptions require manual review — Batch B-2026-0311</div>
           <div className="rounded-lg border p-3 mb-3" style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)', color: 'var(--teal)', fontFamily: 'var(--font-ui)' }}>ℹ AESO data feed updated — March settlement inputs received</div>
