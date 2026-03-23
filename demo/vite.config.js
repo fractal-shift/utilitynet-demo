@@ -7,6 +7,7 @@ export default defineConfig({
     outDir: 'dist',
   },
   server: {
+    host: '127.0.0.1',
     proxy: {
       '/api/mock': {
         target: 'http://localhost:3101',
