@@ -70,7 +70,8 @@ function stripStreamingNavText(text) {
 function stripCompleteNavTag(text) {
   const navInstruction = parseNavInstruction(text);
   if (!navInstruction) return text;
-  return text.replace(navInstruction.tag, '').trim();
+  const cleaned = text.replace(navInstruction.tag, '').trim();
+  return cleaned || 'Let me take you there.';
 }
 
 function typewriterStream(html, onUpdate, onDone) {
@@ -135,7 +136,8 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
   const handleNavFromResponse = (text) => {
     const navInstruction = parseNavInstruction(text);
     fireNavInstruction(navInstruction);
-    return stripCompleteNavTag(text);
+    const cleaned = stripCompleteNavTag(text);
+    return cleaned || 'Let me take you there.';
   };
 
   const suggestions = SUGGESTIONS[suggestionContext] || SUGGESTIONS.default;

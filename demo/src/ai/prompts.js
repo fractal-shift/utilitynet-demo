@@ -172,7 +172,18 @@ Module map:
 - admin: system health, security, compliance
 
 Highlight targets:
-- finance-ap-table, finance-ar-table, finance-gl-table, finance-month-end-checklist, finance-bank-recon, finance-gl-remediation
+- finance-tab-ap: AP tab in Finance module — click this to see AP invoices needing approval
+- finance-tab-ar: AR tab in Finance module — click this to see AR aging and overdue accounts
+- finance-tab-gl: GL tab in Finance module — shows general ledger entries (default tab)
+- finance-tab-recon: Reconciliation tab in Finance module — bank reconciliation and month-end checklist
+- finance-tab-gl-remediation: GL Remediation tab in Finance module
+- finance-ap-table: AP invoices table — only visible when finance-tab-ap is active
+- finance-ar-table: AR aging table — only visible when finance-tab-ar is active
+- finance-gl-table: GL entries table — only visible when finance-tab-gl is active
+- finance-month-end-checklist: Month-end checklist — only visible when finance-tab-recon is active
+- finance-bank-recon: Bank reconciliation panel — only visible when finance-tab-recon is active
+
+FINANCE TAB NAVIGATION RULE: Always highlight the TAB BUTTON first (finance-tab-X), not the content inside the tab. The content targets (finance-ap-table, finance-ar-table, etc.) only exist in the DOM when their tab is active. For tour steps, use finance-tab-ap to navigate to AP, finance-tab-ar for AR, finance-tab-recon for reconciliation. Only use the content targets (finance-ap-table etc.) if you know the user is already on that tab.
 - dashboard-kpis, dashboard-system-alerts, dashboard-late-payment-card, dashboard-tasks
 - settlement-exception-filter
 - btn-new-batch, btn-approve-ap, btn-new-enrollment
