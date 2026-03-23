@@ -631,6 +631,25 @@ Panel redesigned as a fixed right-side drawer floating over content. Three fixed
 
 ---
 
+### F-006: Emberlyn Interaction Modes — Expert+Guide + Operator Assistant
+**Status: COMPLETE — this commit**
+**Files:** prompts.js
+
+Two interaction modes added to EMBERLYN_SYSTEM_PROMPT:
+
+MODE A — EXPERT + GUIDE (default):
+Emberlyn explains domain concepts with full expertise, then offers a guided tour: "Would you like me to give you a tour of how the platform handles this?" If yes: one step at a time, step N of N format, nav tag per step, waits for user confirmation ("ready", "done", "next", "ok") before delivering next step. Never dumps all steps at once. Tour ends with "That's the full workflow. Any part you want to go deeper on?"
+
+MODE B — OPERATOR ASSISTANT:
+For action-oriented requests (draft, write, approve, send, generate): executes immediately, shows full output inline as preview, ends with "Should I go ahead and [action]? I won't do anything until you confirm." Hard rule: no data changes without explicit user confirmation.
+
+FEASIBILITY TIERS:
+- Demo MVP (March 30): Text-based tour + live navigation. CoachRail handles scripted scenarios with audio. Emberlyn handles live Q&A with Expert+Guide text mode. Division of labor is intentional.
+- MVP+1: Pre-cache ElevenLabs audio for top 8-10 Expert+Guide responses. Cache-hit plays audio while text streams.
+- MVP+2: ElevenLabs streaming TTS. True real-time narration for any unpredictable question. Navigation and audio stay in sync via existing nav tag timing.
+
+---
+
 ## T3 Features — Demo Polish
 
 ---
