@@ -69,19 +69,19 @@ export default function DemoPlayer() {
       }
 
       case 'highlight':
-        post({
-          type: 'demo-highlight',
-          selector: step.selector,
-          conclusion: step.conclusion,
-          durationMs: step.durationMs || 5000,
-        });
-        await sleep(step.durationMs || 5000);
+        if (step.conclusion) {
+          post({ type: 'demo-narration', text: step.conclusion });
+          await sleep(step.durationMs || 5000);
+          post({ type: 'demo-narration', text: null });
+        } else {
+          await sleep(step.durationMs || 3000);
+        }
         break;
 
       case 'status':
-        post({ type: 'demo-status', status: step.text });
+        post({ type: 'demo-narration', text: step.text });
         await sleep(5000);
-        post({ type: 'demo-status', status: '' });
+        post({ type: 'demo-narration', text: null });
         break;
 
       case 'wait':
@@ -90,7 +90,7 @@ export default function DemoPlayer() {
         break;
 
       case 'emberlyn-open':
-        post({ type: 'demo-narration', text: 'Sarah opens Emberlyn — her AI companion is already aware of everything on screen.' });
+        post({ type: 'demo-narration', text: 'Sarah opens Emberlyn — our operational AI companion, embedded directly in the platform. No switching tabs. No separate tool.' });
         await sleep(1000);
         document
           .querySelector('[data-demo="emberlyn-toggle"]')
@@ -123,6 +123,22 @@ export default function DemoPlayer() {
       case 'summary':
         post({ type: 'demo-narration', text: `✦ ${step.title} — ${step.text}` });
         await sleep(8000);
+        post({ type: 'demo-narration', text: null });
+        break;
+
+      case 'thena-open':
+        post({ type: 'demo-narration', text: 'Sarah opens Thena — our analytics AI partner, with direct access to 24 months of billing and settlement data.' });
+        await sleep(1000);
+        document.querySelector('[data-demo="thena-toggle"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await sleep(1200);
+        post({ type: 'demo-narration', text: null });
+        break;
+
+      case 'alden-open':
+        post({ type: 'demo-narration', text: 'Sarah opens Alden — our AI system partner, built to answer the hardest architecture and migration questions.' });
+        await sleep(1000);
+        document.querySelector('[data-demo="alden-toggle"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await sleep(1200);
         post({ type: 'demo-narration', text: null });
         break;
 
@@ -196,17 +212,6 @@ export default function DemoPlayer() {
   if (!visible) return null;
 
   const totalSteps = scenario?.steps?.length || 0;
-  const currentStep = scenario?.steps?.[stepIndex];
-
-  const stepPreview =
-    currentStep?.text?.slice(0, 50) ||
-    currentStep?.target ||
-    currentStep?.role ||
-    currentStep?.title ||
-    (currentStep?.ms != null ? `${currentStep.ms}ms` : '');
-
-  const stepPreviewTruncated =
-    currentStep?.text?.length > 50 ? `${stepPreview}…` : stepPreview;
 
   return (
     <div
@@ -288,25 +293,6 @@ export default function DemoPlayer() {
           {playing ? (paused ? '⏸ Paused' : '● Playing') : '○ Ready'}
         </span>
       </div>
-
-      {/* Current step preview */}
-      {currentStep && (
-        <div
-          className="border-b px-3 py-2"
-          style={{ borderColor: 'var(--border)' }}
-        >
-          <div
-            className="rounded px-2 py-1 text-[10px]"
-            style={{
-              background: 'var(--s2)',
-              color: 'var(--muted)',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            {currentStep.type}: {stepPreviewTruncated}
-          </div>
-        </div>
-      )}
 
       {/* Controls */}
       <div className="flex items-center gap-2 p-3">
