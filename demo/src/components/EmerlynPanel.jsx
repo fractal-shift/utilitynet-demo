@@ -116,6 +116,32 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
   const isNearBottomRef = useRef(true);
   const dragStateRef = useRef({ active: false, startX: 0, startWidth: 380 });
   const textareaRef = useRef(null);
+  const lastPrimedContextRef = useRef('');
+
+  const primeConversationContext = (contextText, { replace = false } = {}) => {
+    const trimmed = contextText?.trim();
+    if (!trimmed) return;
+    if (!replace && lastPrimedContextRef.current === trimmed) return;
+
+    const seededHistory = [
+      { role: 'user', content: `Screen context: ${trimmed}` },
+      { role: 'assistant', content: 'Understood. I will answer using that screen context unless the user changes views.' },
+    ];
+
+    historyRef.current = replace ? seededHistory : [...historyRef.current, ...seededHistory];
+    if (replace) {
+      setMessages([]);
+    }
+    lastPrimedContextRef.current = trimmed;
+  };
+
+  const resetConversation = () => {
+    setMessages([]);
+    historyRef.current = [];
+    lastPrimedContextRef.current = '';
+    setInput('');
+    setLoading(false);
+  };
 
   const fireNavInstruction = (navInstruction) => {
     if (!navInstruction || navFiredRef.current) return false;
@@ -321,6 +347,11 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
   }, [messages]);
 
   useEffect(() => {
+    if (!isOpen || !context?.trim() || historyRef.current.length > 0) return;
+    primeConversationContext(context);
+  }, [isOpen, context]);
+
+  useEffect(() => {
     const handler = (e) => {
       if (e.data?.type !== 'demo-scroll-read' || e.data?.panel !== 'emberlyn') return;
       if (scrollTimerRef.current) {
@@ -356,6 +387,26 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
         clearInterval(scrollTimerRef.current);
         scrollTimerRef.current = null;
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleReset = () => {
+      resetConversation();
+    };
+
+    const handlePrime = (event) => {
+      const text = event.detail?.text;
+      const replace = Boolean(event.detail?.replace);
+      if (!text?.trim()) return;
+      primeConversationContext(text, { replace });
+    };
+
+    window.addEventListener('utilitynet:emberlyn-reset', handleReset);
+    window.addEventListener('utilitynet:emberlyn-context', handlePrime);
+    return () => {
+      window.removeEventListener('utilitynet:emberlyn-reset', handleReset);
+      window.removeEventListener('utilitynet:emberlyn-context', handlePrime);
     };
   }, []);
 

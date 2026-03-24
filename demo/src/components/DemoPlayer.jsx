@@ -133,6 +133,7 @@ export default function DemoPlayer() {
         post({ type: 'demo-narration', text: 'Sarah opens Emberlyn — our operational AI companion, embedded directly in the platform. No switching tabs. No separate tool.' });
         await sleep(1000);
         {
+          window.dispatchEvent(new CustomEvent('utilitynet:emberlyn-reset'));
           const el = document.querySelector('[data-demo="emberlyn-toggle"]');
           await animateCursorTo(el);
           el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -145,6 +146,14 @@ export default function DemoPlayer() {
         post({ type: 'demo-narration', text: `Sarah asks: "${step.text}"` });
         await sleep(1500);
         post({ type: 'demo-narration', text: null });
+        if (step.context) {
+          window.dispatchEvent(
+            new CustomEvent('utilitynet:emberlyn-context', {
+              detail: { text: step.context },
+            })
+          );
+          await sleep(200);
+        }
         const input = document.querySelector('[data-demo="emberlyn-input"]');
         if (input) {
           const nativeInputValueSetter = Object.getOwnPropertyDescriptor(

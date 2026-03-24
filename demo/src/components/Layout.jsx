@@ -214,6 +214,12 @@ export default function Layout({ apiKey }) {
     setTheme(next);
   }, [theme, currentModule]);
 
+  const openEmberlyn = useCallback((ctx) => {
+    window.dispatchEvent(new CustomEvent('utilitynet:emberlyn-reset'));
+    setEmberlynSuggestionContext(ctx || 'default');
+    setEmberlynOpen(true);
+  }, []);
+
   const ActiveModule = MODULES[currentModule];
 
   return (
@@ -244,7 +250,7 @@ export default function Layout({ apiKey }) {
           }}
         >
           <ActiveModule
-            onOpenEmberlyn={(ctx) => { setEmberlynOpen(true); setEmberlynSuggestionContext(ctx || 'default'); }}
+            onOpenEmberlyn={openEmberlyn}
             onOpenThena={(ctx) => { setThenaOpen(true); }}
             onOpenAlden={() => setAldenOpen(true)}
             emberlynContext={emberlynContext}
@@ -300,7 +306,7 @@ export default function Layout({ apiKey }) {
       )}
       <EnrollmentModal isOpen={enrollmentModalOpen} onClose={() => setEnrollmentModalOpen(false)} showToast={showToast} />
       <BillingBatchModal isOpen={billingBatchModalOpen} onClose={() => setBillingBatchModalOpen(false)} />
-      <Customer360Modal customer={customer360Customer} isOpen={!!customer360Customer} onClose={() => setCustomer360Customer(null)} onOpenEmberlyn={(ctx) => { setEmberlynOpen(true); setEmberlynSuggestionContext(ctx || 'default'); setCustomer360Customer(null); }} showToast={showToast} />
+      <Customer360Modal customer={customer360Customer} isOpen={!!customer360Customer} onClose={() => setCustomer360Customer(null)} onOpenEmberlyn={(ctx) => { openEmberlyn(ctx); setCustomer360Customer(null); }} showToast={showToast} />
       <OnboardMarketerModal isOpen={onboardMarketerModalOpen} onClose={() => setOnboardMarketerModalOpen(false)} />
       <ScenarioPanel isOpen={scenarioPanelOpen} onClose={() => setScenarioPanelOpen(false)} />
       <DemoPlayer />
