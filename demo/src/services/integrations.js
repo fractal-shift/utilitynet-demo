@@ -90,6 +90,6 @@ export async function postAltaGasDispute(data) {
   });
 }
 
-export async function fetchWatchdogFeeds() {
-  return fetchJson('/api/mock/watchdog/feeds');
+export async function fetchIntegrationHealth() {
+  return fetchJson('/api/mock/integrations/feeds');
 }

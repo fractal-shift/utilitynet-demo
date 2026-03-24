@@ -1,5 +1,5 @@
 /**
- * UTILITYnet Demo — Mock Integration Server
+ * UTILITYnet Demo — Integration Simulator
  * Port 3101. Scenario-controlled responses for AESO, RBC, Credit, AltaGas.
  */
 
@@ -235,8 +235,8 @@ app.get('/api/mock/altagas/feed-status', (req, res) => {
   });
 });
 
-// GET /api/mock/watchdog/feeds — aggregated
-app.get('/api/mock/watchdog/feeds', async (req, res) => {
+// GET /api/mock/integrations/feeds — aggregated
+app.get('/api/mock/integrations/feeds', async (req, res) => {
   const feeds = [];
   for (const [name, path] of [
     ['AESO', '/api/mock/aeso/feed-status'],
@@ -257,5 +257,5 @@ app.get('/api/mock/watchdog/feeds', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`[mock-server] listening on http://localhost:${PORT}`);
+  console.log(`[integration-simulator] listening on http://localhost:${PORT}`);
 });

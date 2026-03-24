@@ -1,6 +1,6 @@
 /**
- * Validates that the mock integration server is running and all routes respond correctly.
- * Prerequisite: node mock-server.mjs must be running on port 3101.
+ * Validates that the integration simulator is running and all routes respond correctly.
+ * Prerequisite: node integration-simulator.mjs must be running on port 3101.
  */
 export async function check() {
   const errors = [];
@@ -86,14 +86,14 @@ export async function check() {
     errors.push(`Scenario switching test failed: ${e.message}`);
   }
 
-  // Watchdog aggregated feed
+  // Aggregated integration feed health
   try {
-    const res = await fetch(`${BASE}/api/mock/watchdog/feeds`);
+    const res = await fetch(`${BASE}/api/mock/integrations/feeds`);
     const data = await res.json();
-    if (!Array.isArray(data.feeds)) errors.push('Watchdog feeds response missing feeds array');
+    if (!Array.isArray(data.feeds)) errors.push('Integration feeds response missing feeds array');
     if (data.feeds.length !== 4) errors.push(`Expected 4 feeds, got ${data.feeds.length}`);
   } catch (e) {
-    errors.push(`Watchdog feeds failed: ${e.message}`);
+    errors.push(`Integration feeds failed: ${e.message}`);
   }
 
   return { pass: errors.length === 0, errors };

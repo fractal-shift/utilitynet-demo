@@ -121,7 +121,7 @@
   },
   "T2-006-watchdog-panel": {
     "tier": "T2",
-    "name": "Watchdog OS Monitoring Panel",
+    "name": "Integration Simulator — Ops Console Panel",
     "status": "LOCKED",
     "validationScript": "scripts/checks/watchdog-panel.mjs",
     "failureCount": 0,
@@ -191,7 +191,7 @@
   },
   "T3-003-watchdog-feed-down-demo": {
     "tier": "T3",
-    "name": "Watchdog Feed-Down Demo Moment",
+    "name": "Integration Feed-Down Demo Moment",
     "status": "LOCKED",
     "validationScript": "scripts/checks/watchdog-feed-down.mjs",
     "failureCount": 0,

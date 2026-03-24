@@ -8,7 +8,7 @@
     "validate:t1": "node scripts/validate.mjs --tier T1",
     "validate:t2": "node scripts/validate.mjs --tier T2",
     "heal": "node scripts/heal.mjs --feature",
-    "mock": "node mock-server.mjs",
+    "mock": "node integration-simulator.mjs",
     "dev:full": "concurrently \"npm run mock\" \"npm run dev\"",
     "gen-audio": "node scripts/generate-audio.mjs",
     "predev": "node -e \"const fs=require('fs'),p='src/apiKey.js';if(!fs.existsSync(p)){fs.copyFileSync('src/apiKey.example.js',p);console.log('[predev] Created apiKey.js from example — edit it with your Anthropic key]');}\"",

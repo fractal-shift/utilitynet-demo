@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
-import { fetchWatchdogFeeds } from '../services/integrations';
+import { fetchIntegrationHealth } from '../services/integrations';
 
 export default function Admin({ onOpenAlden }) {
   const [tab, setTab] = useState('integrations');
-  const [watchdogFeeds, setWatchdogFeeds] = useState([]);
+  const [integrationFeeds, setIntegrationFeeds] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
     const poll = async () => {
       try {
-        const data = await fetchWatchdogFeeds();
-        if (!cancelled && data?.feeds) setWatchdogFeeds(data.feeds);
+        const data = await fetchIntegrationHealth();
+        if (!cancelled && data?.feeds) setIntegrationFeeds(data.feeds);
       } catch {
-        if (!cancelled) setWatchdogFeeds([]);
+        if (!cancelled) setIntegrationFeeds([]);
       }
     };
     poll();
@@ -59,7 +59,7 @@ export default function Admin({ onOpenAlden }) {
         <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
           <div className="mb-4 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Feed Health</div>
           <div data-demo="ops-console-feed-health" className="flex flex-col gap-2">
-            {watchdogFeeds.length > 0 ? watchdogFeeds.map((f) => (
+            {integrationFeeds.length > 0 ? integrationFeeds.map((f) => (
               <div key={f.name} className="flex items-center justify-between rounded-lg border p-3" style={{ background: f.status === 'DOWN' ? 'rgba(229,62,62,0.08)' : 'var(--s2)', borderColor: f.status === 'DOWN' ? 'rgba(229,62,62,0.3)' : 'var(--border)' }}>
                 <span className="text-[13px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{f.name}</span>
                 <div className="flex items-center gap-4">
