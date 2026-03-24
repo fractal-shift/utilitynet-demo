@@ -176,6 +176,30 @@ export default function DemoPlayer() {
         break;
       }
 
+      case 'scroll': {
+        const el = document.querySelector(step.selector || `[data-demo="${step.target}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        await sleep(step.ms || 1200);
+        break;
+      }
+
+      case 'fill': {
+        const el = document.querySelector(`[data-demo="${step.target}"]`);
+        if (el) {
+          el.focus();
+          const tag = el.tagName.toLowerCase();
+          const proto = tag === 'textarea' ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+          const nativeSetter = Object.getOwnPropertyDescriptor(proto, 'value').set;
+          nativeSetter.call(el, step.value);
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+          el.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        await sleep(300);
+        break;
+      }
+
       default:
         break;
     }
@@ -260,7 +284,19 @@ export default function DemoPlayer() {
     }
   };
 
-  if (!visible) return null;
+  if (!visible) {
+    return (
+      <button
+        type="button"
+        onClick={() => setVisible(true)}
+        className="fixed left-4 bottom-4 z-[500] rounded-full px-3 py-2 text-[12px] font-bold shadow-lg"
+        style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}
+        title="Open Demo Player (Ctrl+Shift+D)"
+      >
+        ▶
+      </button>
+    );
+  }
 
   const totalSteps = scenario?.steps?.length || 0;
 

@@ -19,6 +19,7 @@ export const DEMO_SCENARIOS = [
       { type: 'wait', ms: 3000 },
       { type: 'click', target: 'emberlyn-close', label: 'Closing Emberlyn' },
       { type: 'wait', ms: 500 },
+      { type: 'scroll', target: 'dashboard-tasks' },
       { type: 'narration', text: "Emberlyn has already created Sarah's task list for today — billing exceptions, marketer onboarding approvals, the CFO settlement report. She didn't build this list. The platform built it for her overnight." },
       { type: 'wait', ms: 4000 },
       { type: 'click', target: 'dashboard-task-billing' },
