@@ -168,7 +168,7 @@ export const DEMO_SCENARIOS = [
       { type: 'click', target: 'btn-reverse-invoice', label: 'Issuing credit memo reversal' },
       { type: 'wait', ms: 1500 },
       { type: 'navigate', target: 'nav-billing' },
-      { type: 'summary', title: "Billing that runs itself — and handles the unexpected.", text: "AI is built into the billing engine — not added on top. Automated ingestion, real-time pricing, hedge allocation, GL posting, and exception resolution — all in a single workflow. Emberlyn works alongside Sarah to catch what the batch can't, so every invoice that ships is correct." },
+      { type: 'summary', title: "Billing that moves fast — and handles the unexpected.", text: "AI is built into the billing engine — not added on top. Automated ingestion, real-time pricing, hedge allocation, GL posting, and exception resolution — all in a single workflow. Emberlyn works alongside Sarah to catch what the batch flags, so every invoice that ships is correct." },
     ],
   },
   {
