@@ -5,7 +5,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function DemoPlayer() {
   const [visible, setVisible] = useState(false);
-  const [selectedId, setSelectedId] = useState('finance');
+  const [selectedId, setSelectedId] = useState('intro');
   const [playing, setPlaying] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [paused, setPaused] = useState(false);
