@@ -6,14 +6,8 @@ export const DEMO_SCENARIOS = [
     steps: [
       { type: 'role', role: 'Presenter' },
       { type: 'navigate', target: 'nav-dashboard' },
-      { type: 'narration', text: "No slides. No wireframes. What you're about to see we built in one week — using your RFP, your demo script, and public information about UTILITYnet." },
-      { type: 'wait', ms: 5000 },
-      { type: 'narration', text: "FractalShift's philosophy is the opposite of traditional enterprise software. The old model: build a massive, complex platform and sell the same thing to everyone for the next 15 years." },
-      { type: 'wait', ms: 5000 },
-      { type: 'narration', text: "We believe that in the age of AI, the future of enterprise software is customer-tailored. Software that fits your exact workflows, your regulations, your data model — not the other way around. Built fast. Maintained and evolved as your business grows." },
-      { type: 'wait', ms: 6000 },
-      { type: 'narration', text: "This is what we built for UTILITYnet in one week. Imagine what 6 months looks like. Let's go." },
-      { type: 'wait', ms: 4000 },
+      { type: 'narration', text: "In the age of AI, the future of enterprise software is customer-tailored software." },
+      { type: 'wait', ms: 999999 },
     ],
   },
   {
