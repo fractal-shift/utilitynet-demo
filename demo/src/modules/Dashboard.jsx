@@ -267,56 +267,8 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
 
       {/* SECTION 3 — Bottom rows (unchanged) */}
 
-      {/* Row 1: Recent Enrollments + Top Marketer Performance */}
+      {/* Row 1: System Alerts + Your Tasks Today */}
       <div className="mb-6 grid grid-cols-2 gap-5">
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }} data-demo="dashboard-recent-enrollments">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Recent Enrollments</div>
-            <a href="#customers" className="text-[12px] font-medium" style={{ color: 'var(--teal)', fontFamily: 'var(--font-ui)' }}>View All</a>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead>
-                <tr className="border-b-2" style={{ borderColor: 'var(--teal)', background: 'var(--s2)' }}>
-                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Customer</th>
-                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Type</th>
-                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Status</th>
-                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {customers.slice(0, 4).map((c) => (
-                  <tr key={c.id} className="border-b transition-colors hover:bg-[var(--teal-dim)]" style={{ borderColor: 'var(--border)' }}>
-                    <td className="px-3 py-2.5 text-[12px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{c.name}<br /><span className="text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{c.id}</span></td>
-                    <td className="px-3 py-2.5"><span className="rounded px-2 py-0.5 text-[8px]" style={{ background: 'var(--s2)', color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{c.type}</span></td>
-                    <td className="px-3 py-2.5"><span className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[8px] font-medium" style={{ background: c.status === 'Active' ? 'rgba(39,174,96,0.1)' : 'var(--gold-dim)', borderColor: c.status === 'Active' ? 'rgba(39,174,96,0.3)' : 'var(--gold-bdr)', color: c.status === 'Active' ? 'var(--success)' : 'var(--gold)', fontFamily: 'var(--font-mono)' }}>{c.status === 'Active' ? 'Enrolled' : c.status}</span></td>
-                    <td className="px-3 py-2.5 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>{c.since}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
-          <div className="mb-4 flex items-center justify-between">
-            <div className="text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Top Marketer Performance</div>
-          </div>
-          <div className="flex flex-col gap-3">
-            {marketerPerf.map(([name, rev, pct], i) => (
-              <div key={i} className="flex items-center gap-3">
-                <span className="w-28 flex-shrink-0 text-[12px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{name}</span>
-                <div className="h-2 flex-1 rounded" style={{ background: 'var(--s2)' }}>
-                  <div className="h-full rounded" style={{ width: `${pct}%`, background: 'var(--teal)' }} />
-                </div>
-                <span className="w-12 text-right text-[11px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-mono)' }}>{rev}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Row 2: System Alerts + Your Tasks Today */}
-      <div className="grid grid-cols-2 gap-5">
         <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
           <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>System Alerts</div>
           <div className="rounded-lg border p-3 mb-3" style={{ background: 'var(--gold-dim)', borderColor: 'var(--gold-bdr)', color: 'var(--gold)', fontFamily: 'var(--font-ui)' }}>⚠ 3 billing exceptions require manual review — Batch B-2026-0311</div>
@@ -360,6 +312,54 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
                     </button>
                   )}
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2: Recent Enrollments + Top Marketer Performance */}
+      <div className="grid grid-cols-2 gap-5">
+        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }} data-demo="dashboard-recent-enrollments">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Recent Enrollments</div>
+            <a href="#customers" className="text-[12px] font-medium" style={{ color: 'var(--teal)', fontFamily: 'var(--font-ui)' }}>View All</a>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b-2" style={{ borderColor: 'var(--teal)', background: 'var(--s2)' }}>
+                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Customer</th>
+                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Type</th>
+                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Status</th>
+                  <th className="px-3 py-2.5 text-[8px] font-medium tracking-wider uppercase opacity-65" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {customers.slice(0, 4).map((c) => (
+                  <tr key={c.id} className="border-b transition-colors hover:bg-[var(--teal-dim)]" style={{ borderColor: 'var(--border)' }}>
+                    <td className="px-3 py-2.5 text-[12px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{c.name}<br /><span className="text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{c.id}</span></td>
+                    <td className="px-3 py-2.5"><span className="rounded px-2 py-0.5 text-[8px]" style={{ background: 'var(--s2)', color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{c.type}</span></td>
+                    <td className="px-3 py-2.5"><span className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[8px] font-medium" style={{ background: c.status === 'Active' ? 'rgba(39,174,96,0.1)' : 'var(--gold-dim)', borderColor: c.status === 'Active' ? 'rgba(39,174,96,0.3)' : 'var(--gold-bdr)', color: c.status === 'Active' ? 'var(--success)' : 'var(--gold)', fontFamily: 'var(--font-mono)' }}>{c.status === 'Active' ? 'Enrolled' : c.status}</span></td>
+                    <td className="px-3 py-2.5 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>{c.since}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
+          <div className="mb-4 flex items-center justify-between">
+            <div className="text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Top Marketer Performance</div>
+          </div>
+          <div className="flex flex-col gap-3">
+            {marketerPerf.map(([name, rev, pct], i) => (
+              <div key={i} className="flex items-center gap-3">
+                <span className="w-28 flex-shrink-0 text-[12px] font-medium" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{name}</span>
+                <div className="h-2 flex-1 rounded" style={{ background: 'var(--s2)' }}>
+                  <div className="h-full rounded" style={{ width: `${pct}%`, background: 'var(--teal)' }} />
+                </div>
+                <span className="w-12 text-right text-[11px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-mono)' }}>{rev}</span>
               </div>
             ))}
           </div>
