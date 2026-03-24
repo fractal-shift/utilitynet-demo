@@ -350,7 +350,7 @@ export default function DemoPlayer() {
         type="button"
         onClick={() => setVisible(true)}
         className="fixed left-0 bottom-0 z-[500] px-2 py-3 text-[11px] font-bold shadow-lg"
-        style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)', writingMode: 'vertical-rl', letterSpacing: '0.05em', borderTopRightRadius: 6 }}
+        style={{ background: '#045477', color: '#ffffff', fontFamily: 'var(--font-ui)', writingMode: 'vertical-rl', letterSpacing: '0.05em', borderTopRightRadius: 6 }}
         title="Open Demo Player (Ctrl+Shift+D)"
       >
         ▶ DEMO
@@ -363,21 +363,22 @@ export default function DemoPlayer() {
   return (
     <div
       data-demo="demo-player"
-      className="fixed left-0 bottom-0 z-[500] w-[220px] rounded-tr-xl shadow-2xl"
+      className="fixed left-0 bottom-0 z-[500] w-[220px] shadow-2xl"
       style={{
-        background: 'var(--surface)',
-        borderRight: '1px solid var(--teal)',
+        background: '#045477',
+        borderTop: '1px solid rgba(255,255,255,0.15)',
+        borderTopRightRadius: 8,
         fontFamily: 'var(--font-ui)',
       }}
     >
       {/* Header */}
       <div
         className="flex items-center justify-between border-b px-2 py-2"
-        style={{ borderColor: 'var(--border)' }}
+        style={{ borderColor: 'rgba(255,255,255,0.1)' }}
       >
         <span
-          className="text-[11px] font-bold"
-          style={{ color: 'var(--teal)' }}
+          className="text-[11px]"
+          style={{ color: 'rgba(255,255,255,0.9)', fontWeight: 600 }}
         >
           ▶ Demo Player
         </span>
@@ -385,14 +386,14 @@ export default function DemoPlayer() {
           type="button"
           onClick={() => setVisible(false)}
           className="text-[16px] leading-none"
-          style={{ color: 'var(--muted)' }}
+          style={{ color: 'rgba(255,255,255,0.5)' }}
         >
           ×
         </button>
       </div>
 
       {/* Scenario selector */}
-      <div className="border-b p-2" style={{ borderColor: 'var(--border)' }}>
+      <div className="border-b p-2" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
         <select
           value={selectedId}
           onChange={(e) => {
@@ -402,9 +403,9 @@ export default function DemoPlayer() {
           disabled={playing}
           className="w-full rounded-lg border px-2 py-1 text-[10px]"
           style={{
-            background: 'var(--s2)',
-            borderColor: 'var(--border)',
-            color: 'var(--text)',
+            background: 'rgba(255,255,255,0.1)',
+            borderColor: 'rgba(255,255,255,0.2)',
+            color: '#ffffff',
             fontFamily: 'var(--font-ui)',
           }}
         >
@@ -419,23 +420,17 @@ export default function DemoPlayer() {
       {/* Step counter */}
       <div
         className="flex items-center justify-between border-b px-2 py-2"
-        style={{ borderColor: 'var(--border)' }}
+        style={{ borderColor: 'rgba(255,255,255,0.1)' }}
       >
         <span
           className="text-[9px]"
-          style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
+          style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-mono)' }}
         >
           Step {stepIndex + 1} of {totalSteps}
         </span>
         <span
           className="text-[9px] font-medium"
-          style={{
-            color: playing
-              ? paused
-                ? 'var(--warning)'
-                : 'var(--teal)'
-              : 'var(--muted)',
-          }}
+          style={{ color: 'rgba(255,255,255,0.6)' }}
         >
           {playing ? (paused ? '⏸ Paused' : '▶ Running') : '○ Ready'}
         </span>
@@ -448,9 +443,9 @@ export default function DemoPlayer() {
           onClick={handlePrev}
           className="rounded-lg px-1.5 py-1 text-[11px]"
           style={{
-            background: 'var(--s2)',
-            color: 'var(--text)',
-            border: '1px solid var(--border)',
+            background: 'rgba(255,255,255,0.1)',
+            color: '#ffffff',
+            border: '1px solid rgba(255,255,255,0.2)',
           }}
         >
           ⏮
@@ -485,9 +480,9 @@ export default function DemoPlayer() {
           onClick={handleNext}
           className="rounded-lg px-1.5 py-1 text-[11px]"
           style={{
-            background: 'var(--s2)',
-            color: 'var(--text)',
-            border: '1px solid var(--border)',
+            background: 'rgba(255,255,255,0.1)',
+            color: '#ffffff',
+            border: '1px solid rgba(255,255,255,0.2)',
           }}
         >
           ⏭
@@ -498,9 +493,9 @@ export default function DemoPlayer() {
           onClick={handleStop}
           className="rounded-lg px-1.5 py-1 text-[11px]"
           style={{
-            background: 'rgba(229,62,62,0.1)',
-            color: 'var(--error)',
-            border: '1px solid rgba(229,62,62,0.2)',
+            background: 'rgba(255,255,255,0.1)',
+            color: '#ffffff',
+            border: '1px solid rgba(255,255,255,0.2)',
           }}
         >
           ⏹
@@ -508,9 +503,9 @@ export default function DemoPlayer() {
       </div>
 
       {log.length > 0 && (
-        <div className="mx-2 mb-2 rounded-lg p-2 text-[9px] max-h-24 overflow-y-auto" style={{ background: 'var(--s2)', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+        <div className="mx-2 mb-2 rounded-lg p-2 text-[9px] max-h-24 overflow-y-auto" style={{ background: 'rgba(0,0,0,0.2)', fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.5)' }}>
           {log.map((line, i) => (
-            <div key={i} style={{ color: i === log.length - 1 ? 'var(--teal)' : 'var(--muted)' }}>{line}</div>
+            <div key={i} style={{ color: i === log.length - 1 ? '#5bb8d4' : 'rgba(255,255,255,0.5)' }}>{line}</div>
           ))}
         </div>
       )}
