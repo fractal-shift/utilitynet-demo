@@ -165,6 +165,22 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
 
   return (
     <>
+      {!isOpen && (
+        <button
+          type="button"
+          data-demo="alden-toggle"
+          onClick={onToggle}
+          className="fixed bottom-20 right-6 z-[70] flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold text-[13px] shadow-lg transition-all"
+          style={{
+            background: 'var(--gold)',
+            color: '#1a1200',
+            fontFamily: 'var(--font-ui)',
+            boxShadow: '0 4px 24px rgba(212,160,23,0.35)',
+          }}
+        >
+          ⬡ Alden
+        </button>
+      )}
     <div
       data-demo="alden-panel"
       className="fixed top-14 right-0 bottom-0 z-[60] flex w-[340px] flex-col border-l transition-transform duration-300 ease-out"

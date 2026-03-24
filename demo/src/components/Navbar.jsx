@@ -1,4 +1,4 @@
-export default function Navbar({ onToggleMode, theme, onToggleAlden }) {
+export default function Navbar({ onToggleMode, theme }) {
   const isDark = theme === 'dark' || theme === 'thena';
 
   return (
@@ -49,20 +49,6 @@ export default function Navbar({ onToggleMode, theme, onToggleAlden }) {
         </span>
       </div>
       <div className="flex items-center gap-3">
-        <button
-          type="button"
-          data-demo="alden-toggle"
-          onClick={onToggleAlden}
-          className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-medium transition"
-          style={{
-            background: 'var(--gold-dim, rgba(212,160,23,0.10))',
-            borderColor: 'rgba(212,160,23,0.3)',
-            color: 'var(--gold)',
-            fontFamily: 'var(--font-ui)',
-          }}
-        >
-          ⬡ Alden
-        </button>
         <button type="button" className="relative p-1.5 rounded-lg transition-colors hover:bg-white/10" aria-label="Notifications">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ color: 'rgba(255,255,255,0.8)' }}>
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />

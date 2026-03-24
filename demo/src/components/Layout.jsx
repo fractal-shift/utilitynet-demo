@@ -205,7 +205,7 @@ export default function Layout({ apiKey }) {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: 'var(--bg)' }}>
-      <Navbar onToggleMode={handleToggleMode} theme={theme} onToggleAlden={() => setAldenOpen((o) => !o)} />
+      <Navbar onToggleMode={handleToggleMode} theme={theme} />
       {state.tutorialMode && (
         <span
           data-demo="tutorial-toggle"
