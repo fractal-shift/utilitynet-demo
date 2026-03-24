@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { DEMO_SCENARIOS } from '../data/demo-steps';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const NARRATION_MIN_MS = 4000;
 
 export default function DemoPlayer() {
   const [visible, setVisible] = useState(false);
@@ -13,19 +14,123 @@ export default function DemoPlayer() {
   const pausedRef = useRef(false);
   const cancelRef = useRef(false);
   const stepIndexRef = useRef(0);
+  const narrationAudioRef = useRef(null);
+  const narrationAudioCacheRef = useRef(new Map());
   const post = useCallback((msg) => window.postMessage(msg, '*'), []);
 
-  const waitFor = useCallback(async (ms, { untilCancelled = false } = {}) => {
+  const stopNarrationAudio = useCallback(() => {
+    const audio = narrationAudioRef.current;
+    if (!audio) return;
+
+    narrationAudioRef.current = null;
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+  }, []);
+
+  const getReadingTimeMs = useCallback((text) => {
+    const words = text.trim().split(/\s+/).filter(Boolean).length;
+    return Math.max(NARRATION_MIN_MS, Math.round((words / 100) * 60 * 1000));
+  }, []);
+
+  const getNarrationAudioUrl = useCallback(
+    (scenarioId, currentStepIndex) => `/audio/${scenarioId}/${currentStepIndex}.mp3`,
+    []
+  );
+
+  const narrationAudioExists = useCallback(
+    async (scenarioId, currentStepIndex) => {
+      const cacheKey = `${scenarioId}:${currentStepIndex}`;
+      if (narrationAudioCacheRef.current.has(cacheKey)) {
+        return narrationAudioCacheRef.current.get(cacheKey);
+      }
+
+      try {
+        const response = await fetch(getNarrationAudioUrl(scenarioId, currentStepIndex), {
+          method: 'HEAD',
+          cache: 'no-store',
+        });
+        if (response.ok) {
+          narrationAudioCacheRef.current.set(cacheKey, true);
+        }
+        return response.ok;
+      } catch {
+        return false;
+      }
+    },
+    [getNarrationAudioUrl]
+  );
+
+  const startNarrationAudio = useCallback(
+    async (scenarioId, currentStepIndex) => {
+      const exists = await narrationAudioExists(scenarioId, currentStepIndex);
+      if (!exists || cancelRef.current) return null;
+
+      const audio = new Audio(getNarrationAudioUrl(scenarioId, currentStepIndex));
+      audio.preload = 'auto';
+
+      const playback = {
+        audio,
+        ended: false,
+        durationPromise: Promise.resolve(0),
+      };
+
+      playback.durationPromise = new Promise((resolve) => {
+        let resolved = false;
+        const finish = (value) => {
+          if (resolved) return;
+          resolved = true;
+          resolve(value);
+        };
+
+        audio.addEventListener(
+          'loadedmetadata',
+          () => finish(Number.isFinite(audio.duration) ? audio.duration * 1000 : 0),
+          { once: true }
+        );
+        audio.addEventListener('error', () => finish(0), { once: true });
+      });
+
+      const markEnded = () => {
+        playback.ended = true;
+        if (narrationAudioRef.current === audio) {
+          narrationAudioRef.current = null;
+        }
+      };
+
+      audio.addEventListener('ended', markEnded, { once: true });
+      audio.addEventListener('error', markEnded, { once: true });
+
+      narrationAudioRef.current = audio;
+
+      try {
+        await audio.play();
+      } catch {
+        markEnded();
+        return null;
+      }
+
+      return playback;
+    },
+    [getNarrationAudioUrl, narrationAudioExists]
+  );
+
+  const waitFor = useCallback(async (ms, { untilCancelled = false, audio = null } = {}) => {
     let remaining = ms;
 
     while (untilCancelled || remaining > 0) {
       if (cancelRef.current) return false;
 
       while (pausedRef.current && !cancelRef.current) {
+        if (audio && !audio.paused) audio.pause();
         await sleep(200);
       }
 
       if (cancelRef.current) return false;
+
+      if (audio && audio.paused && !audio.ended) {
+        audio.play().catch(() => {});
+      }
 
       const slice = untilCancelled ? 200 : Math.min(200, remaining);
       await sleep(slice);
@@ -80,7 +185,7 @@ export default function DemoPlayer() {
 
   const scenario = DEMO_SCENARIOS.find((s) => s.id === selectedId);
 
-  const executeStep = useCallback(async (step) => {
+  const executeStep = useCallback(async (step, scenarioId, currentStepIndex) => {
     if (cancelRef.current) return;
 
     switch (step.type) {
@@ -117,13 +222,42 @@ export default function DemoPlayer() {
 
       case 'narration': {
         post({ type: 'demo-narration', text: step.text });
+        const playback = await startNarrationAudio(scenarioId, currentStepIndex);
+        const ms = getReadingTimeMs(step.text);
+        const waitMs = playback
+          ? Math.max(ms, await playback.durationPromise)
+          : ms;
+        const completed = await waitFor(waitMs, { audio: playback?.audio });
+        if (!completed) break;
+        while (playback && !playback.ended) {
+          const audioCompleted = await waitFor(200, { audio: playback.audio });
+          if (!audioCompleted) return;
+        }
         if (step.hold) {
           await waitFor(0, { untilCancelled: true });
           break;
         }
-        const words = step.text.split(' ').length;
-        const ms = Math.max(4000, Math.round((words / 100) * 60 * 1000));
-        const completed = await waitFor(ms);
+        if (playback?.ended) {
+          narrationAudioRef.current = null;
+        }
+        if (completed) post({ type: 'demo-narration', text: null });
+        break;
+      }
+
+      case 'summary': {
+        const summaryText = `✦ ${step.title} — ${step.text}`;
+        post({ type: 'demo-narration', text: summaryText });
+        const playback = await startNarrationAudio(scenarioId, currentStepIndex);
+        const ms = getReadingTimeMs(`${step.title} ${step.text}`);
+        const waitMs = playback
+          ? Math.max(ms, await playback.durationPromise)
+          : ms;
+        const completed = await waitFor(waitMs, { audio: playback?.audio });
+        if (!completed) break;
+        while (playback && !playback.ended) {
+          const audioCompleted = await waitFor(200, { audio: playback.audio });
+          if (!audioCompleted) return;
+        }
         if (completed) post({ type: 'demo-narration', text: null });
         break;
       }
@@ -199,12 +333,6 @@ export default function DemoPlayer() {
         await sleep(step.waitMs || 8000);
         break;
       }
-
-      case 'summary':
-        post({ type: 'demo-narration', text: `✦ ${step.title} — ${step.text}` });
-        await sleep(8000);
-        post({ type: 'demo-narration', text: null });
-        break;
 
       case 'thena-open':
         post({ type: 'demo-narration', text: 'Sarah opens Thena — our analytics AI partner, with direct access to 24 months of billing and settlement data.' });
@@ -295,12 +423,13 @@ export default function DemoPlayer() {
     while (pausedRef.current && !cancelRef.current) {
       await sleep(200);
     }
-  }, [animateCursorTo, post]);
+  }, [animateCursorTo, getReadingTimeMs, post, startNarrationAudio, waitFor]);
 
   const runFrom = useCallback(
     async (startIndex) => {
       if (!scenario) return;
       cancelRef.current = false;
+      stopNarrationAudio();
       setPlaying(true);
       setPaused(false);
       pausedRef.current = false;
@@ -310,10 +439,11 @@ export default function DemoPlayer() {
         setStepIndex(i);
         stepIndexRef.current = i;
         setLog(prev => [...prev.slice(-8), `→ ${scenario.steps[i].type}${scenario.steps[i].target ? ': ' + scenario.steps[i].target : scenario.steps[i].text ? ': ' + scenario.steps[i].text.slice(0, 30) + '...' : ''}`]);
-        await executeStep(scenario.steps[i]);
+        await executeStep(scenario.steps[i], scenario.id, i);
       }
 
       if (!cancelRef.current) {
+        stopNarrationAudio();
         window.postMessage({ type: 'demo-status', status: '' }, '*');
         window.postMessage({ type: 'demo-role', role: null }, '*');
         window.postMessage({ type: 'demo-cursor-clear' }, '*');
@@ -324,7 +454,7 @@ export default function DemoPlayer() {
       setPlaying(false);
       setStepIndex(0);
     },
-    [scenario, executeStep]
+    [scenario, executeStep, stopNarrationAudio]
   );
 
   const handlePlay = () => {
@@ -343,6 +473,7 @@ export default function DemoPlayer() {
 
   const handleStop = () => {
     cancelRef.current = true;
+    stopNarrationAudio();
     pausedRef.current = false;
     setPaused(false);
     setPlaying(false);
@@ -368,6 +499,7 @@ export default function DemoPlayer() {
     stepIndexRef.current = next;
     if (playing) {
       cancelRef.current = true;
+      stopNarrationAudio();
       await sleep(100);
       cancelRef.current = false;
       runFrom(next);
@@ -380,11 +512,14 @@ export default function DemoPlayer() {
     stepIndexRef.current = prev;
     if (playing) {
       cancelRef.current = true;
+      stopNarrationAudio();
       await sleep(100);
       cancelRef.current = false;
       runFrom(prev);
     }
   };
+
+  useEffect(() => () => stopNarrationAudio(), [stopNarrationAudio]);
 
   if (!visible) {
     return (

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { TUTORIAL_SCENARIOS } from '../src/data/tutorial-scenarios.js';
+import { DEMO_SCENARIOS } from '../src/data/demo-steps.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_BASE = path.join(__dirname, '../public/audio');
@@ -75,8 +75,8 @@ async function generateAudio(text, outputPath) {
 
 async function run() {
   const scenarios = scenarioFilter
-    ? TUTORIAL_SCENARIOS.filter(s => s.id === scenarioFilter)
-    : TUTORIAL_SCENARIOS;
+    ? DEMO_SCENARIOS.filter(s => s.id === scenarioFilter)
+    : DEMO_SCENARIOS;
 
   console.log(`\n🎙  Generating audio for: ${scenarios.map(s => s.id).join(', ')}\n`);
   let generated = 0, skipped = 0, errors = 0;
@@ -85,16 +85,25 @@ async function run() {
     const dir = path.join(OUTPUT_BASE, scenario.id);
     fs.mkdirSync(dir, { recursive: true });
 
-    for (const step of scenario.steps) {
-      const outputPath = path.join(dir, `${step.id}.mp3`);
+    for (const [stepIndex, step] of scenario.steps.entries()) {
+      const isNarration = step.type === 'narration';
+      const isSummary = step.type === 'summary';
+
+      if (!isNarration && !isSummary) continue;
+
+      const text = isSummary ? `${step.title}. ${step.text}` : step.text;
+      const outputPath = path.join(dir, `${stepIndex}.mp3`);
+      const stepLabel = `${scenario.id}-${stepIndex}`;
+
       if (!forceRegen && fs.existsSync(outputPath)) {
-        console.log(`  ⏭  skip  ${step.id}`);
+        console.log(`  ⏭  skip  ${stepLabel}`);
         skipped++;
         continue;
       }
+
       try {
-        process.stdout.write(`  🔊  gen   ${step.id} ... `);
-        const bytes = await generateAudio(step.narration, outputPath);
+        process.stdout.write(`  🔊  gen   ${stepLabel} ... `);
+        const bytes = await generateAudio(text, outputPath);
         console.log(`${(bytes / 1024).toFixed(0)}KB`);
         generated++;
         await new Promise(r => setTimeout(r, 600));
