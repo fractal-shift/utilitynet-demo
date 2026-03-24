@@ -107,6 +107,7 @@ export const DEMO_SCENARIOS = [
       { type: 'click', target: 'finance-tab-gl' },
       { type: 'wait', ms: 600 },
       { type: 'scroll', target: 'finance-gl-revenue-row' },
+      { type: 'highlight', selector: '[data-demo="finance-gl-revenue-row"]', conclusion: 'Revenue Account 4000 — $2.34M credited automatically', durationMs: 4000 },
       { type: 'narration', text: "Watch Revenue Account 4000 — journal entry JE-2026-0089 posted automatically the moment the batch completed. $1.84M credited. Finance has the numbers before they ask." },
       { type: 'wait', ms: 3000 },
       { type: 'navigate', target: 'nav-billing' },
