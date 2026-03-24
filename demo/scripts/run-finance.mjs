@@ -49,6 +49,9 @@ export async function runFinance(page) {
 
   await step(page, 'Clicking Post Journal Entry...', async () => {
     await clickWithCursor(page, 'btn-post-journal');
+    await page.waitForTimeout(800);
+    // Confirm the journal entry to close the modal before continuing
+    await clickWithCursor(page, 'btn-confirm-journal');
     await page.waitForTimeout(600);
   });
 
