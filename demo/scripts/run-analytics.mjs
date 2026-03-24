@@ -77,11 +77,8 @@ export async function runScenario(page) {
   });
 
   await step(page, 'Running ad-hoc report...', async () => {
-    const adhocTab = page.locator('button:has-text("Ad-hoc")');
-    if (await adhocTab.isVisible().catch(() => false)) {
-      await adhocTab.click();
-      await page.waitForTimeout(800);
-    }
+    await page.getByText('Ad-hoc').click();
+    await page.waitForTimeout(500);
     await clickWithCursor(page, 'btn-run-adhoc-report');
     await page.waitForTimeout(1500);
   });

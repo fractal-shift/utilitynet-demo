@@ -108,7 +108,7 @@ export async function runScenario(page) {
   });
 
   await step(page, 'Submitting onboarding...', async () => {
-    await clickWithCursor(page, 'marketer-submit');
+    await clickWithCursor(page, 'btn-save-margin');
     await page.waitForTimeout(3000);
   });
 

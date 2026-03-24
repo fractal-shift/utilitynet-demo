@@ -55,7 +55,7 @@ async function getBaseUrl() {
 const BASE_URL = await getBaseUrl();
 console.log(`[Demo] Using BASE_URL=${BASE_URL}`);
 const STEP_PAUSE_MS = parseInt(process.env.DEMO_STEP_PAUSE_MS || '5000', 10);
-const SUMMARY_PAUSE_MS = parseInt(process.env.DEMO_SUMMARY_PAUSE_MS || '8000', 10);
+const SUMMARY_PAUSE_MS = parseInt(process.env.DEMO_SUMMARY_PAUSE_MS || '3000', 10);
 const CURSOR_MOVE_MS = parseInt(process.env.DEMO_CURSOR_MOVE_MS || '600', 10);
 const w = parseInt(process.env.DEMO_VIEWPORT_WIDTH || '1600', 10);
 const h = parseInt(process.env.DEMO_VIEWPORT_HEIGHT || '900', 10);

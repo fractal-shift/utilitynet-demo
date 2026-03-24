@@ -45,10 +45,9 @@ export async function runScenario(page) {
   });
 
   playNarration('dashboard', 'dashboard-predictive');
-  await step(page, 'Clicking Late Payment risk card to review...', async () => {
-    await highlightDashboardSection(page, '[data-demo="dashboard-late-payment-card"]', '17 accounts at risk, $41,200 exposure.');
-    await clickWithCursor(page, 'dashboard-late-payment-review');
-    await page.waitForTimeout(2000);
+  await step(page, 'Reviewing Late Payment risk card...', async () => {
+    await highlightDashboardSection(page, '[data-demo="dashboard-late-payment-card"]', '17 accounts at risk, $41,200 exposure. Emberlyn can draft the outreach instantly.');
+    await page.waitForTimeout(1000);
   });
 
   playNarration('dashboard', 'dashboard-tasks');
