@@ -320,7 +320,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                   </tr>
                 ))}
                 {GL_ACCOUNTS.map((r, i) => (
-                  <tr key={i} className="border-t" style={{ borderColor: 'var(--border)' }}>
+                  <tr key={i} data-demo={i === 0 ? 'finance-gl-revenue-row' : undefined} className="border-t" style={{ borderColor: 'var(--border)' }}>
                     <td className="px-4 py-2.5" style={{ color: 'var(--light)' }}>{r.account}</td>
                     <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.glCode}</td>
                     <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.type}</td>
