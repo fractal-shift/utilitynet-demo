@@ -306,6 +306,8 @@ export const DEMO_SCENARIOS = [
       { type: 'wait', ms: 1500 },
       { type: 'narration', text: "847 rows. Marketer revenue by customer segment for the exact date range specified. Sarah built and ran this query herself — no developer, no report request, no waiting." },
       { type: 'wait', ms: 3000 },
+      { type: 'click', target: 'analytics-tab-overview', label: 'Returning to Overview' },
+      { type: 'wait', ms: 500 },
       { type: 'navigate', target: 'nav-analytics' },
       { type: 'summary', title: "Board-ready analytics. Built in a conversation.", text: "Our platform gives leadership direct access to the intelligence inside their operational data — through Thena, our analytics AI partner. Drill-down revenue analysis, churn risk modeling, compliance reporting, and ad-hoc queries — all in a single conversation, with live data behind every answer." },
     ],
