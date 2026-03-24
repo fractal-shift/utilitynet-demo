@@ -3,7 +3,7 @@
 **Last Updated:** March 23, 2026  
 **Repo:** fractalshift/utilitynet-demo  
 **Demo Date:** March 30, 2026 — Live 3-hour session  
-**This document is the single source of truth. Cursor builds to this. New scope is added here first, assigned a tier, then built. Nothing is modified mid-build without updating this doc.**
+**This document is the single source of truth. Cursor builds to this. New scope is added here first, assigned a feature number, then built. Every feature — whether T1, T2, T3, or F-series post-v1 — must be documented here before or immediately after implementation. No exceptions.**
 
 ---
 
@@ -694,6 +694,73 @@ System prompt covers: UTILITYnet legacy state, 3-phase migration architecture, d
 **Files:** Admin.jsx, prompts.js
 
 "Watchdog" removed from all UI copy and data-demo attributes. "System Health" tab renamed to "Operations Console." data-demo attributes updated: watchdog-* → ops-console-*. Tab buttons now have data-demo targets for Emberlyn/Alden highlighting. "Ask Alden" button added to Admin header.
+
+---
+
+### F-010: Finance End-to-End Lock
+**Status: COMPLETE — commits dfe41bf, 2a2c14f**
+**Files:** scripts/run-finance.mjs, src/data/tutorial-scenarios.js, src/modules/Finance.jsx
+
+Finance scenario fully locked end-to-end. Playwright script updated to walk the new GL Remediation interactive flow: navigate to Finance, click GL Remediation tab, open HEDGE-OLD detail panel, close it, select 3 non-critical issues, bulk apply, then ask Emberlyn about the remaining open balance. Tutorial scenario updated with 7 steps matching actual UI: finance-overview, finance-gl-table, finance-ap-approve, finance-gl-remediation, finance-gl-detail, finance-gl-bulk, finance-gl-governance. aria-label="close" added to GL Remediation detail panel close button for Playwright targeting.
+
+---
+
+### F-011: Emberlyn Nav Tag Streaming Fix
+**Status: COMPLETE — commits 78a0b47, 74b41ff, 0361cc3**
+**Files:** src/components/EmerlynPanel.jsx, src/ai/prompts.js, src/ai/responseCache.js
+
+Three fixes to make Emberlyn guided navigation reliable:
+1. Nav tags now fire during streaming (navFiredRef pattern) — no longer waits for onDone
+2. Finance highlight targets updated to use tab-level targets (finance-tab-ap, finance-tab-ar etc.) — content targets only exist in DOM when tab is active
+3. Cache trigger patterns tightened to multi-word phrases only — single words like "explain", "summarize", "draft" were causing false positive cache hits on unrelated queries
+
+---
+
+### F-012: All-Module Highlight Targets + Gap Audit
+**Status: COMPLETE — commit a80951c**
+**Files:** src/ai/prompts.js, src/modules/Analytics.jsx
+
+Live browser audit confirmed all modules navigating and highlighting correctly. Added 18 missing highlight targets covering Billing, Settlement, Customers, Marketers, Analytics. Analytics Thena panel wrapper got data-demo="analytics-thena-panel". Verified live: Finance (finance-tab-ap pulses), Settlement (settlement-exception-filter pulses), Marketers (marketer-margin-input pulses step 2), Customers (btn-new-enrollment pulses step 1), Analytics (analytics-thena-panel highlights, Thena panel opens on churn forecast question).
+
+---
+
+### F-013: Analytics Tabs Fix
+**Status: COMPLETE — commit 05fec94**
+**Files:** src/modules/Analytics.jsx
+
+Overview content (Descriptive, Predictive, Prescriptive sections) was rendering unconditionally — all three sections now wrapped in {tab === 'overview' && (...)}. Ad-hoc tab now correctly shows report builder (dropdowns + Run Report button) instead of the overview content. All four Analytics tabs working: Overview, Compliance, Ad-hoc, Thena.
+
+---
+
+### F-014: Integration Simulator
+**Status: COMPLETE — commits 74938d3, 37d068a, 4536ed0, 4d97950**
+**Files:** integration-simulator.mjs (renamed from mock-server.mjs), src/services/integrations.js, src/modules/Admin.jsx, package.json
+
+"mock-server" renamed to "integration-simulator" throughout. "fetchWatchdogFeeds" renamed to "fetchIntegrationHealth". API route /api/mock/watchdog/feeds → /api/mock/integrations/feeds. Fixed double /api/mock prefix bug in all fetchJson calls in integrations.js (BASE already adds the prefix — 9 paths corrected). process.stdin.resume() added to keep simulator alive. Error handlers added for uncaughtException and unhandledRejection. Loading message updated to "Integration Service required". generate-audio.mjs updated to load .env and accept VITE_ELEVENLABS_API_KEY.
+
+---
+
+### F-015: Finance Audio Regeneration
+**Status: COMPLETE — commits 3672530, 5b14882**
+**Files:** demo/public/audio/finance/
+
+7 Finance tutorial audio files regenerated with updated narration matching new tutorial steps: finance-overview, finance-gl-table, finance-ap-approve, finance-gl-remediation, finance-gl-detail, finance-gl-bulk, finance-gl-governance. Stale files removed: finance-confirm-cleanup.mp3, finance-legacylift-scan.mp3, finance-remediation-plan.mp3.
+
+---
+
+### F-016: Journal Entry Modal + Audit Trail + AR Interactive Actions
+**Status: PENDING**
+**Files:** src/modules/Finance.jsx
+
+Two "table stakes" demo moments that neutralize the Sage 50 checklist comparison. Goal: answer "can you do basic accounting?" in under 5 minutes.
+
+Feature 1 — Journal Entry Modal: clicking Post Journal Entry opens a pre-filled balanced modal (JE-2026-0092, hedge reserve reclassification, DR 3100 / CR 5200, $42,000). On confirm: toast fires, journalPosted state set true. View Audit Log opens a timeline modal showing last 5 Finance actions. If journalPosted is true, the new entry appears at the top in real time.
+
+Feature 2 — AR Interactive Actions: each AR row action button is now interactive — clicking updates row status inline and fires contextual toast. GL Impact note below AR table explains the data model connection.
+
+Demo arc (5 min total): GL flash (30s) → journal entry modal (60s) → AR collections action (30s) → AP approval (30s) → transition to GL Remediation "now let me show you what makes this different."
+
+data-demo targets: btn-confirm-journal, audit-log-entries, btn-send-reminder-ar
 
 ---
 
