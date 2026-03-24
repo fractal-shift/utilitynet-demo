@@ -29,25 +29,10 @@ export default function Admin({ onOpenAlden }) {
 
   return (
     <div>
-      <div className="mb-6 flex items-start justify-between">
-        <div>
-          <h1 className="inline-block font-bold text-[22px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Admin</h1>
-          <div className="mt-2 h-0.5 w-12 rounded-sm" style={{ background: 'var(--gold)' }} />
-          <p className="mt-3.5 text-[13px] font-medium" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Integrations · Permissions · Audit Log</p>
-        </div>
-        <button
-          type="button"
-          onClick={onOpenAlden}
-          className="flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[12px] font-medium transition"
-          style={{
-            background: 'var(--gold-dim, rgba(212,160,23,0.10))',
-            borderColor: 'rgba(212,160,23,0.3)',
-            color: 'var(--gold)',
-            fontFamily: 'var(--font-ui)',
-          }}
-        >
-          ✦ Ask Alden
-        </button>
+      <div className="mb-6">
+        <h1 className="inline-block font-bold text-[22px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Admin</h1>
+        <div className="mt-2 h-0.5 w-12 rounded-sm" style={{ background: 'var(--gold)' }} />
+        <p className="mt-3.5 text-[13px] font-medium" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Integrations · Permissions · Audit Log</p>
       </div>
       <div className="mb-4 flex gap-2">
         <button type="button" data-demo="admin-tab-integrations" onClick={() => setTab('integrations')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'integrations' ? '' : 'opacity-70'}`} style={{ background: tab === 'integrations' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'integrations' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Integrations</button>

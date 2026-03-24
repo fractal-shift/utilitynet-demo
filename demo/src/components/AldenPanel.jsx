@@ -172,10 +172,10 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
           onClick={onToggle}
           className="fixed bottom-20 right-6 z-[70] flex items-center gap-2 rounded-full px-5 py-2.5 font-semibold text-[13px] shadow-lg transition-all"
           style={{
-            background: 'var(--gold)',
-            color: '#1a1200',
+            background: '#045477',
+            color: '#FFFFFF',
             fontFamily: 'var(--font-ui)',
-            boxShadow: '0 4px 24px rgba(212,160,23,0.35)',
+            boxShadow: '0 4px 24px rgba(4,84,119,0.35)',
           }}
         >
           ⬡ Alden
@@ -186,7 +186,7 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
       className="fixed top-14 right-0 bottom-0 z-[60] flex w-[340px] flex-col border-l transition-transform duration-300 ease-out"
       style={{
         background: '#161714',
-        borderColor: 'rgba(236,179,36,0.28)',
+        borderColor: 'rgba(4,84,119,0.4)',
         borderLeftWidth: 1,
         transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
       }}
@@ -195,7 +195,7 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
         className="flex flex-shrink-0 items-center justify-between border-b px-4 py-3.5"
         style={{
           background: '#1c1d19',
-          borderTop: '2px solid var(--gold)',
+          borderTop: '2px solid #045477',
           borderBottomColor: 'rgba(242,240,236,0.07)',
         }}
       >
@@ -235,8 +235,8 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
               <div
                 className="max-w-[90%] rounded-lg px-3 py-2.5 text-[12px] font-medium leading-relaxed"
                 style={{
-                  background: 'var(--gold)',
-                  color: '#0F1A10',
+                  background: '#045477',
+                  color: '#FFFFFF',
                   borderRadius: '10px 10px 2px 10px',
                   fontFamily: 'Syne, sans-serif',
                 }}
@@ -309,7 +309,7 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
             className="flex-1 rounded-lg border px-3 py-2 text-[12px] outline-none"
             style={{
               background: '#111210',
-              borderColor: 'rgba(236,179,36,0.30)',
+              borderColor: 'rgba(4,84,119,0.4)',
               color: '#F2F0EC',
               fontFamily: 'Syne, sans-serif',
             }}
@@ -320,8 +320,8 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
             disabled={loading || !input.trim()}
             className="rounded-lg px-4 py-2 font-semibold text-[13px] disabled:opacity-50"
             style={{
-              background: 'var(--gold)',
-              color: '#0F1A10',
+              background: '#045477',
+              color: '#FFFFFF',
               fontFamily: 'Syne, sans-serif',
             }}
           >
