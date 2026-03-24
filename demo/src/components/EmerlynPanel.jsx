@@ -437,7 +437,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
             right: 0,
             bottom: 0,
             width: panelWidth,
-            zIndex: 65,
+            zIndex: 250,
             display: 'flex',
             flexDirection: 'column',
             background: 'var(--surface)',
