@@ -321,6 +321,7 @@ export default function ThenaPanel({ isOpen, onClose, onToggle, apiKey }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              data-demo="thena-input"
               placeholder="Ask Thena..."
               className="flex-1 rounded-lg border px-3 py-2 text-[12px] outline-none focus:border-[rgba(212,64,40,0.30)]"
               style={{
