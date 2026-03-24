@@ -17,6 +17,9 @@ export default function Analytics({ onOpenThena, showToast }) {
   const [tab, setTab] = useState('overview');
   const [drillOpen, setDrillOpen] = useState(false);
   const [drillAccount, setDrillAccount] = useState(null);
+  const [exportDone, setExportDone] = useState(false);
+  const [reportStatuses, setReportStatuses] = useState({});
+  const [adhocResults, setAdhocResults] = useState(false);
 
   const drillAccounts = [
     { name: 'NRG Direct', value: 841 },
@@ -66,7 +69,7 @@ export default function Analytics({ onOpenThena, showToast }) {
           Reporting · Predictive · Prescriptive · Q1 2026
         </p>
         <div className="mt-4 flex gap-2">
-          <button type="button" data-demo="btn-analytics-export-gl" onClick={() => showToast?.('GL reconciliation export — Revenue $2,340,120 matches GL account 4000 · No variance')} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: '#D44028', color: '#fff' }}>Export to GL</button>
+          <button type="button" data-demo="btn-analytics-export-gl" disabled={exportDone} onClick={() => { setExportDone(true); showToast?.('GL reconciliation complete — Revenue $2,340,120 matches GL account 4000 · Zero variance · Export ready'); }} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: exportDone ? 'rgba(39,174,96,0.2)' : '#D44028', color: exportDone ? '#27AE60' : '#fff' }}>{exportDone ? '✓ Reconciled' : 'Export to GL'}</button>
           <button type="button" onClick={() => setTab('overview')} className={`rounded-lg px-3 py-1.5 text-[11px] ${tab === 'overview' ? 'border-2' : ''}`} style={{ borderColor: tab === 'overview' ? '#D44028' : 'rgba(242,240,236,0.13)', background: tab === 'overview' ? 'rgba(212,64,40,0.15)' : 'transparent', color: '#C8C4BF' }}>Overview</button>
           <button type="button" onClick={() => setTab('compliance')} className={`rounded-lg px-3 py-1.5 text-[11px] ${tab === 'compliance' ? 'border-2' : ''}`} style={{ borderColor: tab === 'compliance' ? '#D44028' : 'rgba(242,240,236,0.13)', background: tab === 'compliance' ? 'rgba(212,64,40,0.15)' : 'transparent', color: '#C8C4BF' }}>Compliance</button>
           <button type="button" onClick={() => setTab('adhoc')} className={`rounded-lg px-3 py-1.5 text-[11px] ${tab === 'adhoc' ? 'border-2' : ''}`} style={{ borderColor: tab === 'adhoc' ? '#D44028' : 'rgba(242,240,236,0.13)', background: tab === 'adhoc' ? 'rgba(212,64,40,0.15)' : 'transparent', color: '#C8C4BF' }}>Ad-hoc</button>
@@ -312,15 +315,22 @@ export default function Analytics({ onOpenThena, showToast }) {
                   { name: 'AESO', status: 'Complete', date: 'Mar 9' },
                   { name: 'PIPEDA', status: 'Complete', date: 'Mar 8' },
                   { name: 'AUC Pending', status: 'Pending', date: '—' },
-                ].map((r) => (
-                  <tr key={r.name} className="border-t" style={{ borderColor: 'rgba(242,240,236,0.07)' }}>
-                    <td className="px-4 py-2" style={{ color: '#F2F0EC' }}>{r.name}</td>
-                    <td className="px-4 py-2" style={{ color: r.status === 'Complete' ? '#27AE60' : '#F39C12' }}>{r.status}</td>
-                    <td className="px-4 py-2">
-                      {r.status === 'Pending' && <button type="button" data-demo="btn-generate-compliance-report" onClick={() => showToast?.('Compliance report generated')} className="rounded px-2 py-1 text-[11px] font-medium" style={{ background: '#D44028', color: '#fff' }}>Generate Report</button>}
-                    </td>
-                  </tr>
-                ))}
+                ].map((r) => {
+                  const isGenerated = reportStatuses[r.name] === 'Generated';
+                  return (
+                    <tr key={r.name} className="border-t" style={{ borderColor: 'rgba(242,240,236,0.07)' }}>
+                      <td className="px-4 py-2" style={{ color: '#F2F0EC' }}>{r.name}</td>
+                      <td className="px-4 py-2" style={{ color: isGenerated ? '#27AE60' : r.status === 'Complete' ? '#27AE60' : '#F39C12' }}>
+                        {isGenerated ? 'Generated' : r.status}
+                      </td>
+                      <td className="px-4 py-2">
+                        {r.status === 'Pending' && !isGenerated && (
+                          <button type="button" data-demo="btn-generate-compliance-report" onClick={() => setReportStatuses(s => ({ ...s, [r.name]: 'Generated' }))} className="rounded px-2 py-1 text-[11px] font-medium" style={{ background: '#D44028', color: '#fff' }}>Generate Report</button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -351,8 +361,40 @@ export default function Analytics({ onOpenThena, showToast }) {
                   <option>Customer</option>
                 </select>
               </div>
-              <button type="button" data-demo="btn-run-adhoc-report" onClick={() => showToast?.('Report generated — 847 rows')} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: '#D44028', color: '#fff' }}>Run Report</button>
+              <button type="button" data-demo="btn-run-adhoc-report" onClick={() => setAdhocResults(true)} className="rounded-lg px-4 py-2 text-[12px] font-semibold" style={{ background: '#D44028', color: '#fff' }}>Run Report</button>
             </div>
+            {adhocResults && (
+              <div className="mt-4 rounded-xl border overflow-hidden" style={{ background: '#161714', borderColor: 'rgba(242,240,236,0.07)' }}>
+                <div className="px-4 py-2.5 text-[9px] font-medium tracking-wider uppercase" style={{ color: '#D44028', fontFamily: 'DM Mono, monospace' }}>Results — 847 rows · March 2026</div>
+                <table className="w-full text-left text-[12px]">
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(242,240,236,0.07)', color: 'rgba(200,196,191,0.6)', fontFamily: 'DM Mono, monospace' }}>
+                      <th className="px-4 py-2">Marketer</th>
+                      <th className="px-4 py-2">Customers</th>
+                      <th className="px-4 py-2">Revenue MTD</th>
+                      <th className="px-4 py-2">Variance</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { name: 'NRG Direct', customers: 284, revenue: '$841,200', variance: '+12.4%' },
+                      { name: 'PrairieEnergy', customers: 201, revenue: '$612,400', variance: '+4.1%' },
+                      { name: 'AltaGas Retail', customers: 156, revenue: '$482,000', variance: '-8.3%' },
+                      { name: 'GreenPath', customers: 124, revenue: '$389,100', variance: '+2.2%' },
+                      { name: 'Calgary Energy', customers: 82, revenue: '$220,400', variance: '-14.1%' },
+                    ].map((row, i) => (
+                      <tr key={i} style={{ borderBottom: '1px solid rgba(242,240,236,0.05)', color: '#F2F0EC', fontFamily: 'var(--font-ui)' }}>
+                        <td className="px-4 py-2.5">{row.name}</td>
+                        <td className="px-4 py-2.5" style={{ fontFamily: 'DM Mono, monospace' }}>{row.customers}</td>
+                        <td className="px-4 py-2.5" style={{ fontFamily: 'DM Mono, monospace' }}>{row.revenue}</td>
+                        <td className="px-4 py-2.5" style={{ color: row.variance.startsWith('-') ? '#E53E3E' : '#27AE60', fontFamily: 'DM Mono, monospace' }}>{row.variance}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="px-4 py-2 text-[10px]" style={{ color: 'rgba(200,196,191,0.5)', fontFamily: 'DM Mono, monospace' }}>847 rows · filtered to top 5 by revenue · export available</div>
+              </div>
+            )}
           </div>
         </div>
       )}

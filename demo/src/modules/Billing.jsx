@@ -6,6 +6,8 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
   const { billingBatches, billingExceptions, finance } = state;
   const [activeTab, setActiveTab] = useState(initialTab ?? 'batches');
   const [postingToGL, setPostingToGL] = useState(false);
+  const [correctionApplied, setCorrectionApplied] = useState(false);
+  const [reversedInvoices, setReversedInvoices] = useState(new Set());
 
   const MOCK_INVOICES = [
     { id: 'INV-2026-0342', customer: 'Sunrise Industrial Ltd.', amount: '$42,400', status: 'Dispute Resolved' },
@@ -184,7 +186,11 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
                 )}
                 <div className="flex gap-2">
                   <button type="button" onClick={() => actions.resolveBillingException(exc.id)} data-demo={`btn-resolve-${exc.id}`} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>✓ Apply Suggested Fix</button>
-                  <button type="button" data-demo="btn-correct-repost" onClick={() => showToast?.('Correction applied — posted to GL')} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Correct & Repost</button>
+                  {correctionApplied ? (
+                    <span className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'rgba(39,174,96,0.15)', color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>✓ Corrected</span>
+                  ) : (
+                    <button type="button" data-demo="btn-correct-repost" onClick={() => { setCorrectionApplied(true); showToast?.('Correction applied — usage 340% → 82% · Rate recalculated · Posted to GL account 4000'); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Correct & Repost</button>
+                  )}
                   <button
                     type="button"
                     onClick={() => onOpenEmberlyn?.(exc.id === 'EXC-0311-A' ? 'exc-A' : 'billing-exceptions')}
@@ -195,6 +201,11 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
                     ✦ Explain This
                   </button>
                 </div>
+                {correctionApplied && (
+                  <div className="mt-3 rounded-lg px-3 py-2 text-[11px]" style={{ background: 'rgba(39,174,96,0.06)', borderLeft: '3px solid var(--success)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
+                    Usage corrected: <strong style={{ color: 'var(--text)' }}>340% → 82%</strong> · Invoice adjusted: <strong style={{ color: 'var(--text)' }}>$8,400 → $2,100</strong> · Delta: <strong style={{ color: 'var(--success)' }}>-$6,300 posted to GL</strong>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -214,18 +225,29 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
               </tr>
             </thead>
             <tbody>
-              {MOCK_INVOICES.map((inv) => (
-                <tr key={inv.id} className="border-b" style={{ borderColor: 'var(--border)' }}>
-                  <td className="px-3 py-2.5 text-[12px]" style={{ color: 'var(--light)' }}>{inv.customer}</td>
-                  <td className="px-3 py-2.5 font-mono text-[11px]" style={{ color: 'var(--text)' }}>{inv.id}</td>
-                  <td className="px-3 py-2.5 font-mono text-[11px]" style={{ color: 'var(--text)' }}>{inv.amount}</td>
-                  <td className="px-3 py-2.5"><span className="rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: inv.status === 'Dispute Resolved' ? 'rgba(39,174,96,0.10)' : 'var(--s2)', border: '1px solid', borderColor: inv.status === 'Dispute Resolved' ? 'rgba(39,174,96,0.30)' : 'var(--border)', color: inv.status === 'Dispute Resolved' ? 'var(--success)' : 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{inv.status}</span></td>
-                  <td className="px-3 py-2.5">
-                    {inv.status === 'Dispute Resolved' && <button type="button" data-demo={`btn-rebill-${inv.id}`} onClick={() => showToast?.('Rebill queued')} className="rounded px-2 py-1 text-[11px] font-semibold mr-1" style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}>Rebill</button>}
-                    <button type="button" data-demo="btn-reverse-invoice" onClick={() => showToast?.('Reversal CM-2026-0038 created — pending Finance approval')} className="rounded px-2 py-1 text-[11px]" style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Reverse</button>
-                  </td>
-                </tr>
-              ))}
+              {MOCK_INVOICES.map((inv) => {
+                const isReversed = reversedInvoices.has(inv.id);
+                return (
+                  <tr key={inv.id} data-invoice-id={inv.id} className="border-b" style={{ borderColor: 'var(--border)' }}>
+                    <td className="px-3 py-2.5 text-[12px]" style={{ color: 'var(--light)' }}>{inv.customer}</td>
+                    <td className="px-3 py-2.5 font-mono text-[11px]" style={{ color: 'var(--text)' }}>{inv.id}</td>
+                    <td className="px-3 py-2.5 font-mono text-[11px]" style={{ color: 'var(--text)' }}>{inv.amount}</td>
+                    <td className="px-3 py-2.5">
+                      {isReversed ? (
+                        <span className="rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: 'rgba(229,62,62,0.10)', border: '1px solid rgba(229,62,62,0.30)', color: 'var(--error)', fontFamily: 'var(--font-mono)' }}>Reversed</span>
+                      ) : (
+                        <span className="rounded px-2 py-0.5 text-[8px] font-medium" style={{ background: inv.status === 'Dispute Resolved' ? 'rgba(39,174,96,0.10)' : 'var(--s2)', border: '1px solid', borderColor: inv.status === 'Dispute Resolved' ? 'rgba(39,174,96,0.30)' : 'var(--border)', color: inv.status === 'Dispute Resolved' ? 'var(--success)' : 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{inv.status}</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2.5">
+                      {inv.status === 'Dispute Resolved' && <button type="button" data-demo={`btn-rebill-${inv.id}`} onClick={() => showToast?.('Rebill queued — new invoice will generate in next batch run')} className="rounded px-2 py-1 text-[11px] font-semibold mr-1" style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}>Rebill</button>}
+                      {!isReversed && (
+                        <button type="button" data-demo="btn-reverse-invoice" onClick={(e) => { const invoiceId = e.currentTarget.closest('tr')?.getAttribute('data-invoice-id') || 'INV-2026-0342'; setReversedInvoices(s => new Set([...s, invoiceId])); showToast?.('Credit memo CM-2026-0038 created — $42,400 · Pending Finance approval'); }} className="rounded px-2 py-1 text-[11px]" style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Reverse</button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

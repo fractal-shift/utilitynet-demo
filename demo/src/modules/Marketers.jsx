@@ -6,6 +6,7 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
   const { marketers, finance } = state;
   const [postingCommissions, setPostingCommissions] = useState(false);
   const [margin, setMargin] = useState(0.85);
+  const [marginSaved, setMarginSaved] = useState(false);
   const [statementModal, setStatementModal] = useState(null);
   const customerRate = (4.82 + margin).toFixed(2);
 
@@ -53,7 +54,7 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
             <div className="text-base font-mono font-bold" style={{ color: 'var(--teal)' }}>${customerRate}/GJ</div>
           </div>
           <div>
-            <button type="button" data-demo="btn-save-margin" onClick={() => showToast?.('Margin updated — effective April 1, 2026 · Rate card distributed to 847 customers')} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Save Margin</button>
+            <button type="button" data-demo="btn-save-margin" onClick={() => { setMarginSaved(true); showToast?.('Margin updated — effective April 1, 2026 · Rate card distributed to 847 customers'); setTimeout(() => setMarginSaved(false), 3000); }} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: marginSaved ? 'rgba(39,174,96,0.15)' : 'var(--btn-primary-bg)', color: marginSaved ? 'var(--success)' : 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>{marginSaved ? '✓ Saved' : 'Save Margin'}</button>
           </div>
         </div>
       </div>

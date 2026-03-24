@@ -128,6 +128,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
   const [journalPosted, setJournalPosted] = useState(false);
   const [auditModalOpen, setAuditModalOpen] = useState(false);
   const [arStatus, setArStatus] = useState({});
+  const [glExportDone, setGlExportDone] = useState(false);
 
   const healthScore = (() => {
     let score = 58;
@@ -251,11 +252,12 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
             <button
               type="button"
               data-demo="btn-export-gl"
-              onClick={() => handleGhostClick('GL export queued')}
+              disabled={glExportDone}
+              onClick={() => { setGlExportDone(true); fireToast('GL export complete — 284 transactions · 6 accounts · March 2026.csv'); }}
               className="rounded border px-3 py-1.5 text-[12px] font-medium opacity-80 hover:opacity-100"
-              style={{ borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}
+              style={{ borderColor: glExportDone ? 'var(--success)' : 'var(--border)', color: glExportDone ? 'var(--success)' : 'var(--text)', fontFamily: 'var(--font-ui)' }}
             >
-              Export GL
+              {glExportDone ? '✓ Exported' : 'Export GL'}
             </button>
             <button
               type="button"
