@@ -37,16 +37,26 @@ export default function DemoPlayer() {
         post({ type: 'demo-role', role: step.role });
         break;
 
-      case 'navigate':
+      case 'navigate': {
+        const navLabel = step.label || step.target.replace('nav-', '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        post({ type: 'demo-narration', text: `Sarah navigates to ${navLabel}` });
+        await sleep(800);
         document.querySelector(`[data-demo="${step.target}"]`)?.click();
         await sleep(1500);
+        post({ type: 'demo-narration', text: null });
         break;
+      }
 
       case 'click':
+        if (step.label) {
+          post({ type: 'demo-narration', text: step.label });
+          await sleep(600);
+        }
         document
           .querySelector(`[data-demo="${step.target}"]`)
           ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await sleep(800);
+        if (step.label) post({ type: 'demo-narration', text: null });
         break;
 
       case 'narration': {
@@ -71,20 +81,28 @@ export default function DemoPlayer() {
       case 'status':
         post({ type: 'demo-status', status: step.text });
         await sleep(5000);
+        post({ type: 'demo-status', status: '' });
         break;
 
       case 'wait':
+        post({ type: 'demo-narration', text: null });
         await sleep(step.ms || 2000);
         break;
 
       case 'emberlyn-open':
+        post({ type: 'demo-narration', text: 'Sarah opens Emberlyn — her AI companion is already aware of everything on screen.' });
+        await sleep(1000);
         document
           .querySelector('[data-demo="emberlyn-toggle"]')
           ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await sleep(1200);
+        post({ type: 'demo-narration', text: null });
         break;
 
       case 'emberlyn-ask': {
+        post({ type: 'demo-narration', text: `Sarah asks: "${step.text}"` });
+        await sleep(1500);
+        post({ type: 'demo-narration', text: null });
         const input = document.querySelector('[data-demo="emberlyn-input"]');
         if (input) {
           const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -103,8 +121,9 @@ export default function DemoPlayer() {
       }
 
       case 'summary':
-        post({ type: 'demo-summary', title: step.title, description: step.text });
+        post({ type: 'demo-narration', text: `✦ ${step.title} — ${step.text}` });
         await sleep(8000);
+        post({ type: 'demo-narration', text: null });
         break;
 
       default:
@@ -192,7 +211,7 @@ export default function DemoPlayer() {
   return (
     <div
       data-demo="demo-player"
-      className="fixed left-4 top-16 z-[500] w-72 rounded-xl border shadow-2xl"
+      className="fixed left-4 bottom-4 z-[500] w-72 rounded-xl border shadow-2xl"
       style={{
         background: 'var(--surface)',
         borderColor: 'var(--teal)',

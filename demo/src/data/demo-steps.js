@@ -19,7 +19,7 @@ export const DEMO_SCENARIOS = [
       { type: 'highlight', selector: '[data-demo="dashboard-tasks"]', conclusion: 'Billing exception already on her task list — Emberlyn put it there overnight.', durationMs: 3000 },
       { type: 'click', target: 'dashboard-task-billing' },
       { type: 'wait', ms: 2000 },
-      { type: 'summary', title: "Sarah's morning took 4 minutes.", text: "Dashboard → risk flagged → question answered → exception routed. She didn't open a single report." },
+      { type: 'summary', title: "Sarah's morning took 4 minutes.", text: "No report. No spreadsheet. Emberlyn analyzed overnight data, surfaced the risk, answered her question, and routed the exception — all before she asked. This is what AI-native operations looks like." },
     ],
   },
   {
@@ -38,7 +38,7 @@ export const DEMO_SCENARIOS = [
       { type: 'emberlyn-ask', text: 'What are the two highest-ROI things we should invest in next quarter?' },
       { type: 'wait', ms: 10000 },
       { type: 'status', text: 'Specific, Alberta-market-aware recommendations tied to their actual numbers. Sarah screenshots it and sends it to the leadership team.' },
-      { type: 'summary', title: 'AI as a strategic advisor.', text: 'Not a report. Not a dashboard. A conversation that replaces a two-hour meeting.' },
+      { type: 'summary', title: 'AI as a strategic advisor.', text: "The leadership team spent two hours debating priorities. Sarah got the same answer in 30 seconds — with data behind it. Emberlyn doesn't just show you what happened. It tells you what's coming and what to do about it." },
     ],
   },
   {
