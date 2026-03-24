@@ -776,6 +776,31 @@ AI moments added per script:
 - Marketers: Emberlyn asked for innovative ideas to help underperforming marketers. Thena asked for Q2 marketer revenue forecast with confidence intervals.
 - Admin (new script): Full walkthrough of Operations Console (integrations, feed health, security), then Alden answers two hardest questions: Oracle migration architecture and AI-native vs. chatbot distinction.
 
+### F-018: Ghost Buttons → Real State Changes
+**Status: COMPLETE — Priority 1 commit**
+**Files:** Finance.jsx, Billing.jsx, Analytics.jsx, Marketers.jsx
+
+All ghost buttons replaced with real state changes:
+- Finance: GL Export button → sets glExportDone, changes to "✓ Exported"
+- Billing: Correct & Repost → sets correctionApplied, shows inline diff (usage 340%→82%, invoice $8,400→$2,100, delta -$6,300 posted to GL)
+- Billing: Reverse Invoice → adds to reversedInvoices set, shows "Reversed" status, hides button
+- Analytics: Export to GL → sets exportDone, changes to "✓ Reconciled"
+- Analytics: Generate Compliance Report → sets reportStatuses[r.name]='Generated', removes button
+- Analytics: Run Ad-hoc Report → sets adhocResults true, shows 847-row results table with marketer breakdown
+- Marketers: Save Margin → sets marginSaved, button shows "✓ Saved" for 3 seconds
+
+### F-019: Connected GL Chain
+**Status: COMPLETE — Priority 2 commit**
+**Files:** Finance.jsx
+
+AP approval now auto-posts a new entry to the GL table. handleApproveAp creates a journal entry object and prepends it to recentGlEntries state. The GL tab shows the new entry at the top with a green "Just Posted" badge. This is the single visual moment that proves the connected data model: approve AP → GL updates automatically.
+
+### F-020: Thena Input data-demo
+**Status: COMPLETE — Priority 3 commit**
+**Files:** ThenaPanel.jsx
+
+Added data-demo="thena-input" to the Thena input element. Playwright scripts can now target it directly instead of using the fragile placeholder selector.
+
 ---
 
 ## T3 Features — Demo Polish
