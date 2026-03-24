@@ -239,6 +239,17 @@ export async function clickWithCursor(page, selector) {
 }
 
 /**
+ * Set the RBAC role badge in the navbar (or clear with null).
+ * @param {import('playwright').Page} page
+ * @param {string|null} role - Role label (e.g. 'Operations Manager') or null to clear
+ */
+export async function setDemoRole(page, role) {
+  await page.evaluate((r) => {
+    window.postMessage({ type: 'demo-role', role: r }, '*');
+  }, role);
+}
+
+/**
  * Clear the status overlay and demo cursor.
  */
 export async function clearStatus(page) {

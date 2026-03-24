@@ -20,6 +20,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -29,6 +30,7 @@ export async function runScenario(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Chief Executive Officer');
 
   await showScenarioSummary(page, 'Analytics + Thena: Prescriptive Intelligence', 'The ops lead opens Analytics. We\'ll drill into revenue, export to GL, check compliance tab, run ad-hoc report, then ask Thena about Q2 risks and build a 30-day action plan.');
 
@@ -130,6 +132,7 @@ export async function runScenario(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Analytics Complete — Revenue drill-down to invoice level. Churn risk modeled. Late payment exposure quantified. Compliance reports generated. Ad-hoc queries answered in seconds. Thena turns your data into decisions — no analyst required.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

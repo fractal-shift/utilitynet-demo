@@ -21,6 +21,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -30,6 +31,7 @@ export async function runScenario(page) {
     });
 
     await dismissApiKeyModal(page);
+    await setDemoRole(page, 'Customer Operations');
 
     await playNarration(page, 'enrollment', 'enrollment-start-btn');
     await showScenarioSummary(page, 'New Customer Enrollment', 'We\'ll enroll Heather Mitchell as a new residential customer: enter details, run credit check, select a Variable plan, and complete PAD setup. The partner marketer (NRG Direct) is notified automatically.');
@@ -152,6 +154,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(2000);
     await showStatus(page, '✦ Enrollment Complete — New customer enrolled in under 2 minutes. Credit checked, plan selected, banking captured, meter read scheduled. Credit-fail path handled automatically. What used to take 3 days of handoffs is now a single workflow.');
     await page.waitForTimeout(5000);
+    await setDemoRole(page, null);
     await clearStatus(page);
 }
 

@@ -25,6 +25,7 @@ import {
   writeFailure,
   DEMO_VIEWPORT,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 const DEBUG = process.env.DEMO_DEBUG === '1';
@@ -169,6 +170,7 @@ export async function runScenario(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Settlement Analyst');
 
   await showScenarioSummary(page, 'Settlement Reconciliation + Emberlyn', 'AltaGas submitted an invoice that doesn\'t match UTILITYnet\'s calculations ($1,640 variance). We\'ll set altagas-variance scenario before ingest, ask Emberlyn for root cause, draft the response, accept UTILITYnet figures, send to Finance, then reset to altagas-clean.');
 
@@ -260,6 +262,7 @@ export async function runScenario(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Settlement Complete — 52 marketer feeds reconciled. AltaGas $1,640 variance identified, traced to site level, dispute drafted, resolved. Journal entry posted to Finance automatically. No email chain. No spreadsheet. One workflow.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

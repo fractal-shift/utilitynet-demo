@@ -22,6 +22,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -31,6 +32,7 @@ export async function runScenario(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Channel Manager');
 
   await showScenarioSummary(page, 'Marketers — Margin, Statements & Commissions', 'We\'ll set marketer margin, generate a monthly statement, post commissions to GL, then onboard a new partner. Uses setMockScenario for scenario control.');
 
@@ -159,6 +161,7 @@ export async function runScenario(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Marketers Complete — 52 partner channels managed. Margins configured. Commissions calculated and posted automatically. Cash calls tracked. Monthly statements generated. NRG Direct at $841K — every dollar accounted for without a single email to Finance.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

@@ -19,6 +19,7 @@ import {
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runAdmin(page) {
@@ -28,6 +29,7 @@ export async function runAdmin(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'System Administrator');
 
   await showScenarioSummary(page, 'Admin — Operations Console & System Architecture', 'We\'ll walk through the Operations Console showing live integration health, then open Alden — the system companion — to answer the hardest architecture and migration questions any evaluator would ask.');
 
@@ -89,6 +91,7 @@ export async function runAdmin(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Admin Complete — Live integration monitoring. Enterprise security posture. And Alden answered your two hardest questions without hesitation. The platform knows its own architecture. That is what AI-native means.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

@@ -19,6 +19,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runFinance(page) {
@@ -28,6 +29,7 @@ export async function runFinance(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Financial Controller');
 
   await showScenarioSummary(page, 'Finance Module — GL, AR, AP, GL Remediation', 'Finance leads because UTILITYnet\'s primary pain is GL technical debt from Oracle. We walk the full module, then demonstrate the GL Remediation diagnostic — the feature that proves we understand their problem.');
 
@@ -156,6 +158,7 @@ export async function runFinance(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Finance Complete — GL remediation reduced technical debt from 42% to 10%. AP approved. AR aging monitored. Month-end on track. Every transaction traced, every entry audited. This is Finance the way it should work.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

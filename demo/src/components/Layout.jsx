@@ -68,6 +68,16 @@ export default function Layout({ apiKey }) {
     return () => window.removeEventListener('keydown', handleKey);
   }, []);
   useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === 'demo-role') {
+        setDemoRole(e.data.role || null);
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  useEffect(() => {
     if (!state.tutorialMode || !state.activeScenario) return;
     const moduleMap = {
       Dashboard: 'dashboard',
@@ -86,6 +96,7 @@ export default function Layout({ apiKey }) {
     }
   }, [state.tutorialMode, state.activeScenario?.id]);
 
+  const [demoRole, setDemoRole] = useState(null);
   const [theme, setTheme] = useState(() => localStorage.getItem('utilitynet-theme') || 'light');
   const [emberlynOpen, setEmberlynOpen] = useState(false);
   const [thenaOpen, setThenaOpen] = useState(false);
@@ -206,7 +217,7 @@ export default function Layout({ apiKey }) {
 
   return (
     <div className="flex min-h-screen flex-col" style={{ background: 'var(--bg)' }}>
-      <Navbar onToggleMode={handleToggleMode} theme={theme} />
+      <Navbar onToggleMode={handleToggleMode} theme={theme} role={demoRole} />
       {state.tutorialMode && (
         <span
           data-demo="tutorial-toggle"

@@ -21,6 +21,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -30,6 +31,7 @@ export async function runScenario(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Operations Manager');
 
   await playNarration(page, 'dashboard', 'dashboard-overview');
   await showScenarioSummary(page, 'Operations Dashboard', 'We\'ll walk through the executive dashboard: KPIs, revenue trend, predictive insights, and today\'s tasks. The dashboard gives leadership a single view of operations.');
@@ -51,6 +53,8 @@ export async function runScenario(page) {
     await highlightDashboardSection(page, '[data-demo="dashboard-late-payment-card"]', '17 accounts at risk, $41,200 exposure. Emberlyn can draft the outreach instantly.');
     await page.waitForTimeout(1000);
   });
+
+  await setDemoRole(page, 'Chief Executive Officer');
 
   await step(page, 'Opening Emberlyn for business forecast...', async () => {
     await clickWithCursor(page, 'emberlyn-toggle');
@@ -86,6 +90,7 @@ export async function runScenario(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Operations Dashboard — $2.34M revenue live. 14,291 customers. 52 marketer partners. 17 risks flagged proactively. No report to run. No spreadsheet to refresh. Leadership has the full picture in one view.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

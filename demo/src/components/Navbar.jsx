@@ -1,4 +1,4 @@
-export default function Navbar({ onToggleMode, theme }) {
+export default function Navbar({ onToggleMode, theme, role }) {
   const isDark = theme === 'dark' || theme === 'thena';
 
   return (
@@ -86,7 +86,23 @@ export default function Navbar({ onToggleMode, theme }) {
             )}
           </span>
         </button>
-        <span className="text-[12px] font-medium" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-ui)' }}>Sarah M.</span>
+        <div className="flex flex-col items-end" style={{ gap: 1 }}>
+          <span className="text-[12px] font-medium" style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'var(--font-ui)' }}>Sarah M.</span>
+          {role && (
+            <span
+              data-demo="navbar-role-badge"
+              className="rounded px-1.5 py-0.5 text-[9px] font-semibold tracking-wider uppercase"
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                color: 'rgba(255,255,255,0.7)',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.08em',
+              }}
+            >
+              {role}
+            </span>
+          )}
+        </div>
         <div
           className="flex h-8 w-8 items-center justify-center rounded-lg font-bold text-[11px] tracking-wide"
           style={{

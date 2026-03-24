@@ -19,6 +19,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -28,6 +29,7 @@ export async function runScenario(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Billing Manager');
 
   await showScenarioSummary(page, 'Full Billing Run — March 2026', 'We\'ll walk through the complete billing cycle: import AESO usage data, apply variable energy rates, allocate hedge costs, generate 2,847 invoices, triage a usage-spike exception with Emberlyn, and distribute clean invoices — all in under two minutes.');
 
@@ -129,6 +131,7 @@ export async function runScenario(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Billing Complete — 2,847 invoices. $1.84M revenue. 3 exceptions caught and resolved without holding the batch. Hedge costs allocated. GL posted automatically. What used to take 3 days took 4 minutes.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 

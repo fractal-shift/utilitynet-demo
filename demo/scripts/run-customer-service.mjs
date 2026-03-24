@@ -21,6 +21,7 @@ import {
   closeDemoContextAndSaveVideo,
   writeFailure,
   playNarration,
+  setDemoRole,
 } from './demo-runner.mjs';
 
 export async function runScenario(page) {
@@ -30,6 +31,7 @@ export async function runScenario(page) {
   });
 
   await dismissApiKeyModal(page);
+  await setDemoRole(page, 'Customer Service Rep');
 
   await showScenarioSummary(page, 'Customer Service + Emberlyn', 'A billing complaint came in from MacGregor Industrial Ltd. ($8,400 balance, EXCEPTION). We\'ll use Customer 360 to view the account, then Emberlyn to summarize issues, draft a response, and confirm the follow-up actions.');
 
@@ -70,6 +72,7 @@ export async function runScenario(page) {
   await page.waitForTimeout(2000);
   await showStatus(page, '✦ Customer Service Complete — Billing dispute received, investigated, drafted response, case updated, credit memo created in Finance. 90 seconds. No hold music. No escalation. No switching systems. Emberlyn handled the investigation — your team handled the relationship.');
   await page.waitForTimeout(5000);
+  await setDemoRole(page, null);
   await clearStatus(page);
 }
 
