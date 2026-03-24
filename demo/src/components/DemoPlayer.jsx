@@ -5,7 +5,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export default function DemoPlayer() {
   const [visible, setVisible] = useState(false);
-  const [selectedId, setSelectedId] = useState('dashboard-am');
+  const [selectedId, setSelectedId] = useState('finance');
   const [playing, setPlaying] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -349,11 +349,11 @@ export default function DemoPlayer() {
       <button
         type="button"
         onClick={() => setVisible(true)}
-        className="fixed left-4 bottom-4 z-[500] rounded-full px-3 py-2 text-[12px] font-bold shadow-lg"
-        style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}
+        className="fixed left-0 bottom-0 z-[500] px-2 py-3 text-[11px] font-bold shadow-lg"
+        style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)', writingMode: 'vertical-rl', letterSpacing: '0.05em', borderTopRightRadius: 6 }}
         title="Open Demo Player (Ctrl+Shift+D)"
       >
-        ▶
+        ▶ DEMO
       </button>
     );
   }
@@ -363,20 +363,20 @@ export default function DemoPlayer() {
   return (
     <div
       data-demo="demo-player"
-      className="fixed left-4 bottom-4 z-[500] w-72 rounded-xl border shadow-2xl"
+      className="fixed left-0 bottom-0 z-[500] w-[220px] rounded-tr-xl shadow-2xl"
       style={{
         background: 'var(--surface)',
-        borderColor: 'var(--teal)',
+        borderRight: '1px solid var(--teal)',
         fontFamily: 'var(--font-ui)',
       }}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between border-b px-3 py-2.5"
+        className="flex items-center justify-between border-b px-2 py-2"
         style={{ borderColor: 'var(--border)' }}
       >
         <span
-          className="text-[12px] font-bold"
+          className="text-[11px] font-bold"
           style={{ color: 'var(--teal)' }}
         >
           ▶ Demo Player
@@ -392,7 +392,7 @@ export default function DemoPlayer() {
       </div>
 
       {/* Scenario selector */}
-      <div className="border-b p-3" style={{ borderColor: 'var(--border)' }}>
+      <div className="border-b p-2" style={{ borderColor: 'var(--border)' }}>
         <select
           value={selectedId}
           onChange={(e) => {
@@ -400,7 +400,7 @@ export default function DemoPlayer() {
             setStepIndex(0);
           }}
           disabled={playing}
-          className="w-full rounded-lg border px-2.5 py-1.5 text-[12px]"
+          className="w-full rounded-lg border px-2 py-1 text-[10px]"
           style={{
             background: 'var(--s2)',
             borderColor: 'var(--border)',
@@ -418,17 +418,17 @@ export default function DemoPlayer() {
 
       {/* Step counter */}
       <div
-        className="flex items-center justify-between border-b px-3 py-2"
+        className="flex items-center justify-between border-b px-2 py-2"
         style={{ borderColor: 'var(--border)' }}
       >
         <span
-          className="text-[10px]"
+          className="text-[9px]"
           style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}
         >
           Step {stepIndex + 1} of {totalSteps}
         </span>
         <span
-          className="text-[10px] font-medium"
+          className="text-[9px] font-medium"
           style={{
             color: playing
               ? paused
@@ -442,11 +442,11 @@ export default function DemoPlayer() {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-2 p-3">
+      <div className="flex items-center gap-2 p-2">
         <button
           type="button"
           onClick={handlePrev}
-          className="rounded-lg px-2 py-1.5 text-[12px]"
+          className="rounded-lg px-1.5 py-1 text-[11px]"
           style={{
             background: 'var(--s2)',
             color: 'var(--text)',
@@ -460,7 +460,7 @@ export default function DemoPlayer() {
           <button
             type="button"
             onClick={handlePause}
-            className="flex-1 rounded-lg py-1.5 text-[12px] font-semibold"
+            className="flex-1 rounded-lg py-1 text-[11px] font-semibold"
             style={{
               background: 'rgba(212,160,23,0.15)',
               color: 'var(--gold)',
@@ -473,7 +473,7 @@ export default function DemoPlayer() {
           <button
             type="button"
             onClick={handlePlay}
-            className="flex-1 rounded-lg py-1.5 text-[12px] font-semibold"
+            className="flex-1 rounded-lg py-1 text-[11px] font-semibold"
             style={{ background: 'var(--teal)', color: '#fff' }}
           >
             {paused ? '▶ Resume' : '▶ Play'}
@@ -483,7 +483,7 @@ export default function DemoPlayer() {
         <button
           type="button"
           onClick={handleNext}
-          className="rounded-lg px-2 py-1.5 text-[12px]"
+          className="rounded-lg px-1.5 py-1 text-[11px]"
           style={{
             background: 'var(--s2)',
             color: 'var(--text)',
@@ -496,7 +496,7 @@ export default function DemoPlayer() {
         <button
           type="button"
           onClick={handleStop}
-          className="rounded-lg px-2 py-1.5 text-[12px]"
+          className="rounded-lg px-1.5 py-1 text-[11px]"
           style={{
             background: 'rgba(229,62,62,0.1)',
             color: 'var(--error)',
@@ -508,7 +508,7 @@ export default function DemoPlayer() {
       </div>
 
       {log.length > 0 && (
-        <div className="mx-3 mb-3 rounded-lg p-2 text-[9px] max-h-24 overflow-y-auto" style={{ background: 'var(--s2)', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+        <div className="mx-2 mb-2 rounded-lg p-2 text-[9px] max-h-24 overflow-y-auto" style={{ background: 'var(--s2)', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
           {log.map((line, i) => (
             <div key={i} style={{ color: i === log.length - 1 ? 'var(--teal)' : 'var(--muted)' }}>{line}</div>
           ))}
