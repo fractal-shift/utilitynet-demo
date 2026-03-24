@@ -285,6 +285,17 @@ export async function scrollReadThenaResponse(page) {
 }
 
 /**
+ * Wait for Alden response to finish, then trigger human-like scroll read animation.
+ * @param {import('playwright').Page} page
+ */
+export async function scrollReadAldenResponse(page) {
+  await page.waitForSelector('[data-demo="alden-suggestion"]:not([disabled])', { timeout: 15000 }).catch(() => {});
+  await page.waitForTimeout(500);
+  await page.evaluate(() => window.postMessage({ type: 'demo-scroll-read', panel: 'alden' }, '*'));
+  await page.waitForTimeout(8000);
+}
+
+/**
  * Set mock server scenario via HTTP. Used by enrollment credit-fail flow.
  * @param {string} name - Scenario name (e.g. 'credit-fail', 'credit-pass')
  */

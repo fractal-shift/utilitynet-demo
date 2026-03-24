@@ -764,6 +764,20 @@ data-demo targets: btn-confirm-journal, audit-log-entries, btn-send-reminder-ar
 
 ---
 
+### F-017: AI Companion Moments in All Demo Scripts
+**Status: COMPLETE — this commit**
+**Files:** run-dashboard.mjs, run-enrollment.mjs, run-marketers.mjs, run-admin.mjs (new), demo-runner.mjs, package.json, run-all.mjs
+
+scrollReadAldenResponse helper added to demo-runner.mjs.
+
+AI moments added per script:
+- Dashboard: Emberlyn asked "what do you predict will happen to our business in the next 12 months?" — models growth, risks, and key actions from live data
+- Enrollment: Emberlyn asked about Alberta regulatory options for credit-declined applicants — embedded compliance knowledge
+- Marketers: Emberlyn asked for innovative ideas to help underperforming marketers. Thena asked for Q2 marketer revenue forecast with confidence intervals.
+- Admin (new script): Full walkthrough of Operations Console (integrations, feed health, security), then Alden answers two hardest questions: Oracle migration architecture and AI-native vs. chatbot distinction.
+
+---
+
 ## T3 Features — Demo Polish
 
 ---

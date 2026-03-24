@@ -16,6 +16,8 @@ import {
   dismissApiKeyModal,
   clickWithCursor,
   setMockScenario,
+  scrollReadEmberlynResponse,
+  scrollReadThenaResponse,
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
@@ -94,6 +96,47 @@ export async function runScenario(page) {
   await step(page, 'Posting commissions to GL...', async () => {
     await clickWithCursor(page, 'btn-post-commissions-to-gl');
     await page.waitForTimeout(2000);
+  });
+
+  await step(page, 'Opening Emberlyn for marketer performance ideas...', async () => {
+    await clickWithCursor(page, 'emberlyn-toggle');
+    await page.waitForTimeout(800);
+  });
+
+  await step(page, 'Asking Emberlyn for ideas to help marketers perform better...', async () => {
+    const input = page.locator('[data-demo="emberlyn-input"], textarea[placeholder="Ask Emberlyn..."]').first();
+    await input.fill('What are some innovative ideas to help our underperforming marketers improve their conversion rates and grow their customer base?');
+    await input.press('Enter');
+    await page.waitForTimeout(500);
+  });
+
+  await scrollReadEmberlynResponse(page);
+
+  await showStatus(page, 'Emberlyn generates targeted strategies for each underperforming partner — specific to their customer mix, territory, and rate structure. AI-powered partner management.');
+
+  await step(page, 'Closing Emberlyn, asking Thena for revenue forecast...', async () => {
+    await clickWithCursor(page, 'emberlyn-close');
+    await page.waitForTimeout(400);
+    await clickWithCursor(page, 'nav-analytics');
+    await page.waitForTimeout(800);
+    await clickWithCursor(page, 'thena-toggle');
+    await page.waitForTimeout(800);
+  });
+
+  await step(page, 'Asking Thena for Q2 marketer revenue forecast...', async () => {
+    const input = page.locator('input[placeholder="Ask Thena..."]').first();
+    await input.fill('Forecast Q2 marketer revenue — which partners will grow and which are at risk of churning their customer base?');
+    await input.press('Enter');
+    await page.waitForTimeout(500);
+  });
+
+  await scrollReadThenaResponse(page);
+
+  await showStatus(page, 'Thena forecasts Q2 marketer performance with confidence intervals. Proactive partner management — before the quarter ends, not after.');
+
+  await step(page, 'Returning to Marketers...', async () => {
+    await clickWithCursor(page, 'nav-marketers');
+    await page.waitForTimeout(600);
   });
 
   playNarration('marketers', 'marketer-plan-create');

@@ -13,6 +13,7 @@ import { runScenario as runSettlement } from './run-settlement.mjs';
 import { runScenario as runMarketers } from './run-marketers.mjs';
 import { runScenario as runAnalytics } from './run-analytics.mjs';
 import { runFinance } from './run-finance.mjs';
+import { runAdmin } from './run-admin.mjs';
 
 const SCENARIOS = [
   ['dashboard', runDashboard],
@@ -23,6 +24,7 @@ const SCENARIOS = [
   ['settlement', runSettlement],
   ['marketers', runMarketers],
   ['analytics', runAnalytics],
+  ['admin', runAdmin],
 ];
 
 async function run() {

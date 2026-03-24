@@ -16,6 +16,7 @@ import {
   dismissApiKeyModal,
   clickWithCursor,
   setMockScenario,
+  scrollReadEmberlynResponse,
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
@@ -120,6 +121,27 @@ export async function runScenario(page) {
       const markBtn = page.locator('[data-demo="btn-mark-deposit-received"]');
       if (await markBtn.isVisible().catch(() => false)) await markBtn.click();
       await page.waitForTimeout(400);
+    });
+
+    await step(page, 'Opening Emberlyn for credit-declined guidance...', async () => {
+      await clickWithCursor(page, 'emberlyn-toggle');
+      await page.waitForTimeout(800);
+    });
+
+    await step(page, 'Asking Emberlyn about Alberta credit-declined options...', async () => {
+      const input = page.locator('[data-demo="emberlyn-input"], textarea[placeholder="Ask Emberlyn..."]').first();
+      await input.fill('What are the standard options for a credit-declined residential applicant under Alberta retail energy regulations?');
+      await input.press('Enter');
+      await page.waitForTimeout(500);
+    });
+
+    await scrollReadEmberlynResponse(page);
+
+    await showStatus(page, 'Emberlyn explains the three regulatory paths with Alberta-specific context. No policy manual. No compliance team. Embedded domain knowledge.');
+
+    await step(page, 'Closing Emberlyn...', async () => {
+      await clickWithCursor(page, 'emberlyn-close');
+      await page.waitForTimeout(500);
     });
 
     await step(page, 'Resetting to credit-pass scenario...', async () => {

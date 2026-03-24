@@ -15,6 +15,8 @@ import {
   dismissApiKeyModal,
   clickWithCursor,
   highlightDashboardSection,
+  scrollReadEmberlynResponse,
+  scrollReadThenaResponse,
   createDemoContext,
   closeDemoContextAndSaveVideo,
   writeFailure,
@@ -48,6 +50,27 @@ export async function runScenario(page) {
   await step(page, 'Reviewing Late Payment risk card...', async () => {
     await highlightDashboardSection(page, '[data-demo="dashboard-late-payment-card"]', '17 accounts at risk, $41,200 exposure. Emberlyn can draft the outreach instantly.');
     await page.waitForTimeout(1000);
+  });
+
+  await step(page, 'Opening Emberlyn for business forecast...', async () => {
+    await clickWithCursor(page, 'emberlyn-toggle');
+    await page.waitForTimeout(800);
+  });
+
+  await step(page, 'Asking Emberlyn for 12-month business prediction...', async () => {
+    const input = page.locator('[data-demo="emberlyn-input"], textarea[placeholder="Ask Emberlyn..."]').first();
+    await input.fill('Based on what you see right now — what do you predict will happen to our business in the next 12 months?');
+    await input.press('Enter');
+    await page.waitForTimeout(500);
+  });
+
+  await scrollReadEmberlynResponse(page);
+
+  await showStatus(page, 'Emberlyn analyzes live operations data and models the next 12 months — growth, risks, and the actions that will matter most. This is what a senior advisor would tell you. In seconds.');
+
+  await step(page, 'Closing Emberlyn...', async () => {
+    await clickWithCursor(page, 'emberlyn-close');
+    await page.waitForTimeout(500);
   });
 
   playNarration('dashboard', 'dashboard-tasks');

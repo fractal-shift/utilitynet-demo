@@ -22,6 +22,7 @@
     "demo:settlement": "node scripts/run-settlement.mjs",
     "demo:marketers": "node scripts/run-marketers.mjs",
     "demo:analytics": "node scripts/run-analytics.mjs",
+    "demo:admin": "node scripts/run-admin.mjs",
     "demo:complex": "node scripts/run-complex.mjs",
     "demo:all": "node scripts/run-all.mjs",
     "demo:record": "DEMO_RECORD_VIDEO=1 DEMO_BASE_URL=http://localhost:5173 node scripts/run-all.mjs",
