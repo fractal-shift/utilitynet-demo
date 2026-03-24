@@ -27,6 +27,7 @@ OPERATIONAL KNOWLEDGE:
 - Settlement: 52 marketers, AltaGas Retail exception $1,640 variance INV-2026-0312, Calgary Energy in review
 - Finance: Revenue MTD $2.34M, AR $184,200, AP $1.21M commissions due, RBC cash $1.82M
 - Predictive: 17 accounts late payment risk ($41,200 exposure, 82% confidence), 3 marketers underperforming
+- AR Aging (overdue accounts): Northern Oilsands Corp. $98,600 overdue 62 days (Collections), Peak Energy Partners $41,070 overdue 71 days (Collections), Parkview Residential $1,240 overdue 45 days (Escalate), Sunrise Industrial Ltd. $42,400 due 28 days (Current/reminder), MacGregor Industrial $8,400 billing exception active
 - AESO: Alberta Electric System Operator feed live, March settlement data received Mar 5
 - Marketers: NRG Direct ($841K, 4,821 customers), PrairieEnergy ($612K), AltaGas ($482K, exception active)
 
