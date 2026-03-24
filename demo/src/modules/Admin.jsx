@@ -68,7 +68,7 @@ export default function Admin({ onOpenAlden }) {
                 </div>
               </div>
             )) : (
-              <div className="text-[12px]" style={{ color: 'var(--muted)' }}>Loading feeds… (mock server required)</div>
+              <div className="text-[12px]" style={{ color: 'var(--muted)' }}>Loading feeds… (Integration Service required)</div>
             )}
           </div>
 

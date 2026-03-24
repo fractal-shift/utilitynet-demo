@@ -50,46 +50,46 @@ export async function getScenarioStatus() {
 }
 
 export async function fetchAesoUsage() {
-  return fetchJson('/api/mock/aeso/usage');
+  return fetchJson('/aeso/usage');
 }
 
 export async function fetchAesoPrice() {
-  return fetchJson('/api/mock/aeso/price');
+  return fetchJson('/aeso/price');
 }
 
 export async function fetchRbcBalance() {
-  return fetchJson('/api/mock/rbc/balance');
+  return fetchJson('/rbc/balance');
 }
 
 export async function fetchRbcTransactions() {
-  return fetchJson('/api/mock/rbc/transactions');
+  return fetchJson('/rbc/transactions');
 }
 
 export async function postRbcPayment(payeeId, amount, description) {
-  return fetchJson('/api/mock/rbc/payment', {
+  return fetchJson('/rbc/payment', {
     method: 'POST',
     body: JSON.stringify({ payeeId, amount, description }),
   });
 }
 
 export async function postCreditCheck(applicant) {
-  return fetchJson('/api/mock/credit/check', {
+  return fetchJson('/credit/check', {
     method: 'POST',
     body: JSON.stringify(applicant),
   });
 }
 
 export async function fetchAltaGasInvoice() {
-  return fetchJson('/api/mock/altagas/invoice');
+  return fetchJson('/altagas/invoice');
 }
 
 export async function postAltaGasDispute(data) {
-  return fetchJson('/api/mock/altagas/dispute', {
+  return fetchJson('/altagas/dispute', {
     method: 'POST',
     body: JSON.stringify(data || {}),
   });
 }
 
 export async function fetchIntegrationHealth() {
-  return fetchJson('/api/mock/integrations/feeds');
+  return fetchJson('/integrations/feeds');
 }
