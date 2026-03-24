@@ -13,6 +13,36 @@ export default function DemoPlayer() {
   const pausedRef = useRef(false);
   const cancelRef = useRef(false);
   const stepIndexRef = useRef(0);
+  const post = useCallback((msg) => window.postMessage(msg, '*'), []);
+
+  const animateCursorTo = useCallback(
+    async (el) => {
+      if (!el) return;
+
+      const rect = el.getBoundingClientRect();
+      const targetX = rect.left + rect.width / 2;
+      const targetY = rect.top + rect.height / 2;
+      const startX = window.__demoCursorX ?? window.innerWidth / 2;
+      const startY = window.__demoCursorY ?? window.innerHeight / 2;
+      const steps = 12;
+
+      for (let i = 1; i <= steps; i += 1) {
+        if (cancelRef.current) return;
+        const x = startX + (targetX - startX) * (i / steps);
+        const y = startY + (targetY - startY) * (i / steps);
+        post({ type: 'demo-cursor', x, y, action: 'move' });
+        window.__demoCursorX = x;
+        window.__demoCursorY = y;
+        await sleep(18);
+      }
+
+      post({ type: 'demo-cursor', x: targetX, y: targetY, action: 'click' });
+      window.__demoCursorX = targetX;
+      window.__demoCursorY = targetY;
+      await sleep(150);
+    },
+    [post]
+  );
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -32,8 +62,6 @@ export default function DemoPlayer() {
   const executeStep = useCallback(async (step) => {
     if (cancelRef.current) return;
 
-    const post = (msg) => window.postMessage(msg, '*');
-
     switch (step.type) {
       case 'role':
         post({ type: 'demo-role', role: step.role });
@@ -43,23 +71,26 @@ export default function DemoPlayer() {
         const navLabel = step.label || step.target.replace('nav-', '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
         post({ type: 'demo-narration', text: `Sarah navigates to ${navLabel}` });
         await sleep(800);
-        document.querySelector(`[data-demo="${step.target}"]`)?.click();
+        const el = document.querySelector(`[data-demo="${step.target}"]`);
+        await animateCursorTo(el);
+        el?.click();
         await sleep(1500);
         post({ type: 'demo-narration', text: null });
         break;
       }
 
-      case 'click':
+      case 'click': {
         if (step.label) {
           post({ type: 'demo-narration', text: step.label });
           await sleep(600);
         }
-        document
-          .querySelector(`[data-demo="${step.target}"]`)
-          ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        const el = document.querySelector(`[data-demo="${step.target}"]`);
+        await animateCursorTo(el);
+        el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await sleep(800);
         if (step.label) post({ type: 'demo-narration', text: null });
         break;
+      }
 
       case 'narration': {
         post({ type: 'demo-narration', text: step.text });
@@ -71,6 +102,12 @@ export default function DemoPlayer() {
       }
 
       case 'highlight':
+        post({
+          type: 'demo-highlight',
+          selector: step.selector,
+          conclusion: step.conclusion,
+          durationMs: step.durationMs,
+        });
         if (step.conclusion) {
           post({ type: 'demo-narration', text: step.conclusion });
           await sleep(step.durationMs || 5000);
@@ -78,6 +115,7 @@ export default function DemoPlayer() {
         } else {
           await sleep(step.durationMs || 3000);
         }
+        post({ type: 'demo-highlight-clear' });
         break;
 
       case 'status':
@@ -94,9 +132,11 @@ export default function DemoPlayer() {
       case 'emberlyn-open':
         post({ type: 'demo-narration', text: 'Sarah opens Emberlyn — our operational AI companion, embedded directly in the platform. No switching tabs. No separate tool.' });
         await sleep(1000);
-        document
-          .querySelector('[data-demo="emberlyn-toggle"]')
-          ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        {
+          const el = document.querySelector('[data-demo="emberlyn-toggle"]');
+          await animateCursorTo(el);
+          el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
         await sleep(1200);
         post({ type: 'demo-narration', text: null });
         break;
@@ -131,7 +171,11 @@ export default function DemoPlayer() {
       case 'thena-open':
         post({ type: 'demo-narration', text: 'Sarah opens Thena — our analytics AI partner, with direct access to 24 months of billing and settlement data.' });
         await sleep(1000);
-        document.querySelector('[data-demo="thena-toggle"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        {
+          const el = document.querySelector('[data-demo="thena-toggle"]');
+          await animateCursorTo(el);
+          el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
         await sleep(1200);
         post({ type: 'demo-narration', text: null });
         break;
@@ -139,7 +183,11 @@ export default function DemoPlayer() {
       case 'alden-open':
         post({ type: 'demo-narration', text: 'Sarah opens Alden — our AI system partner, built to answer the hardest architecture and migration questions.' });
         await sleep(1000);
-        document.querySelector('[data-demo="alden-toggle"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        {
+          const el = document.querySelector('[data-demo="alden-toggle"]');
+          await animateCursorTo(el);
+          el?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        }
         await sleep(1200);
         post({ type: 'demo-narration', text: null });
         break;
@@ -180,6 +228,7 @@ export default function DemoPlayer() {
       case 'scroll': {
         const el = document.querySelector(step.selector || `[data-demo="${step.target}"]`);
         if (el) {
+          await animateCursorTo(el);
           el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         await sleep(step.ms || 1200);
@@ -208,7 +257,7 @@ export default function DemoPlayer() {
     while (pausedRef.current && !cancelRef.current) {
       await sleep(200);
     }
-  }, []);
+  }, [animateCursorTo, post]);
 
   const runFrom = useCallback(
     async (startIndex) => {
@@ -229,6 +278,10 @@ export default function DemoPlayer() {
       if (!cancelRef.current) {
         window.postMessage({ type: 'demo-status', status: '' }, '*');
         window.postMessage({ type: 'demo-role', role: null }, '*');
+        window.postMessage({ type: 'demo-cursor-clear' }, '*');
+        window.postMessage({ type: 'demo-highlight-clear' }, '*');
+        window.__demoCursorX = null;
+        window.__demoCursorY = null;
       }
       setPlaying(false);
       setStepIndex(0);
@@ -261,6 +314,10 @@ export default function DemoPlayer() {
     window.postMessage({ type: 'demo-status', status: '' }, '*');
     window.postMessage({ type: 'demo-narration', text: null }, '*');
     window.postMessage({ type: 'demo-role', role: null }, '*');
+    window.postMessage({ type: 'demo-cursor-clear' }, '*');
+    window.postMessage({ type: 'demo-highlight-clear' }, '*');
+    window.__demoCursorX = null;
+    window.__demoCursorY = null;
   };
 
   const handleNext = async () => {

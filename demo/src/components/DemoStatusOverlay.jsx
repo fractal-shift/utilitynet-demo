@@ -35,8 +35,10 @@ function HighlightOverlay({ selector, conclusion }) {
           left: rect.left - 4,
           width: rect.width + 8,
           height: rect.height + 8,
-          border: '2px solid var(--gold-bdr, rgba(212, 160, 23, 0.8))',
-          boxShadow: '0 0 0 4px rgba(212, 160, 23, 0.2)',
+          border: '3px solid rgba(22,120,160,0.95)',
+          background: 'rgba(22,120,160,0.08)',
+          boxShadow: '0 0 0 4px rgba(22,120,160,0.18)',
+          animation: 'demo-highlight-pulse 1.2s ease-out infinite',
         }}
       />
       {conclusion && (
@@ -130,6 +132,38 @@ export default function DemoStatusOverlay() {
 
   return (
     <>
+      <style>{`
+        @keyframes demo-highlight-pulse {
+          0% {
+            box-shadow: 0 0 0 0 rgba(22,120,160,0.45), 0 0 0 8px rgba(22,120,160,0.18);
+          }
+          70% {
+            box-shadow: 0 0 0 8px rgba(22,120,160,0.12), 0 0 0 18px rgba(22,120,160,0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(22,120,160,0), 0 0 0 8px rgba(22,120,160,0);
+          }
+        }
+
+        @keyframes demo-cursor-click-pulse {
+          0% {
+            transform: translate(-50%, -50%) scale(1);
+            filter: brightness(1);
+          }
+          50% {
+            transform: translate(-50%, -50%) scale(1.4);
+            filter: brightness(1.9);
+          }
+          100% {
+            transform: translate(-50%, -50%) scale(1);
+            filter: brightness(1);
+          }
+        }
+
+        .demo-cursor-click {
+          animation: demo-cursor-click-pulse 180ms ease-out;
+        }
+      `}</style>
       {summary && (
         <div
           className="fixed inset-0 z-[90] flex items-center justify-center bg-black/40"
@@ -176,15 +210,20 @@ export default function DemoStatusOverlay() {
           ref={cursorRef}
           className="pointer-events-none fixed z-[9999] -translate-x-1/2 -translate-y-1/2 transition-all duration-150 ease-out"
           style={{
-            width: 24,
-            height: 24,
+            width: 28,
+            height: 28,
             left: cursor.x,
             top: cursor.y,
+            borderRadius: '9999px',
+            border: '3px solid rgba(255,255,255,0.95)',
+            background: 'rgba(22,120,160,0.4)',
+            boxShadow: '0 0 0 2px rgba(22,120,160,0.5), 0 4px 12px rgba(0,0,0,0.4)',
           }}
         >
-          <svg viewBox="0 0 24 24" fill="none" className="drop-shadow-lg" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.5))' }}>
-            <path d="M5 3l14 9-6 2-4 6-4-17z" fill="#fff" stroke="#D4A017" strokeWidth="1.5" />
-          </svg>
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{ background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.85), rgba(255,255,255,0) 45%)' }}
+          />
         </div>
       )}
       {highlight && <HighlightOverlay selector={highlight.selector} conclusion={highlight.conclusion} />}
