@@ -124,6 +124,10 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
     GL_ISSUES.reduce((acc, r) => ({ ...acc, [r.id]: 'Pending' }), {})
   );
   const [severityFilter, setSeverityFilter] = useState(null);
+  const [journalModalOpen, setJournalModalOpen] = useState(false);
+  const [journalPosted, setJournalPosted] = useState(false);
+  const [auditModalOpen, setAuditModalOpen] = useState(false);
+  const [arStatus, setArStatus] = useState({});
 
   const healthScore = (() => {
     let score = 58;
@@ -265,7 +269,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
             <button
               type="button"
               data-demo="btn-post-journal"
-              onClick={() => handleGhostClick('Journal entry created')}
+              onClick={() => setJournalModalOpen(true)}
               className="rounded border px-3 py-1.5 text-[12px] font-medium opacity-80 hover:opacity-100"
               style={{ borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}
             >
@@ -274,7 +278,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
             <button
               type="button"
               data-demo="btn-audit-log"
-              onClick={() => handleGhostClick('Audit log opened')}
+              onClick={() => setAuditModalOpen(true)}
               className="rounded border px-3 py-1.5 text-[12px] font-medium opacity-80 hover:opacity-100"
               style={{ borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}
             >
@@ -315,6 +319,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
       )}
 
       {activeTab === 'ar' && (
+        <div>
         <div className="overflow-x-auto rounded-lg border" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
           <table data-demo="finance-ar-table" className="w-full text-left text-[13px]" style={{ fontFamily: 'var(--font-ui)' }}>
             <thead>
@@ -335,13 +340,37 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                   <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.amount}</td>
                   <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.days}</td>
                   <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.status}</td>
-                  <td className="px-4 py-2.5">
-                    <button type="button" className="text-[12px] font-medium" style={{ color: 'var(--teal)' }}>{r.action}</button>
+                  <td className="px-4 py-3">
+                    {arStatus[i] === 'Escalated' ? (
+                      <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={{ background: 'rgba(229,62,62,0.12)', color: 'var(--error)', fontFamily: 'var(--font-ui)' }}>Escalated</span>
+                    ) : arStatus[i] === 'Reminded' ? (
+                      <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={{ background: 'rgba(39,174,96,0.12)', color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>Reminder Sent</span>
+                    ) : (
+                      <button
+                        type="button"
+                        data-demo={i === 2 ? 'btn-send-reminder-ar' : undefined}
+                        onClick={() => {
+                          setArStatus(s => ({ ...s, [i]: r.action === 'Collections' || r.action === 'Escalate' ? 'Escalated' : 'Reminded' }));
+                          fireToast(r.action === 'Collections' || r.action === 'Escalate'
+                            ? `${r.customer} escalated to collections — AR aging updated`
+                            : `Reminder sent to ${r.customer} — ${r.invoice}`
+                          );
+                        }}
+                        className="rounded px-2 py-1 text-[11px] font-medium"
+                        style={{ background: r.action === 'Collections' ? 'rgba(229,62,62,0.12)' : 'var(--s2)', color: r.action === 'Collections' ? 'var(--error)' : 'var(--text)', border: '1px solid var(--border)', fontFamily: 'var(--font-ui)' }}
+                      >
+                        {r.action}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+          <div className="mt-3 rounded-lg px-3 py-2 text-[11px]" style={{ background: 'rgba(22,120,160,0.06)', borderLeft: '3px solid var(--teal)', color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>
+            AR balance updates automatically when payments are received — Account 1100 reconciles against RBC banking feed daily. Collections escalations are logged to the audit trail.
+          </div>
         </div>
       )}
 
@@ -813,6 +842,107 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
               <div><span className="text-[14px]" style={{ color: 'var(--warning)' }}>⚠</span> AP approvals pending — $72,680 in commissions awaiting approval</div>
               <div><span className="text-[14px]" style={{ color: 'var(--muted)' }}>○</span> AESO settlement final — Target: March 20 · 3 exceptions pending</div>
               <div><span className="text-[14px]" style={{ color: 'var(--muted)' }}>○</span> Financial statements to CFO — Target: March 31</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {journalModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="w-[480px] rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <div className="text-[14px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Post Journal Entry</div>
+                <div className="text-[11px] mt-0.5" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>JE-2026-0092 · Auto-generated</div>
+              </div>
+              <button type="button" onClick={() => setJournalModalOpen(false)} style={{ color: 'var(--muted)' }} className="text-[18px]">×</button>
+            </div>
+            <div className="mb-4 space-y-2 text-[13px]" style={{ fontFamily: 'var(--font-ui)' }}>
+              <div className="flex justify-between py-1.5 border-b" style={{ borderColor: 'var(--border)' }}>
+                <span style={{ color: 'var(--muted)' }}>Date</span>
+                <span style={{ color: 'var(--text)' }}>March 11, 2026</span>
+              </div>
+              <div className="flex justify-between py-1.5 border-b" style={{ borderColor: 'var(--border)' }}>
+                <span style={{ color: 'var(--muted)' }}>Description</span>
+                <span style={{ color: 'var(--text)' }}>Manual adjustment — hedge reserve reclassification</span>
+              </div>
+            </div>
+            <table className="w-full text-[12px] mb-4" style={{ fontFamily: 'var(--font-ui)' }}>
+              <thead>
+                <tr style={{ color: 'var(--muted)' }}>
+                  <th className="text-left pb-2">Account</th>
+                  <th className="text-right pb-2">Debit</th>
+                  <th className="text-right pb-2">Credit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ color: 'var(--text)' }}>
+                  <td className="py-1.5">3100 — Hedge Risk Reserve</td>
+                  <td className="text-right">$42,000</td>
+                  <td className="text-right">—</td>
+                </tr>
+                <tr style={{ color: 'var(--text)' }}>
+                  <td className="py-1.5">5200 — Operating Expense</td>
+                  <td className="text-right">—</td>
+                  <td className="text-right">$42,000</td>
+                </tr>
+                <tr className="border-t" style={{ borderColor: 'var(--border)', color: 'var(--success)', fontWeight: 600 }}>
+                  <td className="pt-2">Total</td>
+                  <td className="text-right pt-2">$42,000</td>
+                  <td className="text-right pt-2">$42,000</td>
+                </tr>
+              </tbody>
+            </table>
+            <div className="mb-4 rounded-lg px-3 py-2 text-[11px]" style={{ background: 'rgba(39,174,96,0.08)', color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>
+              ✓ Entry balanced · Audit trail will record: Sarah M. · March 11, 2026 · Session #8821
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                data-demo="btn-confirm-journal"
+                onClick={() => {
+                  setJournalPosted(true);
+                  setJournalModalOpen(false);
+                  fireToast('Journal Entry JE-2026-0092 posted — audit trail recorded');
+                }}
+                className="rounded-lg px-4 py-2 text-[13px] font-semibold"
+                style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}
+              >
+                Post Entry
+              </button>
+              <button type="button" onClick={() => setJournalModalOpen(false)} className="rounded-lg border px-4 py-2 text-[13px]" style={{ borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {auditModalOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.5)' }}>
+          <div className="w-[520px] rounded-xl border p-6" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+            <div className="mb-4 flex items-center justify-between">
+              <div className="text-[14px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Audit Log — Finance Module</div>
+              <button type="button" onClick={() => setAuditModalOpen(false)} style={{ color: 'var(--muted)' }} className="text-[18px]">×</button>
+            </div>
+            <div data-demo="audit-log-entries" className="space-y-3">
+              {[
+                ...(journalPosted ? [{ action: 'Journal Entry Posted', detail: 'JE-2026-0092 · Hedge reserve reclassification · $42,000', user: 'Sarah M.', time: 'Just now', color: 'var(--success)' }] : []),
+                { action: 'AP Payment Approved', detail: 'AltaGas Distribution · $1,120,000 · JE-2026-0091 created', user: 'Sarah M.', time: 'Mar 11, 09:14', color: 'var(--teal)' },
+                { action: 'GL Export', detail: 'Full chart of accounts exported · 6 accounts · 284 transactions', user: 'Chris T.', time: 'Mar 11, 08:55', color: 'var(--muted)' },
+                { action: 'AP Payment Approved', detail: 'Apex Energy Marketer · $72,680 · JE-2026-0088 created', user: 'Sarah M.', time: 'Mar 11, 08:30', color: 'var(--teal)' },
+                { action: 'Month-End Checklist Updated', detail: 'Bank reconciliation marked complete', user: 'Chris T.', time: 'Mar 10, 17:22', color: 'var(--muted)' },
+              ].map((entry, i) => (
+                <div key={i} className="flex gap-3 rounded-lg border p-3" style={{ background: 'var(--s2)', borderColor: 'var(--border)' }}>
+                  <div className="mt-0.5 h-2 w-2 rounded-full flex-shrink-0" style={{ background: entry.color, marginTop: 6 }} />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[12px] font-semibold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{entry.action}</span>
+                      <span className="text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{entry.time}</span>
+                    </div>
+                    <div className="text-[11px] mt-0.5" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{entry.detail}</div>
+                    <div className="text-[10px] mt-0.5" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>Posted by {entry.user}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

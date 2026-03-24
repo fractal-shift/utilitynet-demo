@@ -749,7 +749,7 @@ Overview content (Descriptive, Predictive, Prescriptive sections) was rendering 
 ---
 
 ### F-016: Journal Entry Modal + Audit Trail + AR Interactive Actions
-**Status: PENDING**
+**Status: COMPLETE — this commit**
 **Files:** src/modules/Finance.jsx
 
 Two "table stakes" demo moments that neutralize the Sage 50 checklist comparison. Goal: answer "can you do basic accounting?" in under 5 minutes.
