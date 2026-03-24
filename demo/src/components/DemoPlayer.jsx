@@ -15,6 +15,27 @@ export default function DemoPlayer() {
   const stepIndexRef = useRef(0);
   const post = useCallback((msg) => window.postMessage(msg, '*'), []);
 
+  const waitFor = useCallback(async (ms, { untilCancelled = false } = {}) => {
+    let remaining = ms;
+
+    while (untilCancelled || remaining > 0) {
+      if (cancelRef.current) return false;
+
+      while (pausedRef.current && !cancelRef.current) {
+        await sleep(200);
+      }
+
+      if (cancelRef.current) return false;
+
+      const slice = untilCancelled ? 200 : Math.min(200, remaining);
+      await sleep(slice);
+
+      if (!untilCancelled) remaining -= slice;
+    }
+
+    return !cancelRef.current;
+  }, []);
+
   const animateCursorTo = useCallback(
     async (el) => {
       if (!el) return;
@@ -68,14 +89,16 @@ export default function DemoPlayer() {
         break;
 
       case 'navigate': {
-        const navLabel = step.label || step.target.replace('nav-', '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-        post({ type: 'demo-narration', text: `Sarah navigates to ${navLabel}` });
-        await sleep(800);
+        if (!step.silent) {
+          const navLabel = step.label || step.target.replace('nav-', '').replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+          post({ type: 'demo-narration', text: `Sarah navigates to ${navLabel}` });
+        }
+        await waitFor(800);
         const el = document.querySelector(`[data-demo="${step.target}"]`);
         await animateCursorTo(el);
         el?.click();
-        await sleep(1500);
-        post({ type: 'demo-narration', text: null });
+        await waitFor(1500);
+        if (!step.silent) post({ type: 'demo-narration', text: null });
         break;
       }
 
@@ -94,10 +117,14 @@ export default function DemoPlayer() {
 
       case 'narration': {
         post({ type: 'demo-narration', text: step.text });
+        if (step.hold) {
+          await waitFor(0, { untilCancelled: true });
+          break;
+        }
         const words = step.text.split(' ').length;
         const ms = Math.max(4000, Math.round((words / 100) * 60 * 1000));
-        await sleep(ms);
-        post({ type: 'demo-narration', text: null });
+        const completed = await waitFor(ms);
+        if (completed) post({ type: 'demo-narration', text: null });
         break;
       }
 
@@ -125,8 +152,10 @@ export default function DemoPlayer() {
         break;
 
       case 'wait':
-        post({ type: 'demo-narration', text: null });
-        await sleep(step.ms || 2000);
+        if (step.clearNarration !== false) {
+          post({ type: 'demo-narration', text: null });
+        }
+        await waitFor(step.ms || 2000);
         break;
 
       case 'emberlyn-open':
@@ -330,6 +359,10 @@ export default function DemoPlayer() {
   };
 
   const handleNext = async () => {
+    if (playing && stepIndex >= (scenario?.steps?.length ?? 1) - 1) {
+      handleStop();
+      return;
+    }
     const next = Math.min(stepIndex + 1, (scenario?.steps?.length ?? 1) - 1);
     setStepIndex(next);
     stepIndexRef.current = next;

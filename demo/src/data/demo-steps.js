@@ -5,9 +5,8 @@ export const DEMO_SCENARIOS = [
     role: 'Presenter',
     steps: [
       { type: 'role', role: 'Presenter' },
-      { type: 'navigate', target: 'nav-dashboard' },
-      { type: 'narration', text: "In the age of AI, the future of enterprise software is customer-tailored software." },
-      { type: 'wait', ms: 999999 },
+      { type: 'navigate', target: 'nav-dashboard', silent: true },
+      { type: 'narration', text: "In the age of AI, the future of enterprise software is customer-tailored software.", hold: true },
     ],
   },
   {
