@@ -205,7 +205,7 @@ export const DEMO_SCENARIOS = [
       { type: 'click', target: 'emberlyn-close', label: 'Closing Emberlyn' },
       { type: 'wait', ms: 500 },
       { type: 'narration', text: "Sarah applies the credit adjustment. Watch — the change propagates automatically to Finance AR. Account 1100 updated. No manual entry. No email to accounting." },
-      { type: 'click', target: 'customer360-draft-email', label: 'Applying credit — propagating to Finance' },
+      { type: 'click', target: 'crm-billing-link', label: 'Applying credit — propagating to Finance' },
       { type: 'wait', ms: 2000 },
       { type: 'scroll', target: 'crm-propagation-confirmation' },
       { type: 'highlight', selector: '[data-demo="crm-propagation-confirmation"]', conclusion: 'Propagated to Finance AR — Account 1100 updated', durationMs: 4000 },
