@@ -120,6 +120,8 @@ export const DEMO_SCENARIOS = [
       { type: 'wait', ms: 1500 },
       { type: 'narration', text: "Deposit received and logged. James activates with a prudential hold on file. The credit decision, the deposit, the activation — all tracked, all auditable, all handled in one workflow." },
       { type: 'wait', ms: 3000 },
+      { type: 'click', target: 'enrollment-close', label: 'Closing enrollment modal' },
+      { type: 'wait', ms: 800 },
       { type: 'navigate', target: 'nav-customers' },
       { type: 'wait', ms: 800 },
       { type: 'summary', title: "Enrollment that works for every customer — including the hard cases.", text: "AI accelerates every step of the customer onboarding journey. One workflow handles both the straightforward approval and the credit-declined exception. Alberta regulatory policy is built in — deposit requirements, prudential holds, audit trail. Emberlyn works alongside Sarah to handle the questions that turn a transaction into a relationship." },

@@ -84,6 +84,12 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
     setStep(1);
     setCreditRunning(false);
     setCreditDone(false);
+    setCreditFailed(false);
+    setSimulateFail(false);
+    setSimulateThin(false);
+    setCreditThin(false);
+    setDepositOptionSelected(false);
+    setDepositReceived(false);
     setSuccess(false);
     setForm({
       firstName: '',
@@ -155,7 +161,7 @@ export default function EnrollmentModal({ isOpen, onClose, showToast }) {
       <div className="max-h-[90vh] w-[580px] max-w-[95vw] overflow-y-auto rounded-xl border p-7 shadow-xl" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }} onClick={(e) => e.stopPropagation()}>
         <div className="mb-5 flex items-center justify-between">
           <div className="font-bold text-[18px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>New Customer Enrollment</div>
-          <button type="button" onClick={handleClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
+          <button type="button" data-demo="enrollment-close" onClick={handleClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
         </div>
 
         <div className="mb-5 flex items-center gap-1">
