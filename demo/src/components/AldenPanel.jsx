@@ -164,6 +164,7 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
   }, []);
 
   return (
+    <>
     <div
       data-demo="alden-panel"
       className="fixed top-14 right-0 bottom-0 z-[60] flex w-[340px] flex-col border-l transition-transform duration-300 ease-out"
@@ -313,5 +314,6 @@ export default function AldenPanel({ isOpen, onClose, onToggle, apiKey }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
