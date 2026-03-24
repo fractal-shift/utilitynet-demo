@@ -11,6 +11,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+process.on('unhandledRejection', (error) => {
+  console.error('[integration-simulator] unhandledRejection', error);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('[integration-simulator] uncaughtException', error);
+});
+
 // Scenario state: aeso, rbc, credit, altagas
 const scenarios = {
   aeso: 'aeso-happy',
@@ -256,6 +264,20 @@ app.get('/api/mock/integrations/feeds', async (req, res) => {
   res.json({ feeds, alertCount });
 });
 
-app.listen(PORT, () => {
-  console.log(`[integration-simulator] listening on http://localhost:${PORT}`);
+const server = app.listen(PORT, () => {
+  const address = server.address();
+  const port = typeof address === 'object' && address ? address.port : PORT;
+  console.log(`[integration-simulator] listening on http://localhost:${port}`);
 });
+
+server.on('error', (error) => {
+  console.error('[integration-simulator] server error', error);
+});
+
+server.on('close', () => {
+  console.error('[integration-simulator] server closed');
+});
+
+// Some launchers/sandboxes can detach cleanly right after startup.
+// Keeping stdin resumed makes the process lifetime explicit.
+process.stdin.resume();
