@@ -9,6 +9,7 @@ export default function DemoPlayer() {
   const [playing, setPlaying] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [log, setLog] = useState([]);
   const pausedRef = useRef(false);
   const cancelRef = useRef(false);
   const stepIndexRef = useRef(0);
@@ -221,6 +222,7 @@ export default function DemoPlayer() {
         if (cancelRef.current) break;
         setStepIndex(i);
         stepIndexRef.current = i;
+        setLog(prev => [...prev.slice(-8), `→ ${scenario.steps[i].type}${scenario.steps[i].target ? ': ' + scenario.steps[i].target : scenario.steps[i].text ? ': ' + scenario.steps[i].text.slice(0, 30) + '...' : ''}`]);
         await executeStep(scenario.steps[i]);
       }
 
@@ -255,6 +257,7 @@ export default function DemoPlayer() {
     setPlaying(false);
     setStepIndex(0);
     stepIndexRef.current = 0;
+    setLog([]);
     window.postMessage({ type: 'demo-status', status: '' }, '*');
     window.postMessage({ type: 'demo-narration', text: null }, '*');
     window.postMessage({ type: 'demo-role', role: null }, '*');
@@ -446,6 +449,14 @@ export default function DemoPlayer() {
           ⏹
         </button>
       </div>
+
+      {log.length > 0 && (
+        <div className="mx-3 mb-3 rounded-lg p-2 text-[9px] max-h-24 overflow-y-auto" style={{ background: 'var(--s2)', fontFamily: 'var(--font-mono)', color: 'var(--muted)' }}>
+          {log.map((line, i) => (
+            <div key={i} style={{ color: i === log.length - 1 ? 'var(--teal)' : 'var(--muted)' }}>{line}</div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

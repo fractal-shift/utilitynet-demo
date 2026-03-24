@@ -38,7 +38,7 @@ export default function BillingBatchModal({ isOpen, onClose }) {
       <div className="w-[580px] max-w-[95vw] rounded-xl border p-7 shadow-xl" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }} onClick={(e) => e.stopPropagation()}>
         <div className="mb-5 flex items-center justify-between">
           <div className="font-bold text-[18px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>New Billing Batch</div>
-          <button type="button" onClick={onClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
+          <button type="button" data-demo="billing-batch-close" onClick={onClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
         </div>
 
         <div className="mb-4">
