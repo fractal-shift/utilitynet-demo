@@ -172,13 +172,13 @@ export async function runScenario(page) {
 
   await showScenarioSummary(page, 'Settlement Reconciliation + Emberlyn', 'AltaGas submitted an invoice that doesn\'t match UTILITYnet\'s calculations ($1,640 variance). We\'ll set altagas-variance scenario before ingest, ask Emberlyn for root cause, draft the response, accept UTILITYnet figures, send to Finance, then reset to altagas-clean.');
 
-  playNarration('settlement', 'settlement-import-btn');
+  await playNarration(page, 'settlement', 'settlement-import-btn');
   await step(page, 'Setting mock scenario altagas-variance before invoice ingest...', async () => {
     await setMockScenario('altagas-variance');
     await page.waitForTimeout(500);
   });
 
-  playNarration('settlement', 'settlement-match-table');
+  await playNarration(page, 'settlement', 'settlement-match-table');
   await step(page, 'Navigating to Settlement...', async () => {
     await clickWithCursor(page, 'nav-settlement');
   });
@@ -188,7 +188,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(1000);
   });
 
-  playNarration('settlement', 'settlement-emberlyn-insight');
+  await playNarration(page, 'settlement', 'settlement-emberlyn-insight');
   await step(page, "Asking Emberlyn for root cause analysis...", async () => {
     await page.getByRole('button', { name: 'What is the root cause of this mismatch?' }).click();
     await scrollReadEmberlynResponse(page);
@@ -199,7 +199,7 @@ export async function runScenario(page) {
     await scrollReadEmberlynResponse(page);
   });
 
-  playNarration('settlement', 'settlement-marketer-allocation');
+  await playNarration(page, 'settlement', 'settlement-marketer-allocation');
   await step(page, "Accepting UTILITYnet figures...", async () => {
     const confirm = page.locator('[data-demo="emberlyn-confirm"]');
     if (await confirm.isVisible().catch(() => false)) {
@@ -243,7 +243,7 @@ export async function runScenario(page) {
     await ensureSettlementReady(page);
   });
 
-  playNarration('settlement', 'settlement-report-btn');
+  await playNarration(page, 'settlement', 'settlement-report-btn');
   await step(page, 'Sending settlement to Finance...', async () => {
     await page.waitForTimeout(800);
     const sendBtn = await ensureSettlementReady(page);

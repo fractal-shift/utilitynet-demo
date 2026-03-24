@@ -32,13 +32,13 @@ export async function runScenario(page) {
 
   await showScenarioSummary(page, 'Analytics + Thena: Prescriptive Intelligence', 'The ops lead opens Analytics. We\'ll drill into revenue, export to GL, check compliance tab, run ad-hoc report, then ask Thena about Q2 risks and build a 30-day action plan.');
 
-  playNarration('analytics', 'analytics-overview');
+  await playNarration(page, 'analytics', 'analytics-overview');
   await step(page, 'Navigating to Analytics (Thena mode)...', async () => {
     await clickWithCursor(page, 'nav-analytics');
     await page.waitForTimeout(1000);
   });
 
-  playNarration('analytics', 'analytics-revenue-panel');
+  await playNarration(page, 'analytics', 'analytics-revenue-panel');
   await step(page, 'Drilling into revenue...', async () => {
     await clickWithCursor(page, 'analytics-drill-revenue');
     await page.waitForTimeout(1500);
@@ -49,7 +49,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(1500);
   });
 
-  playNarration('analytics', 'analytics-marketer-panel');
+  await playNarration(page, 'analytics', 'analytics-marketer-panel');
   await step(page, 'Reviewing marketer revenue performance...', async () => {
     await page.evaluate(() => {
       const heading = Array.from(document.querySelectorAll('div')).find(
@@ -83,7 +83,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(1500);
   });
 
-  playNarration('analytics', 'analytics-thena-panel');
+  await playNarration(page, 'analytics', 'analytics-thena-panel');
   await step(page, 'Opening Thena panel...', async () => {
     const thenaToggle = page.locator('[data-demo="thena-toggle"]');
     if (await thenaToggle.isVisible().catch(() => false)) {

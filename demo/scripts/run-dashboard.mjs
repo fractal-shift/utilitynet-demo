@@ -31,22 +31,22 @@ export async function runScenario(page) {
 
   await dismissApiKeyModal(page);
 
-  playNarration('dashboard', 'dashboard-overview');
+  await playNarration(page, 'dashboard', 'dashboard-overview');
   await showScenarioSummary(page, 'Operations Dashboard', 'We\'ll walk through the executive dashboard: KPIs, revenue trend, predictive insights, and today\'s tasks. The dashboard gives leadership a single view of operations.');
 
-  playNarration('dashboard', 'dashboard-kpis');
+  await playNarration(page, 'dashboard', 'dashboard-kpis');
   await step(page, 'Viewing Dashboard KPIs...', async () => {
     await clickWithCursor(page, 'nav-dashboard');
     await page.waitForTimeout(1000);
     await highlightDashboardSection(page, '[data-demo="dashboard-kpis"]', 'Revenue $2.34M MTD (+12.4%). Settlement 98.2% reconciled.');
   });
 
-  playNarration('dashboard', 'dashboard-revenue-trend');
+  await playNarration(page, 'dashboard', 'dashboard-revenue-trend');
   await step(page, 'Reviewing revenue trend...', async () => {
     await highlightDashboardSection(page, '[data-demo="dashboard-revenue-chart"]', '12-month trend shows steady growth; March tracking above forecast.');
   });
 
-  playNarration('dashboard', 'dashboard-predictive');
+  await playNarration(page, 'dashboard', 'dashboard-predictive');
   await step(page, 'Reviewing Late Payment risk card...', async () => {
     await highlightDashboardSection(page, '[data-demo="dashboard-late-payment-card"]', '17 accounts at risk, $41,200 exposure. Emberlyn can draft the outreach instantly.');
     await page.waitForTimeout(1000);
@@ -73,7 +73,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(500);
   });
 
-  playNarration('dashboard', 'dashboard-tasks');
+  await playNarration(page, 'dashboard', 'dashboard-tasks');
   await step(page, 'Navigating to Billing exceptions from task list...', async () => {
     await clickWithCursor(page, 'nav-dashboard');
     await page.waitForTimeout(500);

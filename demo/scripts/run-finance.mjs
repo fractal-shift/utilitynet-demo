@@ -31,7 +31,7 @@ export async function runFinance(page) {
 
   await showScenarioSummary(page, 'Finance Module — GL, AR, AP, GL Remediation', 'Finance leads because UTILITYnet\'s primary pain is GL technical debt from Oracle. We walk the full module, then demonstrate the GL Remediation diagnostic — the feature that proves we understand their problem.');
 
-  playNarration('finance', 'finance-overview');
+  await playNarration(page, 'finance', 'finance-overview');
   await step(page, 'Navigating to Finance...', async () => {
     await clickWithCursor(page, 'nav-finance');
     await page.waitForTimeout(800);
@@ -39,7 +39,7 @@ export async function runFinance(page) {
 
   await showStatus(page, 'Cash position $1.82M. AR at $184K. Two AP items pending approval blocking month-end.');
 
-  playNarration('finance', 'finance-gl-table');
+  await playNarration(page, 'finance', 'finance-gl-table');
   await step(page, 'Viewing General Ledger tab...', async () => {
     await clickWithCursor(page, 'finance-tab-gl');
     await page.waitForTimeout(400);
@@ -88,7 +88,7 @@ export async function runFinance(page) {
     await clickWithCursor(page, 'finance-tab-gl-remediation');
     await page.waitForTimeout(1000);
   });
-  playNarration('finance', 'finance-gl-remediation');
+  await playNarration(page, 'finance', 'finance-gl-remediation');
 
   await showStatus(page, 'Chart health at 58%. Four issues flagged — 1 critical, 2 high, 1 medium. This is the Oracle technical debt made visible.');
 

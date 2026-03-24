@@ -36,7 +36,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(600);
   });
 
-  playNarration('billing', 'billing-import-btn');
+  await playNarration(page, 'billing', 'billing-import-btn');
   await step(page, 'Importing AESO usage data — opening new batch...', async () => {
     await clickWithCursor(page, 'btn-new-batch');
     await page.waitForTimeout(600);
@@ -52,7 +52,7 @@ export async function runScenario(page) {
 
   await showStatus(page, 'AESO pool price feed ingested — 2,847 site-months of metered usage loaded. Batch B-2026-0311 created.');
 
-  playNarration('billing', 'billing-rate-apply');
+  await playNarration(page, 'billing', 'billing-rate-apply');
   await step(page, 'Applying variable energy rate — AESO pool price $4.82/GJ...', async () => {
     await page.evaluate(() => {
       const table = document.querySelector('table');
@@ -63,7 +63,7 @@ export async function runScenario(page) {
 
   await showStatus(page, 'Variable rate applied: AESO pool $4.82/GJ + $0.38/GJ distribution. 2,847 line items priced. Batch total: $1.84M.');
 
-  playNarration('billing', 'billing-hedge-allocation');
+  await playNarration(page, 'billing', 'billing-hedge-allocation');
   await step(page, 'Allocating hedge costs across eligible customers...', async () => {
     await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
     await page.waitForTimeout(800);
@@ -71,7 +71,7 @@ export async function runScenario(page) {
 
   await showStatus(page, 'Hedge allocation complete — $214K distributed across 1,203 fixed-price customers. Net margin protected at 8.4%.');
 
-  playNarration('billing', 'billing-generate-btn');
+  await playNarration(page, 'billing', 'billing-generate-btn');
   await step(page, 'Generating invoices — posting revenue to GL...', async () => {
     await page.evaluate(() => {
       const btn = document.querySelector('[data-demo="btn-post-billing-to-gl"]');
@@ -82,7 +82,7 @@ export async function runScenario(page) {
 
   await showStatus(page, '2,847 invoices generated. Journal Entry JE-2026-0089 created — Revenue Account 4000 credited $1.84M.');
 
-  playNarration('billing', 'billing-exception-flag');
+  await playNarration(page, 'billing', 'billing-exception-flag');
   await step(page, 'Exception detected — usage spike on SITE-20011...', async () => {
     await clickWithCursor(page, 'tab-exceptions');
     await page.waitForTimeout(600);
@@ -115,7 +115,7 @@ export async function runScenario(page) {
     await page.waitForTimeout(800);
   });
 
-  playNarration('billing', 'billing-send-btn');
+  await playNarration(page, 'billing', 'billing-send-btn');
   await step(page, 'Sending clean invoices to customers...', async () => {
     await page.evaluate(() => {
       const tabs = Array.from(document.querySelectorAll('button'));

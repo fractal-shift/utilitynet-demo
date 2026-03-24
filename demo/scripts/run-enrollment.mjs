@@ -31,7 +31,7 @@ export async function runScenario(page) {
 
     await dismissApiKeyModal(page);
 
-    playNarration('enrollment', 'enrollment-start-btn');
+    await playNarration(page, 'enrollment', 'enrollment-start-btn');
     await showScenarioSummary(page, 'New Customer Enrollment', 'We\'ll enroll Heather Mitchell as a new residential customer: enter details, run credit check, select a Variable plan, and complete PAD setup. The partner marketer (NRG Direct) is notified automatically.');
 
     await step(page, 'Navigating to Customers...', async () => {
@@ -41,7 +41,7 @@ export async function runScenario(page) {
       await clickWithCursor(page, 'btn-new-enrollment');
     });
 
-    playNarration('enrollment', 'enrollment-customer-form');
+    await playNarration(page, 'enrollment', 'enrollment-customer-form');
     await step(page, 'Entering customer details: Heather Mitchell...', async () => {
       await page.fill('[data-demo="enrollment-firstName"]', 'Heather');
       await page.fill('[data-demo="enrollment-lastName"]', 'Mitchell');
@@ -51,7 +51,7 @@ export async function runScenario(page) {
       await page.click('[data-demo="enrollment-continue-1"]');
     });
 
-    playNarration('enrollment', 'enrollment-credit-check');
+    await playNarration(page, 'enrollment', 'enrollment-credit-check');
     await step(page, 'Running credit check...', async () => {
       await page.click('[data-demo="enrollment-run-credit"]');
       await page.waitForTimeout(2000);
@@ -61,17 +61,17 @@ export async function runScenario(page) {
       await page.click('[data-demo="enrollment-continue-2"]');
     });
 
-    playNarration('enrollment', 'enrollment-plan-select');
+    await playNarration(page, 'enrollment', 'enrollment-plan-select');
     await step(page, 'Selecting Variable plan. Continuing to banking...', async () => {
       await page.click('[data-demo="enrollment-continue-3"]');
     });
 
-    playNarration('enrollment', 'enrollment-banking-form');
+    await playNarration(page, 'enrollment', 'enrollment-banking-form');
     await step(page, 'PAD setup complete. Continuing to confirm...', async () => {
       await page.click('[data-demo="enrollment-continue-4"]');
     });
 
-    playNarration('enrollment', 'enrollment-approve-btn');
+    await playNarration(page, 'enrollment', 'enrollment-approve-btn');
     await step(page, 'Enrolling customer...', async () => {
       await page.click('[data-demo="enrollment-submit"]');
       await page.waitForTimeout(3000);
@@ -80,13 +80,13 @@ export async function runScenario(page) {
     await showStatus(page, 'Enrollment complete!');
 
     // Second act: credit failure scenario
-    playNarration('enrollment', 'enrollment-credit-fail');
+    await playNarration(page, 'enrollment', 'enrollment-credit-fail');
     await step(page, 'Switching to credit-fail scenario...', async () => {
       await setMockScenario('credit-fail');
       await page.waitForTimeout(500);
     });
 
-    playNarration('enrollment', 'enrollment-credit-check');
+    await playNarration(page, 'enrollment', 'enrollment-credit-check');
     await step(page, 'Opening new enrollment (credit fail path)...', async () => {
       await clickWithCursor(page, 'btn-new-enrollment');
       await page.waitForTimeout(600);
@@ -104,13 +104,13 @@ export async function runScenario(page) {
       await page.click('[data-demo="enrollment-continue-1"]').catch(() => {});
     });
 
-    playNarration('enrollment', 'enrollment-banking-form');
+    await playNarration(page, 'enrollment', 'enrollment-banking-form');
     await step(page, 'Running credit check (expect declined)...', async () => {
       await page.click('[data-demo="enrollment-run-credit"]').catch(() => {});
       await page.waitForTimeout(2000);
     });
 
-    playNarration('enrollment', 'enrollment-approve-btn');
+    await playNarration(page, 'enrollment', 'enrollment-approve-btn');
     await step(page, 'Selecting require deposit option...', async () => {
       const depositBtn = page.locator('[data-demo="btn-require-deposit"]');
       if (await depositBtn.isVisible().catch(() => false)) await depositBtn.click();

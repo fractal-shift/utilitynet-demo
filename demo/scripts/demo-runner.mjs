@@ -8,10 +8,10 @@
  * - createDemoContext(): injects API key from apiKey.js so Emberlyn/Thena use real Claude
  */
 
-import { execSync } from 'child_process';
 import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { TUTORIAL_SCENARIOS } from '../src/data/tutorial-scenarios.js';
 
 const _dirname = dirname(fileURLToPath(import.meta.url));
 import os from 'os';
@@ -315,20 +315,36 @@ export async function dismissApiKeyModal(page) {
   }
 }
 
-const AUDIO_BASE = join(_dirname, '../public/audio');
-
 /**
- * Play a narration audio file via macOS afplay and block until done.
- * Silently skips if the file is missing or afplay fails.
- * @param {string} scenarioId - Subfolder under public/audio (e.g. 'enrollment')
- * @param {string} stepId     - Filename without extension (e.g. 'enrollment-start-btn')
+ * Show narration text as an on-screen overlay instead of playing audio.
+ * Reads text from tutorial-scenarios.js, posts to the app via postMessage,
+ * waits for read time, then clears.
+ * @param {import('playwright').Page} page
+ * @param {string} scenarioId - Scenario id (e.g. 'enrollment')
+ * @param {string} stepId     - Step id (e.g. 'enrollment-start-btn')
  */
-export function playNarration(scenarioId, stepId) {
-  const audioFile = join(AUDIO_BASE, scenarioId, `${stepId}.mp3`);
-  try {
-    // afplay is macOS built-in — plays audio and blocks until done
-    execSync(`afplay "${audioFile}"`, { stdio: 'ignore' });
-  } catch {
-    console.warn(`[Narration] Could not play ${scenarioId}/${stepId}.mp3`);
+export async function playNarration(page, scenarioId, stepId) {
+  const scenario = TUTORIAL_SCENARIOS.find((s) => s.id === scenarioId);
+  const step = scenario?.steps?.find((s) => s.id === stepId);
+  const text = step?.narration;
+
+  if (!text) {
+    console.warn(`[Narration] No text found for ${scenarioId}/${stepId}`);
+    return;
   }
+
+  console.log(`[Narration] ${stepId}: ${text.slice(0, 80)}...`);
+
+  await page.evaluate((narrationText) => {
+    window.postMessage({ type: 'demo-narration', text: narrationText }, '*');
+  }, text);
+
+  // avg 150 words/min for demo pacing, minimum 3s
+  const words = text.split(' ').length;
+  const readMs = Math.max(3000, Math.round((words / 150) * 60 * 1000));
+  await page.waitForTimeout(readMs);
+
+  await page.evaluate(() => {
+    window.postMessage({ type: 'demo-narration', text: null }, '*');
+  });
 }

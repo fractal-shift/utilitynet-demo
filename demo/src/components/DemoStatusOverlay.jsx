@@ -60,19 +60,22 @@ function HighlightOverlay({ selector, conclusion }) {
 }
 
 /**
- * Displays status text, scenario summary, visible demo cursor, and highlight overlay during Playwright automation.
+ * Displays status text, scenario summary, visible demo cursor, highlight overlay,
+ * and narration text overlay during Playwright automation.
  * Listens for postMessage:
  * - demo-status: { status: string }
  * - demo-summary: { title: string, description: string }
  * - demo-cursor: { x: number, y: number, action: 'move' | 'click' }
  * - demo-highlight: { selector: string, conclusion?: string, durationMs?: number }
  * - demo-highlight-clear
+ * - demo-narration: { text: string | null }
  */
 export default function DemoStatusOverlay() {
   const [status, setStatus] = useState('');
   const [summary, setSummary] = useState(null);
   const [cursor, setCursor] = useState(null);
   const [highlight, setHighlight] = useState(null);
+  const [narration, setNarration] = useState(null);
   const cursorRef = useRef(null);
   const highlightTimeoutRef = useRef(null);
 
@@ -95,6 +98,8 @@ export default function DemoStatusOverlay() {
         setHighlight({ selector: d.selector || '', conclusion: d.conclusion || '', durationMs: d.durationMs ?? 4000 });
       } else if (d.type === 'demo-highlight-clear') {
         setHighlight(null);
+      } else if (d.type === 'demo-narration') {
+        setNarration(d.text || null);
       }
     };
     window.addEventListener('message', handler);
@@ -183,6 +188,23 @@ export default function DemoStatusOverlay() {
         </div>
       )}
       {highlight && <HighlightOverlay selector={highlight.selector} conclusion={highlight.conclusion} />}
+      {narration && (
+        <div
+          className="fixed bottom-6 left-1/2 z-[400] w-[720px] max-w-[90vw] -translate-x-1/2 rounded-xl px-6 py-4"
+          style={{
+            background: 'rgba(4,84,119,0.95)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.15)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.4)',
+            fontFamily: 'var(--font-ui)',
+          }}
+        >
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 text-[16px]">🎙</div>
+            <p className="text-[13px] leading-relaxed font-medium" style={{ color: '#ffffff' }}>{narration}</p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
