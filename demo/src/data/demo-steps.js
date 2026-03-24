@@ -110,7 +110,7 @@ export const DEMO_SCENARIOS = [
       { type: 'click', target: 'emberlyn-close', label: 'Closing Emberlyn' },
       { type: 'wait', ms: 500 },
       { type: 'navigate', target: 'nav-billing' },
-      { type: 'summary', title: "2,847 invoices. One exception caught and resolved.", text: "Our billing engine is deeply embedded with AI to accelerate every step — automated ingestion, real-time pricing, exception detection, and resolution. The batch ships clean every time." },
+      { type: 'summary', title: "Billing that runs itself — and handles the unexpected.", text: "Our platform is deeply embedded with AI to accelerate the entire billing cycle. Automated ingestion, real-time pricing, hedge allocation, GL posting, and exception resolution — all in a single workflow. Emberlyn works alongside Sarah to catch what the batch can't, so every invoice that ships is correct." },
     ],
   },
   {
@@ -214,7 +214,7 @@ export const DEMO_SCENARIOS = [
       { type: 'click', target: 'thena-toggle' },
       { type: 'wait', ms: 500 },
       { type: 'navigate', target: 'nav-analytics' },
-      { type: 'summary', title: "Board-ready analytics. Built in a conversation.", text: "Our platform gives leadership direct access to the intelligence inside their operational data — through Thena, our analytics AI partner. The analysis that used to require a team and a week is now a conversation that takes minutes." },
+      { type: 'summary', title: "Board-ready analytics. Built in a conversation.", text: "Our platform gives leadership direct access to the intelligence inside their operational data — through Thena, our analytics AI partner. Drill-down revenue analysis, churn risk modeling, compliance reporting, and ad-hoc queries — all in a single conversation, with live data behind every answer." },
     ],
   },
   {
