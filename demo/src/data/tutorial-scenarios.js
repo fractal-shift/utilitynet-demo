@@ -17,7 +17,7 @@ export const TUTORIAL_SCENARIOS = [
         title: 'Dashboard Overview',
         demoTarget: 'nav-dashboard',
         narration:
-          "Sarah opens her dashboard before her first meeting. She didn't run a report — Emberlyn analyzed overnight activity and surfaced what matters. Everything she needs to start her day is already here.",
+          "Sarah opens her dashboard before her first meeting. She didn't run a report — Emberlyn, her AI companion, analyzed overnight activity and surfaced what matters. Everything she needs to start her day is already here.",
       },
       {
         id: 'dashboard-kpis',
