@@ -11,6 +11,7 @@ export default function DemoPlayer() {
   const [paused, setPaused] = useState(false);
   const pausedRef = useRef(false);
   const cancelRef = useRef(false);
+  const stepIndexRef = useRef(0);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -195,6 +196,7 @@ export default function DemoPlayer() {
       for (let i = startIndex; i < scenario.steps.length; i++) {
         if (cancelRef.current) break;
         setStepIndex(i);
+        stepIndexRef.current = i;
         await executeStep(scenario.steps[i]);
       }
 
@@ -228,18 +230,34 @@ export default function DemoPlayer() {
     setPaused(false);
     setPlaying(false);
     setStepIndex(0);
+    stepIndexRef.current = 0;
     window.postMessage({ type: 'demo-status', status: '' }, '*');
     window.postMessage({ type: 'demo-narration', text: null }, '*');
     window.postMessage({ type: 'demo-role', role: null }, '*');
   };
 
-  const handleNext = () => {
-    if (stepIndex < (scenario?.steps?.length ?? 0) - 1)
-      setStepIndex((i) => i + 1);
+  const handleNext = async () => {
+    const next = Math.min(stepIndex + 1, (scenario?.steps?.length ?? 1) - 1);
+    setStepIndex(next);
+    stepIndexRef.current = next;
+    if (playing) {
+      cancelRef.current = true;
+      await sleep(100);
+      cancelRef.current = false;
+      runFrom(next);
+    }
   };
 
-  const handlePrev = () => {
-    if (stepIndex > 0) setStepIndex((i) => i - 1);
+  const handlePrev = async () => {
+    const prev = Math.max(stepIndex - 1, 0);
+    setStepIndex(prev);
+    stepIndexRef.current = prev;
+    if (playing) {
+      cancelRef.current = true;
+      await sleep(100);
+      cancelRef.current = false;
+      runFrom(prev);
+    }
   };
 
   if (!visible) return null;
@@ -323,7 +341,7 @@ export default function DemoPlayer() {
               : 'var(--muted)',
           }}
         >
-          {playing ? (paused ? '⏸ Paused' : '● Playing') : '○ Ready'}
+          {playing ? (paused ? '⏸ Paused' : '▶ Running') : '○ Ready'}
         </span>
       </div>
 
@@ -332,7 +350,6 @@ export default function DemoPlayer() {
         <button
           type="button"
           onClick={handlePrev}
-          disabled={playing && !paused}
           className="rounded-lg px-2 py-1.5 text-[12px]"
           style={{
             background: 'var(--s2)',
@@ -370,7 +387,6 @@ export default function DemoPlayer() {
         <button
           type="button"
           onClick={handleNext}
-          disabled={playing && !paused}
           className="rounded-lg px-2 py-1.5 text-[12px]"
           style={{
             background: 'var(--s2)',
