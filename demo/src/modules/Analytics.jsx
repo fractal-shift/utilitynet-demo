@@ -73,6 +73,7 @@ export default function Analytics({ onOpenThena, showToast }) {
         </div>
       </div>
 
+      {tab === 'overview' && (<>
       {/* Descriptive */}
       <div className="mb-9">
         <div className="mb-4 flex items-center gap-3">
@@ -290,6 +291,7 @@ export default function Analytics({ onOpenThena, showToast }) {
           </div>
         </div>
       </div>
+      </>)}
 
       {/* Compliance tab */}
       {tab === 'compliance' && (
