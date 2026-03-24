@@ -180,15 +180,6 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
           <span className="rounded border px-3 py-1.5 text-[12px] font-medium" style={{ borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
             Month-End: March 2026 ▾
           </span>
-          <button
-            type="button"
-            data-demo="btn-emberlyn-finance"
-            onClick={() => onOpenEmberlyn('finance')}
-            className="rounded-lg px-4 py-2 text-[13px] font-medium transition"
-            style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}
-          >
-            ✦ Emberlyn Assist
-          </button>
         </div>
       </div>
 

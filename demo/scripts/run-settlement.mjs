@@ -257,6 +257,9 @@ export async function runScenario(page) {
   });
 
   await showStatus(page, 'Settlement exception resolved and sent to Finance!');
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Settlement Complete — 52 marketer feeds reconciled. AltaGas $1,640 variance identified, traced to site level, dispute drafted, resolved. Journal entry posted to Finance automatically. No email chain. No spreadsheet. One workflow.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 

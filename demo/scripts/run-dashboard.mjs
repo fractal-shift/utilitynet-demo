@@ -60,6 +60,9 @@ export async function runScenario(page) {
   });
 
   await showStatus(page, 'Dashboard scenario complete!');
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Operations Dashboard — $2.34M revenue live. 14,291 customers. 52 marketer partners. 17 risks flagged proactively. No report to run. No spreadsheet to refresh. Leadership has the full picture in one view.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 

@@ -49,10 +49,9 @@ export async function runFinance(page) {
 
   await step(page, 'Clicking Post Journal Entry...', async () => {
     await clickWithCursor(page, 'btn-post-journal');
-    await page.waitForTimeout(800);
-    // Confirm the journal entry to close the modal before continuing
+    await page.waitForTimeout(1500);
     await clickWithCursor(page, 'btn-confirm-journal');
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(1000);
   });
 
   await showStatus(page, 'Journal entry created. Full audit trail captured automatically.');
@@ -85,11 +84,11 @@ export async function runFinance(page) {
 
   await showStatus(page, 'Bank reconciliation: RBC $1.82M matches GL $1.82M. Zero variance. February close confirmed.');
 
-  playNarration('finance', 'finance-gl-remediation');
   await step(page, 'Opening GL Remediation tab...', async () => {
     await clickWithCursor(page, 'finance-tab-gl-remediation');
-    await page.waitForTimeout(600);
+    await page.waitForTimeout(1000);
   });
+  playNarration('finance', 'finance-gl-remediation');
 
   await showStatus(page, 'Chart health at 58%. Four issues flagged — 1 critical, 2 high, 1 medium. This is the Oracle technical debt made visible.');
 
@@ -139,13 +138,13 @@ export async function runFinance(page) {
 
   await showStatus(page, 'Three remediations applied. Chart health updated. HEDGE-OLD remains flagged for Controller review — the $42K balance requires a journal entry before it can be retired.');
 
-  await step(page, 'Opening Emberlyn Assist...', async () => {
-    await clickWithCursor(page, 'btn-emberlyn-finance');
+  await step(page, 'Opening Emberlyn...', async () => {
+    await clickWithCursor(page, 'emberlyn-toggle');
     await page.waitForTimeout(800);
   });
 
   await step(page, 'Asking Emberlyn about the remaining GL issue...', async () => {
-    const input = page.locator('[data-demo="emberlyn-input"]').first();
+    const input = page.locator('[data-demo="emberlyn-input"], textarea[placeholder="Ask Emberlyn..."]').first();
     await input.fill('The HEDGE-OLD balance is still open — what do we need to do to close it?');
     await input.press('Enter');
     await page.waitForTimeout(500);
@@ -154,7 +153,9 @@ export async function runFinance(page) {
   await scrollReadEmberlynResponse(page);
 
   await showStatus(page, 'Emberlyn identifies the journal entry needed, drafts the approach, offers to generate it. Finance close is unblocked.');
-
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Finance Complete — GL remediation reduced technical debt from 42% to 10%. AP approved. AR aging monitored. Month-end on track. Every transaction traced, every entry audited. This is Finance the way it should work.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 

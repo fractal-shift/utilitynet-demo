@@ -126,6 +126,9 @@ export async function runScenario(page) {
   });
 
   await showStatus(page, 'Batch B-2026-0311 complete — 2,847 invoices distributed. All exceptions resolved. Revenue posted to GL.');
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Billing Complete — 2,847 invoices. $1.84M revenue. 3 exceptions caught and resolved without holding the batch. Hedge costs allocated. GL posted automatically. What used to take 3 days took 4 minutes.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 

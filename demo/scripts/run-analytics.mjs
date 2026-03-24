@@ -127,6 +127,9 @@ export async function runScenario(page) {
   });
 
   await showStatus(page, 'Analytics flow complete — drill, GL export, compliance, ad-hoc, Thena!');
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Analytics Complete — Revenue drill-down to invoice level. Churn risk modeled. Late payment exposure quantified. Compliance reports generated. Ad-hoc queries answered in seconds. Thena turns your data into decisions — no analyst required.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 

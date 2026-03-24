@@ -113,6 +113,9 @@ export async function runScenario(page) {
   });
 
   await showStatus(page, 'Marketer flow complete — margin, statement, commissions, onboarded!');
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Marketers Complete — 52 partner channels managed. Margins configured. Commissions calculated and posted automatically. Cash calls tracked. Monthly statements generated. NRG Direct at $841K — every dollar accounted for without a single email to Finance.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 

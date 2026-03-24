@@ -650,6 +650,7 @@ export default function EmerlynPanel({ isOpen, onClose, onToggle, context, sugge
             >
               <textarea
                 ref={textareaRef}
+                data-demo="emberlyn-input"
                 value={input}
                 onChange={(e) => {
                   setInput(e.target.value);

@@ -127,6 +127,9 @@ export async function runScenario(page) {
     });
 
     await showStatus(page, 'Enrollment scenario with credit-fail path complete.');
+    await page.waitForTimeout(2000);
+    await showStatus(page, '✦ Enrollment Complete — New customer enrolled in under 2 minutes. Credit checked, plan selected, banking captured, meter read scheduled. Credit-fail path handled automatically. What used to take 3 days of handoffs is now a single workflow.');
+    await page.waitForTimeout(5000);
     await clearStatus(page);
 }
 

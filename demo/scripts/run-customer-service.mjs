@@ -67,6 +67,9 @@ export async function runScenario(page) {
   });
 
   await showStatus(page, 'Customer Service flow complete!');
+  await page.waitForTimeout(2000);
+  await showStatus(page, '✦ Customer Service Complete — Billing dispute received, investigated, drafted response, case updated, credit memo created in Finance. 90 seconds. No hold music. No escalation. No switching systems. Emberlyn handled the investigation — your team handled the relationship.');
+  await page.waitForTimeout(5000);
   await clearStatus(page);
 }
 
