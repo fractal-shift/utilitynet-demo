@@ -19,6 +19,7 @@ import BillingBatchModal from './BillingBatchModal';
 import Customer360Modal from './Customer360Modal';
 import OnboardMarketerModal from './OnboardMarketerModal';
 import ScenarioPanel from './ScenarioPanel';
+import DemoPlayer from './DemoPlayer';
 import { exportTableToCsv } from '../utils/exportCsv';
 import { executeCreateBillingBatch } from '../ai/intentActions';
 
@@ -302,6 +303,7 @@ export default function Layout({ apiKey }) {
       <Customer360Modal customer={customer360Customer} isOpen={!!customer360Customer} onClose={() => setCustomer360Customer(null)} onOpenEmberlyn={(ctx) => { setEmberlynOpen(true); setEmberlynSuggestionContext(ctx || 'default'); setCustomer360Customer(null); }} showToast={showToast} />
       <OnboardMarketerModal isOpen={onboardMarketerModalOpen} onClose={() => setOnboardMarketerModalOpen(false)} />
       <ScenarioPanel isOpen={scenarioPanelOpen} onClose={() => setScenarioPanelOpen(false)} />
+      <DemoPlayer />
       {toast && (
         <div className="fixed bottom-24 left-1/2 z-[300] -translate-x-1/2 rounded-lg px-4 py-2 text-[13px] font-medium" style={{ background: 'var(--surface)', border: '1px solid var(--gold-bdr)', color: 'var(--gold)', fontFamily: 'var(--font-ui)', boxShadow: 'var(--card-shadow)' }}>
           {toast}

@@ -803,6 +803,28 @@ Added data-demo="thena-input" to the Thena input element. Playwright scripts can
 
 ---
 
+### F-021: In-App JavaScript Demo Player
+**Status: COMPLETE**
+**Files:** src/components/DemoPlayer.jsx (new), src/data/demo-steps.js (new), src/components/Layout.jsx
+
+Replace Playwright as the demo presentation runner with a pure JavaScript player that runs inside the app. Playwright scripts remain for CI validation only.
+
+Architecture:
+- demo-steps.js: step sequences for all 9 scenarios. Each step has a type (navigate, highlight, narration, click, wait, role, emberlyn-open, emberlyn-ask, status) and a payload.
+- DemoPlayer.jsx: floating control bar — scenario selector, play/pause/next/prev/stop, step counter, current narration preview. Visible at ?demo=1 or Ctrl+Shift+D.
+- useDemoPlayer hook inside DemoPlayer: executes steps by posting postMessages to the app (same system already used by DemoStatusOverlay). No Playwright, no terminal, no external process.
+
+Key behaviors:
+- One browser window stays open the entire demo
+- Pause anytime for Q&A — presenter takes manual control
+- Resume from where you left off
+- Next/prev step for granular control
+- Role badge updates automatically per scenario
+- Narration overlay shows at the right moment per step
+- Works offline, no API dependencies
+
+---
+
 ## T3 Features — Demo Polish
 
 ---
