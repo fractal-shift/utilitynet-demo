@@ -275,12 +275,14 @@ export default function Layout({ apiKey }) {
           />
         )}
       </div>
-      <AldenPanel
-        isOpen={aldenOpen}
-        onClose={() => setAldenOpen(false)}
-        onToggle={() => setAldenOpen((o) => !o)}
-        apiKey={apiKey}
-      />
+      {currentModule === 'admin' && (
+        <AldenPanel
+          isOpen={aldenOpen}
+          onClose={() => setAldenOpen(false)}
+          onToggle={() => setAldenOpen((o) => !o)}
+          apiKey={apiKey}
+        />
+      )}
       <EnrollmentModal isOpen={enrollmentModalOpen} onClose={() => setEnrollmentModalOpen(false)} showToast={showToast} />
       <BillingBatchModal isOpen={billingBatchModalOpen} onClose={() => setBillingBatchModalOpen(false)} />
       <Customer360Modal customer={customer360Customer} isOpen={!!customer360Customer} onClose={() => setCustomer360Customer(null)} onOpenEmberlyn={(ctx) => { setEmberlynOpen(true); setEmberlynSuggestionContext(ctx || 'default'); setCustomer360Customer(null); }} showToast={showToast} />
