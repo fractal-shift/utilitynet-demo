@@ -1,6 +1,13 @@
+const RESPONSE_LENGTH_RULE =
+  'RESPONSE LENGTH RULE: Keep all responses under 80 words. Lead with the key point in one sentence. One or two supporting sentences maximum. End with a single short question if follow-up would help. Think: a sharp colleague giving a quick answer in a hallway, not a consultant writing a report.';
+
 export async function streamClaude({ systemPrompt, messages, onChunk, onDone, apiKey }) {
   const key = apiKey?.trim();
   if (!key) throw new Error('No API key provided. Add VITE_CLAUDE_API_KEY to .env or enter in modal.');
+
+  const fullSystemPrompt = systemPrompt
+    ? `${systemPrompt}\n\n${RESPONSE_LENGTH_RULE}`
+    : RESPONSE_LENGTH_RULE;
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -12,9 +19,9 @@ export async function streamClaude({ systemPrompt, messages, onChunk, onDone, ap
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-5',
-      max_tokens: 1024,
+      max_tokens: 300,
       stream: true,
-      system: systemPrompt,
+      system: fullSystemPrompt,
       messages,
     }),
   });

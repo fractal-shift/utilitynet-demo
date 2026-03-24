@@ -39,20 +39,20 @@ export default function DemoPlayer() {
 
       case 'navigate':
         document.querySelector(`[data-demo="${step.target}"]`)?.click();
-        await sleep(600);
+        await sleep(1500);
         break;
 
       case 'click':
         document
           .querySelector(`[data-demo="${step.target}"]`)
           ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        await sleep(400);
+        await sleep(800);
         break;
 
       case 'narration': {
         post({ type: 'demo-narration', text: step.text });
         const words = step.text.split(' ').length;
-        const ms = Math.max(3000, Math.round((words / 130) * 60 * 1000));
+        const ms = Math.max(4000, Math.round((words / 100) * 60 * 1000));
         await sleep(ms);
         post({ type: 'demo-narration', text: null });
         break;
@@ -63,14 +63,14 @@ export default function DemoPlayer() {
           type: 'demo-highlight',
           selector: step.selector,
           conclusion: step.conclusion,
-          durationMs: step.durationMs || 4000,
+          durationMs: step.durationMs || 5000,
         });
-        await sleep(step.durationMs || 4000);
+        await sleep(step.durationMs || 5000);
         break;
 
       case 'status':
         post({ type: 'demo-status', status: step.text });
-        await sleep(4000);
+        await sleep(5000);
         break;
 
       case 'wait':
@@ -81,7 +81,7 @@ export default function DemoPlayer() {
         document
           .querySelector('[data-demo="emberlyn-toggle"]')
           ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        await sleep(800);
+        await sleep(1200);
         break;
 
       case 'emberlyn-ask': {
@@ -104,7 +104,7 @@ export default function DemoPlayer() {
 
       case 'summary':
         post({ type: 'demo-summary', title: step.title, description: step.text });
-        await sleep(6000);
+        await sleep(8000);
         break;
 
       default:
