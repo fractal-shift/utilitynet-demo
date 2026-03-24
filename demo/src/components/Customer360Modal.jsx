@@ -32,7 +32,7 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
             <div className="font-bold text-[18px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Customer 360 — {customer.name}</div>
             <div className="mt-1 text-[10px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{customer.id} · {customer.type} · Active since {customer.since}</div>
           </div>
-          <button type="button" onClick={onClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
+          <button type="button" data-demo="customer360-close" onClick={onClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
         </div>
 
         <div className="mb-5 flex gap-0.5 border-b" style={{ borderColor: 'var(--border)' }}>

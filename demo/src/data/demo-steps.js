@@ -261,7 +261,7 @@ export const DEMO_SCENARIOS = [
       { type: 'narration', text: "Sarah applies the credit adjustment. The change propagates automatically to Finance AR — Account 1100 updated. No manual entry. No email to accounting." },
       { type: 'click', target: 'crm-billing-link', label: 'Applying credit to account' },
       { type: 'wait', ms: 1500 },
-      { type: 'click', target: 'enrollment-close', label: 'Closing Customer 360' },
+      { type: 'click', target: 'customer360-close', label: 'Closing Customer 360' },
       { type: 'wait', ms: 800 },
       { type: 'navigate', target: 'nav-finance' },
       { type: 'wait', ms: 800 },
