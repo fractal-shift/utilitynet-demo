@@ -5,11 +5,40 @@ import { TUTORIAL_SCENARIOS } from '../src/data/tutorial-scenarios.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUTPUT_BASE = path.join(__dirname, '../public/audio');
-const API_KEY = process.env.ELEVENLABS_API_KEY;
-const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
+
+function loadEnvFile(envPath) {
+  if (!fs.existsSync(envPath)) return;
+
+  const content = fs.readFileSync(envPath, 'utf8');
+  for (const rawLine of content.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith('#')) continue;
+
+    const eqIndex = line.indexOf('=');
+    if (eqIndex === -1) continue;
+
+    const key = line.slice(0, eqIndex).trim();
+    if (!key || process.env[key] !== undefined) continue;
+
+    let value = line.slice(eqIndex + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+
+    process.env[key] = value;
+  }
+}
+
+loadEnvFile(path.join(__dirname, '../.env'));
+
+const API_KEY = process.env.ELEVENLABS_API_KEY || process.env.VITE_ELEVENLABS_API_KEY;
+const VOICE_ID = process.env.ELEVENLABS_VOICE_ID || process.env.VITE_ELEVENLABS_VOICE_ID || '21m00Tcm4TlvDq8ikWAM';
 
 if (!API_KEY) {
-  console.error('ELEVENLABS_API_KEY not set in .env');
+  console.error('ELEVENLABS_API_KEY or VITE_ELEVENLABS_API_KEY not set in .env');
   process.exit(1);
 }
 
