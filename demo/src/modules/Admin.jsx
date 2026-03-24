@@ -38,6 +38,7 @@ export default function Admin({ onOpenAlden }) {
         <button type="button" data-demo="admin-tab-integrations" onClick={() => setTab('integrations')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'integrations' ? '' : 'opacity-70'}`} style={{ background: tab === 'integrations' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'integrations' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Integrations</button>
         <button type="button" data-demo="admin-tab-ops-console" onClick={() => setTab('ops-console')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'ops-console' ? '' : 'opacity-70'}`} style={{ background: tab === 'ops-console' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'ops-console' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Operations Console</button>
         <button type="button" data-demo="admin-tab-security" onClick={() => setTab('security')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'security' ? '' : 'opacity-70'}`} style={{ background: tab === 'security' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'security' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Security</button>
+        <button type="button" data-demo="admin-tab-users" onClick={() => setTab('users')} className={`rounded-lg px-3 py-1.5 text-[12px] font-medium ${tab === 'users' ? '' : 'opacity-70'}`} style={{ background: tab === 'users' ? 'var(--teal-dim)' : 'var(--s2)', borderColor: tab === 'users' ? 'var(--teal)' : 'var(--border)', border: '1px solid', color: 'var(--text)' }}>Users & Roles</button>
       </div>
       {tab === 'integrations' && (
         <div className="rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
@@ -210,6 +211,78 @@ export default function Admin({ onOpenAlden }) {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+      {tab === 'users' && (
+        <div className="space-y-6">
+          <div>
+            <div className="mb-2 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Role Definitions</div>
+            <div data-demo="admin-roles-table" className="rounded-xl border overflow-hidden" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <table className="w-full text-left text-[12px]">
+                <thead>
+                  <tr className="border-b" style={{ borderColor: 'var(--border)', background: 'var(--s2)' }}>
+                    {['ROLE', 'ACCESS LEVEL', 'MODULES', 'APPROVAL RIGHTS'].map(h => (
+                      <th key={h} className="px-4 py-2.5 text-[10px] font-semibold" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { role: 'System Administrator', level: 'Full Access', modules: 'All modules', approvals: 'All' },
+                    { role: 'Financial Controller', level: 'Finance + Read All', modules: 'Finance, Analytics, Admin (read)', approvals: 'AP, Journal Entries, Month-End' },
+                    { role: 'Billing Manager', level: 'Billing + Finance Read', modules: 'Billing, Settlement, Finance (read)', approvals: 'Batch Release, Exception Override' },
+                    { role: 'Settlement Analyst', level: 'Settlement + Read', modules: 'Settlement, Finance (read)', approvals: 'Variance Dispute' },
+                    { role: 'Channel Manager', level: 'Marketers + Read', modules: 'Marketers, Customers (read)', approvals: 'Margin Changes, Statement Release' },
+                    { role: 'Customer Operations', level: 'CRM + Enrollment', modules: 'Customers, Enrollment', approvals: 'Credit Override (with supervisor)' },
+                    { role: 'Customer Service Rep', level: 'CRM Read + Cases', modules: 'Customers (read), Cases', approvals: 'Credit Memos up to $500' },
+                    { role: 'Energy Marketer (Partner)', level: 'Portal Only', modules: 'Own customers only', approvals: 'None' },
+                  ].map((r, i) => (
+                    <tr key={i} className="border-b" style={{ borderColor: 'var(--border)' }}>
+                      <td className="px-4 py-3 font-semibold text-[12px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{r.role}</td>
+                      <td className="px-4 py-3"><span className="rounded px-2 py-0.5 text-[10px] font-medium" style={{ background: 'rgba(22,120,160,0.1)', color: 'var(--teal)', fontFamily: 'var(--font-mono)' }}>{r.level}</span></td>
+                      <td className="px-4 py-3 text-[11px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{r.modules}</td>
+                      <td className="px-4 py-3 text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>{r.approvals}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <div className="mb-2 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Active Users</div>
+            <div data-demo="admin-users-table" className="rounded-xl border overflow-hidden" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}>
+              <table className="w-full text-left text-[12px]">
+                <thead>
+                  <tr className="border-b" style={{ borderColor: 'var(--border)', background: 'var(--s2)' }}>
+                    {['USER', 'ROLE', 'LAST LOGIN', 'MFA', 'STATUS'].map(h => (
+                      <th key={h} className="px-4 py-2.5 text-[10px] font-semibold" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { name: 'Sarah M.', email: 'sarah.m@utilitynet.ca', role: 'System Administrator', lastLogin: 'Today, 8:47 AM', mfa: true },
+                    { name: 'Chris T.', email: 'chris.t@utilitynet.ca', role: 'Financial Controller', lastLogin: 'Today, 9:02 AM', mfa: true },
+                    { name: 'Jordan K.', email: 'jordan.k@utilitynet.ca', role: 'Billing Manager', lastLogin: 'Today, 8:55 AM', mfa: true },
+                    { name: 'Priya N.', email: 'priya.n@utilitynet.ca', role: 'Settlement Analyst', lastLogin: 'Yesterday, 4:31 PM', mfa: true },
+                    { name: 'Marcus W.', email: 'marcus.w@utilitynet.ca', role: 'Customer Operations', lastLogin: 'Today, 9:14 AM', mfa: true },
+                    { name: 'NRG Direct Portal', email: 'portal@nrgdirect.ca', role: 'Energy Marketer (Partner)', lastLogin: 'Today, 7:22 AM', mfa: false },
+                  ].map((u, i) => (
+                    <tr key={i} className="border-b" style={{ borderColor: 'var(--border)' }}>
+                      <td className="px-4 py-3">
+                        <div className="font-semibold text-[12px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>{u.name}</div>
+                        <div className="text-[10px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{u.email}</div>
+                      </td>
+                      <td className="px-4 py-3 text-[11px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{u.role}</td>
+                      <td className="px-4 py-3 text-[11px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{u.lastLogin}</td>
+                      <td className="px-4 py-3 text-[11px]" style={{ color: u.mfa ? 'var(--success)' : 'var(--warning)' }}>{u.mfa ? '✓ Enabled' : '⚠ Exempt'}</td>
+                      <td className="px-4 py-3"><span className="rounded px-2 py-0.5 text-[10px] font-medium" style={{ background: 'rgba(39,174,96,0.1)', color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>Active</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
