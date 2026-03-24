@@ -79,7 +79,7 @@ export const TUTORIAL_SCENARIOS = [
         id: 'finance-gl-remediation',
         title: 'GL Remediation Scan',
         demoTarget: 'finance-tab-gl-remediation',
-        narration: "GL Remediation surfaces what's been hiding in the Oracle system for years. Chart health at 58%. Four issues — one critical. Sarah can see the debt, understand it, and fix it. For the first time.",
+        narration: "GL Remediation surfaces the chart of accounts issues that have been accumulating undetected. Chart health at 58%. Four issues — one critical. Sarah can see the GL code debt, understand it, and fix it. For the first time.",
       },
       {
         id: 'finance-gl-detail',
