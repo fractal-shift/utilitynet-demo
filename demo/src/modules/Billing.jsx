@@ -23,6 +23,14 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
     setPostingToGL(true);
     setTimeout(() => {
       actions.postBillingToGL('Mar 11, 2026');
+      actions.addPendingJournalEntry({
+        id: 'JE-2026-0089',
+        account: '4000 — Energy Revenue',
+        description: 'Billing batch posted to General Ledger',
+        credit: '$1,841,233',
+        status: 'Posted',
+        isNew: true,
+      });
       showToast?.('✓ Revenue posted to GL — Journal Entry JE-2026-0089 created · Account 4000');
       setPostingToGL(false);
     }, 1500);
@@ -242,7 +250,7 @@ export default function Billing({ onOpenEmberlyn, onOpenBillingBatchModal, onExp
                     <td className="px-3 py-2.5">
                       {inv.status === 'Dispute Resolved' && <button type="button" data-demo={`btn-rebill-${inv.id}`} onClick={() => showToast?.('Rebill queued — new invoice will generate in next batch run')} className="rounded px-2 py-1 text-[11px] font-semibold mr-1" style={{ background: 'var(--teal)', color: '#fff', fontFamily: 'var(--font-ui)' }}>Rebill</button>}
                       {!isReversed && (
-                        <button type="button" data-demo="btn-reverse-invoice" onClick={(e) => { const invoiceId = e.currentTarget.closest('tr')?.getAttribute('data-invoice-id') || 'INV-2026-0342'; setReversedInvoices(s => new Set([...s, invoiceId])); showToast?.('Credit memo CM-2026-0038 created — $42,400 · Pending Finance approval'); }} className="rounded px-2 py-1 text-[11px]" style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Reverse</button>
+                        <button type="button" data-demo="btn-reverse-invoice" onClick={(e) => { const invoiceId = e.currentTarget.closest('tr')?.getAttribute('data-invoice-id') || 'INV-2026-0342'; setReversedInvoices(s => new Set([...s, invoiceId])); actions.addPendingJournalEntry({ id: 'JE-2026-0090', account: '1100 — Accounts Receivable', description: `Credit memo created for ${invoiceId}`, credit: '$42,400', status: 'Pending Approval', isNew: true }); showToast?.('Credit memo CM-2026-0038 created — $42,400 · Pending Finance approval'); }} className="rounded px-2 py-1 text-[11px]" style={{ background: 'transparent', border: '1px solid var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Reverse</button>
                       )}
                     </td>
                   </tr>

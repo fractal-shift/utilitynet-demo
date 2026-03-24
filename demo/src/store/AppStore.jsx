@@ -44,6 +44,8 @@ const initialState = {
   finance: {
     pendingJournalEntries: [],
     billingPostedAt: null,
+    customerCredits: {},
+    recentArActivity: [],
   },
   tutorialMode: false,
   activeScenario: null,
@@ -65,7 +67,10 @@ function mergePersisted(init, persisted) {
     settlementData: persisted.settlementData ?? init.settlementData,
     timelineItems: persisted.timelineItems ?? init.timelineItems,
     cases: persisted.cases ?? init.cases,
-    finance: persisted.finance ?? init.finance,
+    finance: {
+      ...init.finance,
+      ...(persisted.finance ?? {}),
+    },
   };
 }
 
@@ -154,10 +159,43 @@ function reducer(state, action) {
         ...state,
         finance: {
           ...state.finance,
-          pendingJournalEntries: [...(state.finance?.pendingJournalEntries || []), action.payload],
+          pendingJournalEntries: [
+            action.payload,
+            ...(state.finance?.pendingJournalEntries || []).filter((entry) => entry.id !== action.payload.id),
+          ],
         },
       };
       break;
+    case 'APPLY_CUSTOMER_CREDIT': {
+      const { customerId, adjustedBalance, recentArActivity, ...creditPayload } = action.payload;
+      next = {
+        ...state,
+        customers: state.customers.map((customer) =>
+          customer.id === customerId
+            ? {
+                ...customer,
+                balance: adjustedBalance,
+                status: 'Active',
+              }
+            : customer
+        ),
+        cases: state.cases.map((c) =>
+          c.customerId === customerId ? { ...c, status: 'Resolved' } : c
+        ),
+        finance: {
+          ...state.finance,
+          customerCredits: {
+            ...(state.finance?.customerCredits || {}),
+            [customerId]: creditPayload,
+          },
+          recentArActivity: [
+            recentArActivity,
+            ...(state.finance?.recentArActivity || []).filter((item) => item.customerId !== customerId),
+          ],
+        },
+      };
+      break;
+    }
     case 'POST_BILLING_TO_GL':
       next = {
         ...state,
@@ -237,6 +275,8 @@ export function AppStoreProvider({ children }) {
     dispatch({ type: 'UPDATE_CASE_STATUS', payload: { id, status } });
   const addPendingJournalEntry = (entry) =>
     dispatch({ type: 'ADD_PENDING_JOURNAL_ENTRY', payload: entry });
+  const applyCustomerCredit = (credit) =>
+    dispatch({ type: 'APPLY_CUSTOMER_CREDIT', payload: credit });
   const postBillingToGL = (date) =>
     dispatch({ type: 'POST_BILLING_TO_GL', payload: date });
   const startTutorial = (scenario) => dispatch({ type: 'START_TUTORIAL', payload: scenario });
@@ -256,6 +296,7 @@ export function AppStoreProvider({ children }) {
     updateTimelineItem,
     updateCaseStatus,
     addPendingJournalEntry,
+    applyCustomerCredit,
     postBillingToGL,
     startTutorial,
     advanceStep,

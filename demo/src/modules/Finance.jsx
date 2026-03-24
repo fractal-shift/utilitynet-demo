@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useAppStore } from '../store/AppStore';
 
 const GL_ACCOUNTS = [
   { account: 'Energy Revenue', glCode: '4000', type: 'Revenue', opening: '$0.00', debits: '—', credits: '$2,340,120', closing: '$2,340,120', status: 'Balanced' },
@@ -12,6 +13,7 @@ const GL_ACCOUNTS = [
 const AR_ROWS = [
   { customer: 'Sunrise Industrial Ltd.', invoice: 'INV-2026-0342', amount: '$42,400', days: 28, status: 'Current', action: 'Send Reminder' },
   { customer: 'Parkview Residential', invoice: 'INV-2026-0287', amount: '$1,240', days: 45, status: 'Overdue', action: 'Escalate' },
+  { customerId: 'C-10478', customer: 'MacGregor Industrial Ltd.', invoice: 'INV-2026-14801', amount: '$8,400', days: 12, status: 'Exception', action: 'Review Exception' },
   { customer: 'Northern Oilsands Corp.', invoice: 'INV-2026-0301', amount: '$98,600', days: 62, status: 'Overdue', action: 'Collections' },
   { customer: 'Lakeview Homes', invoice: 'INV-2026-0311', amount: '$890', days: 18, status: 'Current', action: 'Send Reminder' },
   { customer: 'Peak Energy Partners', invoice: 'INV-2026-0298', amount: '$41,070', days: 71, status: '60+ Days', action: 'Collections' },
@@ -114,6 +116,7 @@ const GL_GOVERNANCE_RULES = [
 ];
 
 export default function Finance({ onOpenEmberlyn, showToast }) {
+  const { state } = useAppStore();
   const [activeTab, setActiveTab] = useState('gl');
   const [apStatus, setApStatus] = useState(
     AP_ROWS.reduce((acc, r, i) => ({ ...acc, [i]: r.status }), {})
@@ -130,6 +133,32 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
   const [arStatus, setArStatus] = useState({});
   const [glExportDone, setGlExportDone] = useState(false);
   const [recentGlEntries, setRecentGlEntries] = useState([]);
+  const financeState = state.finance || {};
+  const pendingJournalEntries = financeState.pendingJournalEntries || [];
+  const customerCredits = financeState.customerCredits || {};
+  const recentArActivity = financeState.recentArActivity || [];
+
+  const displayedArRows = useMemo(
+    () =>
+      AR_ROWS.map((row) => {
+        if (!row.customerId || !customerCredits[row.customerId]) return row;
+        const credit = customerCredits[row.customerId];
+        return {
+          ...row,
+          amount: `$${credit.adjustedAmount.toLocaleString()}`,
+          status: credit.status,
+          action: 'View Credit Memo',
+          creditMemoId: credit.creditMemoId,
+          isUpdatedFromCrm: true,
+        };
+      }),
+    [customerCredits]
+  );
+
+  const displayedGlEntries = useMemo(() => {
+    const merged = [...recentGlEntries, ...pendingJournalEntries];
+    return merged.filter((entry, index) => merged.findIndex((candidate) => candidate.id === entry.id) === index);
+  }, [pendingJournalEntries, recentGlEntries]);
 
   const healthScore = (() => {
     let score = 58;
@@ -304,16 +333,16 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                 </tr>
               </thead>
               <tbody>
-                {recentGlEntries.map((entry) => (
+                {displayedGlEntries.map((entry) => (
                   <tr key={entry.id} data-demo="finance-gl-latest-entry" style={{ background: 'rgba(39,174,96,0.06)', borderBottom: '1px solid var(--border)' }}>
                     <td className="px-4 py-3" style={{ fontFamily: 'var(--font-mono)', color: 'var(--success)', fontSize: 12 }}>
                       {entry.id}
                       <span className="ml-2 rounded px-1.5 py-0.5 text-[9px] font-semibold" style={{ background: 'rgba(39,174,96,0.15)', color: 'var(--success)' }}>Just Posted</span>
                     </td>
                     <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{entry.account}</td>
-                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>{entry.description}</td>
+                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>{entry.description || entry.source}</td>
                     <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.debit || '—'}</td>
-                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.credit}</td>
+                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.credit || `$${(entry.amount || 0).toLocaleString()}`}</td>
                     <td className="px-4 py-3" colSpan={2}>
                       <span className="rounded px-2 py-0.5 text-[10px] font-medium" style={{ background: 'rgba(39,174,96,0.12)', color: 'var(--success)' }}>Posted</span>
                     </td>
@@ -339,6 +368,11 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
 
       {activeTab === 'ar' && (
         <div>
+        {recentArActivity[0] && (
+          <div className="mb-3 rounded-lg border-l-4 px-4 py-3 text-[12px]" style={{ borderLeftColor: 'var(--success)', background: 'rgba(39,174,96,0.08)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
+            <span style={{ color: 'var(--success)' }}>✓</span> {recentArActivity[0].message} for {recentArActivity[0].customerName}. Finance AR reflects the adjusted balance automatically.
+          </div>
+        )}
         <div className="overflow-x-auto rounded-lg border" style={{ borderColor: 'var(--border)', background: 'var(--surface)' }}>
           <table data-demo="finance-ar-table" className="w-full text-left text-[13px]" style={{ fontFamily: 'var(--font-ui)' }}>
             <thead>
@@ -352,15 +386,32 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
               </tr>
             </thead>
             <tbody>
-              {AR_ROWS.map((r, i) => (
-                <tr key={i} className="border-t" style={{ borderColor: 'var(--border)' }}>
+              {displayedArRows.map((r, i) => (
+                <tr key={i} data-demo={r.customerId === 'C-10478' ? 'finance-ar-macgregor' : undefined} className="border-t" style={{ borderColor: 'var(--border)', background: r.isUpdatedFromCrm ? 'rgba(39,174,96,0.05)' : 'transparent' }}>
                   <td className="px-4 py-2.5" style={{ color: 'var(--light)' }}>{r.customer}</td>
                   <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.invoice}</td>
-                  <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.amount}</td>
+                  <td className="px-4 py-2.5" style={{ color: r.status === 'Exception' ? 'var(--error)' : r.status === 'Credit Applied' ? 'var(--success)' : 'var(--text)' }}>{r.amount}</td>
                   <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.days}</td>
-                  <td className="px-4 py-2.5" style={{ color: 'var(--text)' }}>{r.status}</td>
+                  <td className="px-4 py-2.5">
+                    <span
+                      className="rounded px-2 py-0.5 text-[10px] font-medium"
+                      style={{
+                        background: r.status === 'Credit Applied' ? 'rgba(39,174,96,0.12)' : r.status === 'Exception' ? 'rgba(229,62,62,0.10)' : 'var(--s2)',
+                        color: r.status === 'Credit Applied' ? 'var(--success)' : r.status === 'Exception' ? 'var(--error)' : 'var(--text)',
+                        border: '1px solid',
+                        borderColor: r.status === 'Credit Applied' ? 'rgba(39,174,96,0.25)' : r.status === 'Exception' ? 'rgba(229,62,62,0.25)' : 'var(--border)',
+                      }}
+                    >
+                      {r.status}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
-                    {arStatus[i] === 'Escalated' ? (
+                    {r.isUpdatedFromCrm ? (
+                      <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={{ background: 'rgba(39,174,96,0.12)', color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>
+                        {r.creditMemoId}
+                      </span>
+                    ) : (
+                      arStatus[i] === 'Escalated' ? (
                       <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={{ background: 'rgba(229,62,62,0.12)', color: 'var(--error)', fontFamily: 'var(--font-ui)' }}>Escalated</span>
                     ) : arStatus[i] === 'Reminded' ? (
                       <span className="rounded px-2 py-0.5 text-[11px] font-medium" style={{ background: 'rgba(39,174,96,0.12)', color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>Reminder Sent</span>
@@ -380,7 +431,8 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                       >
                         {r.action}
                       </button>
-                    )}
+                    ))
+                    }
                   </td>
                 </tr>
               ))}

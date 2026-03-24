@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAppStore } from '../store/AppStore';
 
 export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, showToast }) {
-  const { state } = useAppStore();
+  const { state, actions } = useAppStore();
   const { marketers, finance } = state;
   const [postingCommissions, setPostingCommissions] = useState(false);
   const [margin, setMargin] = useState(0.85);
@@ -10,7 +10,8 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
   const [statementModal, setStatementModal] = useState(null);
   const customerRate = (4.82 + margin).toFixed(2);
 
-  const journalEntries = finance?.pendingJournalEntries?.filter((e) => e.account?.includes('2100')) || [
+  const marketerJournalEntries = finance?.pendingJournalEntries?.filter((e) => e.account?.includes('2100')) || [];
+  const journalEntries = marketerJournalEntries.length ? marketerJournalEntries : [
     { id: 'JE-2026-0088', source: 'Marketer Commissions — February 2026', amount: 1208400, account: '2100' },
     { id: 'JE-2026-0087', source: 'Marketer Commissions — January 2026', amount: 1189200, account: '2100' },
   ].slice(0, 2);
@@ -18,6 +19,16 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
   const handlePostCommissions = () => {
     setPostingCommissions(true);
     setTimeout(() => {
+      actions.addPendingJournalEntry({
+        id: 'JE-2026-0088',
+        source: 'Marketer Commissions — February 2026',
+        description: 'Commission statement approved from Marketers',
+        amount: 1208400,
+        account: '2100 — Marketer Commissions Payable',
+        credit: '$1,208,400',
+        status: 'Posted',
+        isNew: true,
+      });
       showToast?.('✓ Commission run approved — Journal Entry JE-2026-0088 · Account 2100 · $1,208,400');
       setPostingCommissions(false);
     }, 1500);
@@ -74,7 +85,7 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
           <div className="mt-4 p-4 rounded-lg border" style={{ background: 'var(--teal-dim)', borderColor: 'var(--teal-bdr)' }}>
             <div className="text-sm font-medium mb-2" style={{ color: 'var(--light)' }}>Summary Preview</div>
             <div className="text-[13px] mb-3" style={{ color: 'var(--text)' }}>{statementModal.customers} customers · {'$' + statementModal.net.toLocaleString()} net to marketer</div>
-            <button type="button" data-demo="btn-post-commissions-to-gl-modal" onClick={() => { showToast?.('Statement posted to Finance (Hook 3)'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
+            <button type="button" data-demo="btn-post-commissions-to-gl-modal" onClick={() => { actions.addPendingJournalEntry({ id: 'JE-2026-0088', source: 'Marketer Commissions — February 2026', description: 'Commission statement approved from Marketers', amount: 1208400, account: '2100 — Marketer Commissions Payable', credit: '$1,208,400', status: 'Posted', isNew: true }); showToast?.('Statement posted to Finance — JE-2026-0088 · Account 2100'); setStatementModal(null); }} className="rounded-lg px-3 py-1.5 text-[12px] font-semibold" style={{ background: 'var(--teal)', color: '#fff' }}>Approve & Post to Finance</button>
           </div>
         )}
       </div>

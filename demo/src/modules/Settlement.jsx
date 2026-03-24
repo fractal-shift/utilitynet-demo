@@ -15,6 +15,14 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
   const handleSendToFinance = () => {
     setSendingToFinance(true);
     setTimeout(() => {
+      actions.addPendingJournalEntry({
+        id: 'JE-2026-0091',
+        account: '2200 — AESO Settlement Payable',
+        description: 'Settlement reconciliation posted from Settlement',
+        credit: '$6,820,000',
+        status: 'Posted',
+        isNew: true,
+      });
       showToast?.('✓ Settlement reconciliation sent to Finance — Journal Entry JE-2026-0091 · Account 2200');
       setSendingToFinance(false);
     }, 1500);

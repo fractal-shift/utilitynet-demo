@@ -3,12 +3,33 @@ import { useAppStore } from '../store/AppStore';
 
 export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmberlyn, showToast }) {
   const { state, actions } = useAppStore();
-  const [propagationShown, setPropagationShown] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const liveCustomer = customer ? state.customers.find((item) => item.id === customer.id) || customer : null;
+  const appliedCredit = liveCustomer ? state.finance?.customerCredits?.[liveCustomer.id] : null;
+  const propagationShown = Boolean(appliedCredit);
 
   const handleApplyCredit = () => {
-    actions.addPendingJournalEntry?.({ id: 'JE-2026-0092', account: '1100', amount: 85 });
-    setPropagationShown(true);
-    showToast?.('Credit applied — propagation complete');
+    if (!liveCustomer || appliedCredit) return;
+    actions.applyCustomerCredit?.({
+      customerId: liveCustomer.id,
+      customerName: liveCustomer.name,
+      invoice: 'INV-2026-14801',
+      originalAmount: 8400,
+      creditAmount: 6300,
+      adjustedAmount: 2100,
+      adjustedBalance: '$2,100.00',
+      status: 'Credit Applied',
+      previousStatus: 'Exception',
+      creditMemoId: 'CM-2026-0041',
+      source: 'Customer 360',
+      syncedAccount: '1100 — Accounts Receivable',
+      recentArActivity: {
+        customerId: liveCustomer.id,
+        customerName: liveCustomer.name,
+        message: 'Credit memo CM-2026-0041 synced from Customer 360',
+      },
+    });
+    showToast?.('Credit applied — MacGregor AR reduced by $6,300 and synced to Finance');
   };
 
   const MOCK_BILLING = [
@@ -17,20 +38,19 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
   { invoice: 'INV-2025-14612', period: 'Dec 2025', usage: '51,200 kWh', amount: '$4,820', status: 'Paid' },
   ];
 
-  const cases = (customer ? state.cases.filter((c) => c.customerId === customer.id) : []) || [];
-  const [activeTab, setActiveTab] = useState('overview');
+  const cases = (liveCustomer ? state.cases.filter((c) => c.customerId === liveCustomer.id) : []) || [];
 
-  if (!isOpen || !customer) return null;
+  if (!isOpen || !liveCustomer) return null;
 
-  const hasException = customer.status === 'Exception';
+  const hasException = liveCustomer.status === 'Exception';
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50" onClick={(e) => e.target === e.currentTarget && onClose()}>
       <div className="max-h-[90vh] w-[700px] max-w-[95vw] overflow-y-auto rounded-xl border p-7 shadow-xl" style={{ background: 'var(--surface)', borderColor: 'var(--border)' }} onClick={(e) => e.stopPropagation()}>
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <div className="font-bold text-[18px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Customer 360 — {customer.name}</div>
-            <div className="mt-1 text-[10px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{customer.id} · {customer.type} · Active since {customer.since}</div>
+            <div className="font-bold text-[18px]" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Customer 360 — {liveCustomer.name}</div>
+            <div className="mt-1 text-[10px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-mono)' }}>{liveCustomer.id} · {liveCustomer.type} · Active since {liveCustomer.since}</div>
           </div>
           <button type="button" data-demo="customer360-close" onClick={onClose} className="text-xl" style={{ color: 'var(--muted)' }}>×</button>
         </div>
@@ -59,18 +79,18 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
               <div>
                 <div className="mb-2 text-[10px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Contact Info</div>
                 <div className="space-y-2 text-[13px]" style={{ fontFamily: 'var(--font-ui)' }}>
-                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Email</span><span className="font-mono text-[11px]" style={{ color: 'var(--light)' }}>{customer.email}</span></div>
+                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Email</span><span className="font-mono text-[11px]" style={{ color: 'var(--light)' }}>{liveCustomer.email}</span></div>
                   <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Phone</span><span style={{ color: 'var(--light)' }}>780-555-0241</span></div>
                   <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Address</span><span style={{ color: 'var(--light)' }}>8820 Industrial Pkwy, Edmonton</span></div>
-                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Marketer</span><span style={{ color: 'var(--light)' }}>{customer.marketer}</span></div>
+                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Marketer</span><span style={{ color: 'var(--light)' }}>{liveCustomer.marketer}</span></div>
                 </div>
               </div>
               <div>
                 <div className="mb-2 text-[10px] font-medium tracking-wider uppercase opacity-75" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>Account Status</div>
                 <div className="space-y-2 text-[13px]" style={{ fontFamily: 'var(--font-ui)' }}>
-                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Plan</span><span style={{ color: 'var(--light)' }}>{customer.plan} Rate</span></div>
-                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Outstanding</span><span style={{ color: customer.balance !== '$0.00' ? 'var(--error)' : 'var(--success)' }}>{customer.balance}</span></div>
-                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Status</span><span style={{ color: 'var(--light)' }}>{customer.status}</span></div>
+                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Plan</span><span style={{ color: 'var(--light)' }}>{liveCustomer.plan} Rate</span></div>
+                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Outstanding</span><span style={{ color: liveCustomer.balance !== '$0.00' ? 'var(--error)' : 'var(--success)' }}>{liveCustomer.balance}</span></div>
+                  <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Status</span><span style={{ color: 'var(--light)' }}>{liveCustomer.status}</span></div>
                   <div className="flex justify-between"><span style={{ color: 'var(--muted)' }}>Last Payment</span><span style={{ color: 'var(--light)' }}>Jan 28, 2026</span></div>
                 </div>
               </div>
@@ -79,13 +99,36 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
               <div className="mb-4 rounded-lg border p-4" style={{ background: 'rgba(229,62,62,0.08)', borderColor: 'rgba(229,62,62,0.25)', color: 'var(--error)', fontFamily: 'var(--font-ui)' }}>
                 ⚠ BILLING EXCEPTION — Missing meter read March 1-8. Invoice blocked. Estimated: $4,200 at risk.{' '}
                 {onOpenEmberlyn && (
-                  <button type="button" onClick={() => onOpenEmberlyn('customer-' + customer.id)} className="ml-2 rounded px-2 py-1 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>✦ Emberlyn Assist</button>
+                  <button type="button" onClick={() => onOpenEmberlyn('customer-' + liveCustomer.id)} className="ml-2 rounded px-2 py-1 text-[12px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)' }}>✦ Emberlyn Assist</button>
                 )}
+                <button
+                  type="button"
+                  data-demo="crm-billing-link"
+                  disabled={propagationShown}
+                  onClick={handleApplyCredit}
+                  className="ml-2 rounded px-2 py-1 text-[12px] font-semibold"
+                  style={{
+                    background: propagationShown ? 'rgba(39,174,96,0.15)' : 'var(--btn-primary-bg)',
+                    color: propagationShown ? 'var(--success)' : 'var(--btn-primary-text)',
+                  }}
+                >
+                  {propagationShown ? '✓ Credit Applied' : 'Apply Credit'}
+                </button>
+              </div>
+            )}
+            {propagationShown && (
+              <div data-demo="crm-propagation-confirmation" className="mb-4 rounded-lg border-l-4 p-4" style={{ background: 'rgba(39,174,96,0.08)', borderLeftColor: 'var(--success)' }}>
+                <div className="font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>✓ Credit applied and synced</div>
+                <div className="mt-2 text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
+                  Billing: Credit memo {appliedCredit.creditMemoId} created (${appliedCredit.creditAmount.toLocaleString()}.00)<br />
+                  Finance: AR updated automatically — account 1100 reduced by ${appliedCredit.creditAmount.toLocaleString()}.00<br />
+                  Remaining balance: ${appliedCredit.adjustedAmount.toLocaleString()}.00 outstanding
+                </div>
               </div>
             )}
             <div className="flex gap-2">
               {onOpenEmberlyn && (
-                <button type="button" onClick={() => onOpenEmberlyn('customer-' + customer.id.replace(/-/g, ''))} data-demo="customer360-draft-email" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>✦ Draft Customer Email</button>
+                <button type="button" onClick={() => onOpenEmberlyn('customer-' + liveCustomer.id.replace(/-/g, ''))} data-demo="customer360-draft-email" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>✦ Draft Customer Email</button>
               )}
               <button type="button" className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>📞 Log Call</button>
               <button type="button" className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⊕ Create Case</button>
@@ -98,16 +141,28 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
           <>
           {propagationShown && (
             <div data-demo="crm-propagation-confirmation" className="mb-4 rounded-lg border-l-4 p-4" style={{ background: 'rgba(39,174,96,0.08)', borderLeftColor: 'var(--success)' }}>
-              <div className="font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>✓ Adjustment propagated</div>
+              <div className="font-semibold" style={{ color: 'var(--success)', fontFamily: 'var(--font-ui)' }}>✓ Credit applied and synced</div>
               <div className="mt-2 text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>
-                Billing: Credit memo CM-2026-0041 created ($85.00)<br />
-                Finance: AR updated — account 1100 reduced by $85.00<br />
-                GL entry: JE-2026-0092 pending approval
+                Billing: Credit memo {appliedCredit.creditMemoId} created (${appliedCredit.creditAmount.toLocaleString()}.00)<br />
+                Finance: AR updated automatically — account 1100 reduced by ${appliedCredit.creditAmount.toLocaleString()}.00<br />
+                Remaining balance: ${appliedCredit.adjustedAmount.toLocaleString()}.00 outstanding
               </div>
             </div>
           )}
           <div className="mb-3">
-            <button type="button" data-demo="crm-billing-link" onClick={handleApplyCredit} className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>Apply Credit</button>
+            <button
+              type="button"
+              onClick={handleApplyCredit}
+              disabled={propagationShown}
+              className="rounded-lg px-4 py-2 text-[13px] font-semibold"
+              style={{
+                background: propagationShown ? 'rgba(39,174,96,0.15)' : 'var(--btn-primary-bg)',
+                color: propagationShown ? 'var(--success)' : 'var(--btn-primary-text)',
+                fontFamily: 'var(--font-ui)',
+              }}
+            >
+              {propagationShown ? '✓ Credit Applied' : 'Apply Credit'}
+            </button>
           </div>
           <div className="overflow-x-auto rounded-xl border" style={{ background: 'var(--s2)', borderColor: 'var(--border)' }}>
             <table className="w-full text-left">
