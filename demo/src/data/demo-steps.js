@@ -2,9 +2,9 @@ export const DEMO_SCENARIOS = [
   {
     id: 'intro',
     label: '0. Introduction — FractalShift',
-    role: 'Chief Executive Officer',
+    role: 'Presenter',
     steps: [
-      { type: 'role', role: 'Chief Executive Officer' },
+      { type: 'role', role: 'Presenter' },
       { type: 'navigate', target: 'nav-dashboard' },
       { type: 'narration', text: "No slides. No wireframes. What you're about to see we built in one week — using your RFP, your demo script, and public information about UTILITYnet." },
       { type: 'wait', ms: 5000 },
