@@ -142,6 +142,39 @@ export default function DemoPlayer() {
         post({ type: 'demo-narration', text: null });
         break;
 
+      case 'thena-ask': {
+        post({ type: 'demo-narration', text: `Sarah asks Thena: "${step.text}"` });
+        await sleep(1500);
+        post({ type: 'demo-narration', text: null });
+        const thenaInput = document.querySelector('[data-demo="thena-input"], input[placeholder="Ask Thena..."]');
+        if (thenaInput) {
+          thenaInput.focus();
+          const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+          nativeSetter.call(thenaInput, step.text);
+          thenaInput.dispatchEvent(new Event('input', { bubbles: true }));
+          await sleep(300);
+          thenaInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        }
+        await sleep(step.waitMs || 9000);
+        break;
+      }
+
+      case 'alden-ask': {
+        post({ type: 'demo-narration', text: `Sarah asks Alden: "${step.text}"` });
+        await sleep(1500);
+        post({ type: 'demo-narration', text: null });
+        const aldenInput = document.querySelector('[data-demo="alden-input"], input[placeholder="Ask Alden..."]');
+        if (aldenInput) {
+          const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+          nativeSetter.call(aldenInput, step.text);
+          aldenInput.dispatchEvent(new Event('input', { bubbles: true }));
+          await sleep(300);
+          aldenInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        }
+        await sleep(step.waitMs || 9000);
+        break;
+      }
+
       default:
         break;
     }
