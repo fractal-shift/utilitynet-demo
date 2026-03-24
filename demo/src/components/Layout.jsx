@@ -102,6 +102,7 @@ export default function Layout({ apiKey }) {
   );
 
   const isThena = currentModule === 'analytics';
+  const isAlden = currentModule === 'admin';
 
   const showToast = useCallback((msg) => {
     setToast(msg);
@@ -253,6 +254,8 @@ export default function Layout({ apiKey }) {
             onToggle={() => setThenaOpen((o) => !o)}
             apiKey={apiKey}
           />
+        ) : isAlden ? (
+          null
         ) : state.tutorialMode ? (
           <CoachRail />
         ) : (
