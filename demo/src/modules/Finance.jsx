@@ -129,6 +129,7 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
   const [auditModalOpen, setAuditModalOpen] = useState(false);
   const [arStatus, setArStatus] = useState({});
   const [glExportDone, setGlExportDone] = useState(false);
+  const [recentGlEntries, setRecentGlEntries] = useState([]);
 
   const healthScore = (() => {
     let score = 58;
@@ -158,7 +159,17 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
 
   const handleApproveAp = (idx) => {
     setApStatus((s) => ({ ...s, [idx]: 'Approved' }));
-    fireToast('Payment approved — journal entry created');
+    const entry = {
+      id: `JE-2026-009${idx + 1}`,
+      account: '2200 — AESO Settlement Payable',
+      description: 'AP payment approved — auto-posted',
+      debit: '',
+      credit: AP_ROWS[idx]?.amount || '$0',
+      status: 'Posted',
+      isNew: true,
+    };
+    setRecentGlEntries(s => [entry, ...s]);
+    fireToast('Payment approved — journal entry ' + entry.id + ' created automatically. No manual GL entry.');
   };
 
   const handleGhostClick = (msg) => {
@@ -293,6 +304,21 @@ export default function Finance({ onOpenEmberlyn, showToast }) {
                 </tr>
               </thead>
               <tbody>
+                {recentGlEntries.map((entry) => (
+                  <tr key={entry.id} data-demo="finance-gl-latest-entry" style={{ background: 'rgba(39,174,96,0.06)', borderBottom: '1px solid var(--border)' }}>
+                    <td className="px-4 py-3" style={{ fontFamily: 'var(--font-mono)', color: 'var(--success)', fontSize: 12 }}>
+                      {entry.id}
+                      <span className="ml-2 rounded px-1.5 py-0.5 text-[9px] font-semibold" style={{ background: 'rgba(39,174,96,0.15)', color: 'var(--success)' }}>Just Posted</span>
+                    </td>
+                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>{entry.account}</td>
+                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>{entry.description}</td>
+                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.debit || '—'}</td>
+                    <td className="px-4 py-3 text-[12px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-mono)' }}>{entry.credit}</td>
+                    <td className="px-4 py-3" colSpan={2}>
+                      <span className="rounded px-2 py-0.5 text-[10px] font-medium" style={{ background: 'rgba(39,174,96,0.12)', color: 'var(--success)' }}>Posted</span>
+                    </td>
+                  </tr>
+                ))}
                 {GL_ACCOUNTS.map((r, i) => (
                   <tr key={i} className="border-t" style={{ borderColor: 'var(--border)' }}>
                     <td className="px-4 py-2.5" style={{ color: 'var(--light)' }}>{r.account}</td>
