@@ -132,7 +132,7 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
                         Resolve
                       </button>
                     )}
-                    {row.status === 'Reconciled' && <button className="rounded-lg border px-3 py-1.5 text-[12px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>View</button>}
+                    {row.status === 'Reconciled' && <button type="button" onClick={() => showToast?.(`${row.name} — reconciliation report opened`)} className="rounded-lg border px-3 py-1.5 text-[12px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>View</button>}
                   </td>
                 </tr>
               ))}
@@ -153,7 +153,7 @@ export default function Settlement({ onOpenEmberlyn, onExport, showToast }) {
                 <div className="mb-2 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>Exception Resolved — AltaGas Retail</div>
                 <div className="mb-2 text-sm font-bold" style={{ color: 'var(--light)', fontFamily: 'var(--font-ui)' }}>Settlement accepted at our figures: $481,600.00</div>
                 <div className="mb-4 text-[12px]" style={{ color: 'var(--muted)', fontFamily: 'var(--font-ui)' }}>Commission statement queued for March 15 disbursement. Variance documentation filed.</div>
-                <button type="button" className="rounded-lg border px-3 py-1.5 text-[12px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⬇ Download Final Statement</button>
+                <button type="button" onClick={() => showToast?.('Statement downloaded — AltaGas_Settlement_March2026.pdf')} className="rounded-lg border px-3 py-1.5 text-[12px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⬇ Download Final Statement</button>
               </>
             ) : (
               <>

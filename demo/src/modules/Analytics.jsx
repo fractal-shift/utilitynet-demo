@@ -274,7 +274,7 @@ export default function Analytics({ onOpenThena, showToast }) {
             </div>
             <div className="mb-2 text-[14px] font-bold leading-snug" style={{ color: '#F2F0EC', fontFamily: 'Playfair Display, serif' }}>Enablement calls for 3 marketers with above-average leads</div>
             <div className="mb-3 text-[11px] leading-relaxed" style={{ color: '#C8C4BF', fontFamily: 'Syne, sans-serif' }}>GreenPath, AltaEnergy, SolarEdge. Rate positioning coaching.</div>
-            <button type="button" className="rounded-lg border px-3 py-1.5 text-[11px] font-medium" style={{ background: 'transparent', borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF', fontFamily: 'Syne, sans-serif' }}>Schedule Calls</button>
+            <button type="button" onClick={() => showToast?.('Enablement calls scheduled — GreenPath, AltaEnergy, SolarEdge · Week of Mar 31')} className="rounded-lg border px-3 py-1.5 text-[11px] font-medium" style={{ background: 'transparent', borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF', fontFamily: 'Syne, sans-serif' }}>Schedule Calls</button>
           </div>
           <div className="rounded-xl border p-4" style={{ background: '#1c1d19', borderColor: 'rgba(242,240,236,0.13)' }}>
             <div className="mb-2 flex items-center gap-2">
@@ -290,7 +290,7 @@ export default function Analytics({ onOpenThena, showToast }) {
             </div>
             <div className="mb-2 text-[14px] font-bold leading-snug" style={{ color: '#F2F0EC', fontFamily: 'Playfair Display, serif' }}>Increase industrial hedge coverage before April billing</div>
             <div className="mb-3 text-[11px] leading-relaxed" style={{ color: '#C8C4BF', fontFamily: 'Syne, sans-serif' }}>AESO forward pricing +6.2%. Coverage at 61% — increase to 75%.</div>
-            <button type="button" className="rounded-lg border px-3 py-1.5 text-[11px] font-medium" style={{ background: 'transparent', borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF', fontFamily: 'Syne, sans-serif' }}>Review Hedge Model</button>
+            <button type="button" onClick={() => showToast?.('Hedge model opened — current coverage 61% · Target 75% · AESO forward +6.2%')} className="rounded-lg border px-3 py-1.5 text-[11px] font-medium" style={{ background: 'transparent', borderColor: 'rgba(242,240,236,0.13)', color: '#C8C4BF', fontFamily: 'Syne, sans-serif' }}>Review Hedge Model</button>
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@ function StatusPill({ status }) {
   );
 }
 
-export default function Customers({ onOpenEmberlyn, onOpenEnrollmentModal, onOpenCustomer360, onExport }) {
+export default function Customers({ onOpenEmberlyn, onOpenEnrollmentModal, onOpenCustomer360, onExport, showToast }) {
   const { state } = useAppStore();
   const { customers } = state;
   const [activeTab, setActiveTab] = useState('list');
@@ -151,6 +151,7 @@ export default function Customers({ onOpenEmberlyn, onOpenEnrollmentModal, onOpe
           <button
             type="button"
             data-demo="customers-service-apply-credit"
+            onClick={() => showToast?.('Credit applied — account balance updated')}
             className="rounded-lg px-4 py-2 text-[13px] font-semibold"
             style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}
           >

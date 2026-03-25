@@ -130,9 +130,9 @@ export default function Customer360Modal({ customer, isOpen, onClose, onOpenEmbe
               {onOpenEmberlyn && (
                 <button type="button" onClick={() => onOpenEmberlyn('customer-' + liveCustomer.id.replace(/-/g, ''))} data-demo="customer360-draft-email" className="rounded-lg px-4 py-2 text-[13px] font-semibold" style={{ background: 'var(--btn-primary-bg)', color: 'var(--btn-primary-text)', fontFamily: 'var(--font-ui)' }}>✦ Draft Customer Email</button>
               )}
-              <button type="button" className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>📞 Log Call</button>
-              <button type="button" className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⊕ Create Case</button>
-              <button type="button" className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>📋 View Contract</button>
+              <button type="button" onClick={() => showToast?.('Call logged — activity recorded on MacGregor account')} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>📞 Log Call</button>
+              <button type="button" onClick={() => showToast?.('Case created — assigned to Customer Service queue')} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>⊕ Create Case</button>
+              <button type="button" onClick={() => showToast?.('Contract CAL-2026-0478 — Variable Rate · Active since Nov 2023')} className="rounded-lg border px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>📋 View Contract</button>
             </div>
           </>
         )}

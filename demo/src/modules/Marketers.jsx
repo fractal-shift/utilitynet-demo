@@ -74,7 +74,7 @@ export default function Marketers({ onOpenEmberlyn, onOpenOnboardMarketerModal, 
       <div className="mb-6 rounded-xl border p-5" style={{ background: 'var(--surface)', borderColor: 'var(--border)', boxShadow: 'var(--card-shadow)' }}>
         <div className="mb-3 text-[9px] font-medium tracking-[0.12em] uppercase" style={{ color: 'var(--label-color)', fontFamily: 'var(--font-mono)' }}>Prudential / Cash Call</div>
         <div className="text-[13px]" style={{ color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>AltaGas: Required $420,000 · Held $380,000 · Shortfall $40,000 ⚠ · Cash Call Issued Mar 8 · Due Mar 22</div>
-        <button type="button" data-demo="btn-cash-call-reminder" className="mt-3 rounded-lg px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', border: '1px solid', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Send Cash Call Reminder</button>
+        <button type="button" data-demo="btn-cash-call-reminder" onClick={() => showToast?.('Cash call reminder sent — AltaGas notified · Due Mar 22')} className="mt-3 rounded-lg px-4 py-2 text-[13px] font-medium" style={{ background: 'transparent', borderColor: 'var(--border)', border: '1px solid', color: 'var(--text)', fontFamily: 'var(--font-ui)' }}>Send Cash Call Reminder</button>
       </div>
 
       {/* Statement generation */}
