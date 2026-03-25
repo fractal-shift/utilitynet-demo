@@ -35,7 +35,7 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
           },
           {
             label: 'Forecast',
-            data: [null, null, null, null, null, null, null, null, null, null, null, 2.34, 2.21, 2.08, 2.14],
+            data: [null, null, null, null, null, null, null, null, null, null, null, 2.34, 1.61, 1.48, 1.54],
             borderColor: 'rgba(232,149,42,0.8)',
             borderDash: [6, 3],
             borderWidth: 1.5,
