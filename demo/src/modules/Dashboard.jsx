@@ -5,7 +5,7 @@ import { useAppStore } from '../store/AppStore';
 
 Chart.register(...registerables);
 
-const ACTUAL_DATA = [1.62, 1.71, 1.68, 1.82, 1.89, 1.94, 2.01, 2.08, 2.12, 2.18, 2.21, 2.34];
+const ACTUAL_DATA = [1.42, 1.31, 1.28, 1.24, 1.19, 1.38, 1.67, 1.94, 2.18, 2.31, 2.28, 2.34];
 const CHART_LABELS = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr*', 'May*', 'Jun*'];
 
 export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
@@ -35,7 +35,7 @@ export default function Dashboard({ onOpenEmberlyn, onNavigate, onExport }) {
           },
           {
             label: 'Forecast',
-            data: [null, null, null, null, null, null, null, null, null, null, null, 2.34, 2.47, 2.58, 2.61],
+            data: [null, null, null, null, null, null, null, null, null, null, null, 2.34, 2.21, 2.08, 2.14],
             borderColor: 'rgba(232,149,42,0.8)',
             borderDash: [6, 3],
             borderWidth: 1.5,
